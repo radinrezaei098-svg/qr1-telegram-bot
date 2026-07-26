@@ -155,7 +155,7 @@ async function generateColoredQr(text, colorHex, captionText) {
   const qrImage = await Jimp.read(qrBuffer);
   const captionHeight = 90;
 
-  const canvas = new Jimp(qrImage.bitmap.width, qrImage.bitmap.height + captionHeight, '#ffffffff');
+  const canvas = new Jimp(qrImage.bitmap.width, qrImage.bitmap.height + captionHeight, 0xffffffff);
   canvas.composite(qrImage, 0, 0);
 
   const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
