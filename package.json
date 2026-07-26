@@ -2,8 +2,9 @@
   "name": "telegram-qr-bot",
   "version": "1.0.0",
   "private": true,
+  "type": "commonjs",
   "dependencies": {
-    "qrcode": "^1.5.3",
-    "jimp": "^0.22.12"
+    "jimp": "^0.22.12",
+    "qrcode": "^1.5.4"
   }
 }
