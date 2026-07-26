@@ -1,13 +1,9 @@
 {
   "name": "telegram-qr-bot",
   "version": "1.0.0",
-  "description": "ربات تلگرام ساخت کیوآرکد روی Vercel Serverless",
-  "main": "api/webhook.js",
+  "private": true,
   "dependencies": {
-  "qrcode": "^1.5.3",
-  "jimp": "^0.22.12"
-}
-  "engines": {
-    "node": ">=18.x"
+    "qrcode": "^1.5.3",
+    "jimp": "^0.22.12"
   }
 }
