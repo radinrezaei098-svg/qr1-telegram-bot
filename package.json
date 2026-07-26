@@ -4,8 +4,9 @@
   "description": "ربات تلگرام ساخت کیوآرکد روی Vercel Serverless",
   "main": "api/webhook.js",
   "dependencies": {
-    "qrcode": "^1.5.3"
-  },
+  "qrcode": "^1.5.3",
+  "jimp": "^0.22.12"
+}
   "engines": {
     "node": ">=18.x"
   }
