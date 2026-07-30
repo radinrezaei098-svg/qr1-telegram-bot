@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.0/qrcode.min.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   :root{
     --ink:#0a0e1a;
@@ -634,6 +635,13 @@
         <button class="btn btn-ghost" id="downloadSvg">دانلود SVG</button>
       </div>
 
+      <div class="download-row" id="botSendRow" style="margin-top:10px; display:none;">
+        <button class="btn btn-primary" id="sendByBot" style="width:100%; background:var(--coral); color:#2a0e07;">
+          📩 ارسال توسط ربات
+        </button>
+      </div>
+      <p class="footnote-panel" id="botStatus"></p>
+
       <p class="footnote-panel">
         کیوآرکد کاملاً واقعیه و با هر اپ اسکنری خونده می‌شه. اگه لوگو گذاشتی،
         سطح تصحیح خطا خودکار روی H تنظیم می‌شه تا خوانایی حفظ بشه.
@@ -932,6 +940,62 @@ document.getElementById('downloadSvg').addEventListener('click', ()=>{
 /* ================= input listeners ================= */
 document.querySelectorAll('input[type=text], input[type=url], input[type=email], input[type=tel], textarea, select')
   .forEach(el => el.addEventListener('input', scheduleRender));
+
+/* ================= تلگرام مینی‌اپ ================= */
+// آدرس سروری که فایل server.js روش بالاست. اگه سرور و مینی‌اپ روی یه دامنه هستن
+// (یعنی server.js خودش index.html رو سرو می‌کنه) این مسیر نسبی کافیه.
+// اگه جدا هاست کردی، کل آدرس رو بذار، مثلاً: 'https://your-domain.com/api/send-qr'
+const SEND_ENDPOINT = '/api/send-qr';
+
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+const botSendRow = document.getElementById('botSendRow');
+const botStatus = document.getElementById('botStatus');
+const sendByBotBtn = document.getElementById('sendByBot');
+
+if (tg) {
+  tg.ready();
+  tg.expand();
+  // فقط وقتی واقعاً داخل تلگرام باز شده و initData معتبر داره، دکمه رو نشون بده
+  if (tg.initData) {
+    botSendRow.style.display = 'flex';
+  }
+}
+
+if (sendByBotBtn) {
+  sendByBotBtn.addEventListener('click', async () => {
+    if (!tg || !tg.initData) {
+      botStatus.textContent = 'این دکمه فقط داخل مینی‌اپ تلگرام کار می‌کنه.';
+      return;
+    }
+
+    sendByBotBtn.disabled = true;
+    sendByBotBtn.textContent = 'در حال ارسال...';
+    botStatus.textContent = '';
+
+    try {
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      const form = new FormData();
+      form.append('photo', blob, 'kodino-qr.png');
+      form.append('initData', tg.initData);
+
+      const res = await fetch(SEND_ENDPOINT, { method: 'POST', body: form });
+      const data = await res.json();
+
+      if (data.ok) {
+        tg.showAlert ? tg.showAlert('کیوآرکد برات توی چت ربات ارسال شد ✅') : (botStatus.textContent = 'ارسال شد ✅');
+      } else {
+        const msg = data.error || 'ارسال با خطا مواجه شد.';
+        tg.showAlert ? tg.showAlert(msg) : (botStatus.textContent = msg);
+      }
+    } catch (err) {
+      const msg = 'اتصال به سرور برقرار نشد.';
+      tg.showAlert ? tg.showAlert(msg) : (botStatus.textContent = msg);
+    } finally {
+      sendByBotBtn.disabled = false;
+      sendByBotBtn.textContent = '📩 ارسال توسط ربات';
+    }
+  });
+}
 
 /* initial render */
 window.addEventListener('load', render);
