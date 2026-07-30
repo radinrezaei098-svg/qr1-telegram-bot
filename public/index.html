@@ -1,230 +1,162 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>Codino</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<title>در حال بروزرسانی</title>
 
 <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Vazirmatn", Tahoma, sans-serif;
+    }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Vazirmatn,sans-serif;
-}
+    body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+        color: white;
+        overflow: hidden;
+    }
 
-body{
+    .container {
+        text-align: center;
+        padding: 40px;
+        width: 90%;
+        max-width: 500px;
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(15px);
+        border-radius: 25px;
+        box-shadow: 0 20px 50px rgba(0,0,0,.3);
+        animation: fade 1s ease;
+    }
 
-background:#0f172a;
+    h1 {
+        font-size: 32px;
+        margin-bottom: 15px;
+    }
 
-color:white;
+    p {
+        color: #cbd5e1;
+        font-size: 17px;
+        line-height: 2;
+    }
 
-padding:20px;
+    .loader {
+        width: 90px;
+        height: 90px;
+        margin: 30px auto;
+        border-radius: 50%;
+        border: 8px solid rgba(255,255,255,.2);
+        border-top-color: #38bdf8;
+        animation: spin 1s linear infinite;
+    }
 
-}
+    .dots span {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin: 5px;
+        background: #38bdf8;
+        border-radius: 50%;
+        animation: bounce 1.2s infinite;
+    }
 
-.container{
+    .dots span:nth-child(2){
+        animation-delay: .2s;
+    }
 
-max-width:700px;
+    .dots span:nth-child(3){
+        animation-delay: .4s;
+    }
 
-margin:auto;
+    .footer {
+        margin-top: 25px;
+        font-size: 13px;
+        color: #94a3b8;
+    }
 
-}
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
 
-.card{
+    @keyframes bounce {
+        50% {
+            transform: translateY(-12px);
+        }
+    }
 
-background:#1e293b;
+    @keyframes fade {
+        from {
+            opacity:0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity:1;
+            transform: translateY(0);
+        }
+    }
 
-border-radius:20px;
+    .bg-circle {
+        position:absolute;
+        border-radius:50%;
+        filter:blur(80px);
+        opacity:.5;
+    }
 
-padding:20px;
+    .one {
+        width:300px;
+        height:300px;
+        background:#0ea5e9;
+        top:-100px;
+        left:-100px;
+    }
 
-margin-top:20px;
-
-box-shadow:0 10px 30px rgba(0,0,0,.3);
-
-}
-
-h1{
-
-text-align:center;
-
-margin-bottom:20px;
-
-}
-
-select,input,textarea{
-
-width:100%;
-
-padding:12px;
-
-border:none;
-
-border-radius:12px;
-
-background:#334155;
-
-color:white;
-
-margin-top:8px;
-
-margin-bottom:15px;
-
-}
-
-button{
-
-width:100%;
-
-padding:14px;
-
-border:none;
-
-border-radius:12px;
-
-background:#2563eb;
-
-color:white;
-
-font-size:16px;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-button:hover{
-
-background:#1d4ed8;
-
-}
-
-#preview{
-
-margin-top:20px;
-
-background:white;
-
-border-radius:15px;
-
-padding:20px;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-min-height:300px;
-
-}
+    .two {
+        width:250px;
+        height:250px;
+        background:#8b5cf6;
+        bottom:-80px;
+        right:-80px;
+    }
 
 </style>
-
 </head>
 
 <body>
 
+<div class="bg-circle one"></div>
+<div class="bg-circle two"></div>
+
 <div class="container">
 
-<h1>📱 Codino</h1>
+    <div class="loader"></div>
 
-<div class="card">
+    <h1>در حال ساخت و بروزرسانی صفحه</h1>
 
-<label>نوع کد</label>
+    <p>
+        ما در حال آماده‌سازی یک تجربه‌ی جدید برای شما هستیم.
+        لطفاً چند لحظه صبر کنید...
+    </p>
 
-<select id="type">
+    <div class="dots">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
 
-<option value="text">📝 متن</option>
-
-<option value="link">🌐 لینک</option>
-
-<option value="phone">📞 تلفن</option>
-
-<option value="email">📧 ایمیل</option>
-
-<option value="wifi">📶 وای فای</option>
-
-<option value="telegram">✈️ تلگرام</option>
-
-<option value="whatsapp">💚 واتساپ</option>
-
-</select>
-
-<label>متن</label>
-
-<textarea id="content" placeholder="اینجا بنویس..."></textarea>
-
-<button onclick="makeQR()">
-
-ساخت QR Code
-
-</button>
-
-<div id="preview">
-
-<span style="color:#555">
-
-هنوز چیزی ساخته نشده
-
-</span>
+    <div class="footer">
+        © 2026 - تمامی حقوق محفوظ است
+    </div>
 
 </div>
-
-</div>
-
-</div>
-
-<script>
-
-const tg=window.Telegram?.WebApp;
-
-if(tg){
-
-tg.ready();
-
-tg.expand();
-
-}
-
-function makeQR(){
-
-let text=document.getElementById("content").value;
-
-let box=document.getElementById("preview");
-
-box.innerHTML="";
-
-QRCode.toCanvas(text,function(err,canvas){
-
-if(err){
-
-box.innerHTML="خطا";
-
-return;
-
-}
-
-box.appendChild(canvas);
-
-});
-
-}
-
-</script>
 
 </body>
-
 </html>
