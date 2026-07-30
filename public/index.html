@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>کُدینو | Codino</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #f5f5f7;
+    --bg-deep: #05060a;
+    --ink: #0a0a0c;
+    --ink-soft: #6e6e73;
+    --ink-faint: #a9a9ae;
+    --blue: #0055ff;
+    --blue-deep: #0026a3;
+    --blue-glow: rgba(0, 85, 255, 0.35);
+    --line: #e2e2e6;
+    --line-deep: rgba(255,255,255,0.12);
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+    --font-fa: 'Vazirmatn', sans-serif;
+    --font-en: 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-fa);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .en { font-family: var(--font-en); }
+  .mono { font-family: var(--font-mono); letter-spacing: 0.02em; }
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(255,255,255,0.72);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    max-width: 1120px; margin: 0 auto; padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand { display: flex; align-items: baseline; gap: 8px; font-weight: 800; font-size: 20px; }
+  .brand .en { font-weight: 600; font-size: 14px; color: var(--ink-soft); }
+  .nav-cta {
+    font-family: var(--font-mono); font-size: 13px; padding: 9px 18px;
+    border-radius: 100px; background: var(--ink); color: #fff;
+    transition: transform .25s ease, background .25s ease;
+  }
+  .nav-cta:hover { background: var(--blue); transform: translateY(-1px); }
+
+  /* ===== HERO ===== */
+  .hero { padding: 150px 0 60px; text-align: center; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--blue);
+    background: rgba(0,85,255,0.08); border: 1px solid rgba(0,85,255,0.18);
+    padding: 6px 16px; border-radius: 100px; margin-bottom: 24px;
+    opacity: 0; animation: fadeUp .7s ease .05s forwards;
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 3px rgba(0,85,255,0.18); }
+  h1.title {
+    font-size: clamp(38px, 7vw, 72px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.08;
+    opacity: 0; animation: fadeUp .8s ease .15s forwards;
+  }
+  h1.title .en { display: block; font-size: clamp(16px, 2.2vw, 22px); font-weight: 500; color: var(--ink-soft); margin-top: 12px; }
+  .hero p.lead {
+    max-width: 540px; margin: 20px auto 0; font-size: clamp(15px, 2vw, 18px); color: var(--ink-soft);
+    opacity: 0; animation: fadeUp .8s ease .28s forwards;
+  }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== WORKBENCH ===== */
+  .workbench-shell { margin: 48px auto 0; max-width: 980px; opacity: 0; animation: fadeUp .9s ease .4s forwards; }
+  .workbench {
+    background: var(--bg-deep); border-radius: var(--radius-lg); padding: 44px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 40px 100px -30px rgba(0,20,80,0.45);
+  }
+  .workbench::before {
+    content: ''; position: absolute; inset: -40% -20%;
+    background: radial-gradient(circle at 30% 15%, rgba(0,85,255,0.32), transparent 55%);
+    pointer-events: none;
+  }
+  .wb-left, .wb-right { position: relative; z-index: 1; }
+
+  .tab-switch {
+    display: flex; background: rgba(255,255,255,0.06); border: 1px solid var(--line-deep);
+    border-radius: 100px; padding: 4px; margin-bottom: 20px;
+  }
+  .tab-btn {
+    flex: 1; text-align: center; padding: 10px 0; border-radius: 100px;
+    font-family: var(--font-fa); font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.55);
+    cursor: pointer; transition: background .2s ease, color .2s ease; user-select: none;
+  }
+  .tab-btn.active { background: var(--blue); color: #fff; }
+
+  .field-label { font-family: var(--font-mono); font-size: 11px; color: #7ea8ff; display: block; margin-bottom: 10px; }
+
+  #inputText {
+    width: 100%; min-height: 96px; background: rgba(255,255,255,0.06);
+    border: 1px solid var(--line-deep); border-radius: var(--radius-md); padding: 16px;
+    color: #fff; font-family: var(--font-fa); font-size: 15px; resize: none; outline: none;
+    transition: border-color .25s ease, background .25s ease;
+  }
+  #inputText:focus { border-color: var(--blue); background: rgba(255,255,255,0.09); }
+  #inputText::placeholder { color: rgba(255,255,255,0.35); }
+  #barcodeNote { font-size: 12px; color: rgba(255,190,110,0.85); margin-top: 8px; display: none; }
+  #barcodeNote.show { display: block; }
+
+  .controls { margin-top: 24px; display: flex; flex-direction: column; gap: 18px; }
+  .control-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .control-row label { font-size: 13px; color: rgba(255,255,255,0.65); }
+  .color-pair { display: flex; gap: 10px; }
+  .color-swatch {
+    width: 34px; height: 34px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.2);
+    cursor: pointer; padding: 0; overflow: hidden; background: none;
+  }
+  .color-swatch input[type="color"] { width: 140%; height: 140%; margin: -20%; border: none; cursor: pointer; }
+
+  input[type="range"] {
+    -webkit-appearance: none; width: 130px; height: 4px; border-radius: 4px;
+    background: rgba(255,255,255,0.15); outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--blue); cursor: pointer; box-shadow: 0 0 0 4px rgba(0,85,255,0.25);
+  }
+
+  select#eccSelect {
+    background: rgba(255,255,255,0.08); border: 1px solid var(--line-deep); color: #fff;
+    font-family: var(--font-fa); font-size: 13px; padding: 7px 10px; border-radius: 8px; outline: none;
+  }
+  select#eccSelect option { background: #101018; color: #fff; }
+
+  /* ===== PREVIEW ===== */
+  .qr-frame {
+    aspect-ratio: 1; background: #fff; border-radius: 20px; display: flex;
+    align-items: center; justify-content: center; padding: 20px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 20px 60px -20px var(--blue-glow);
+  }
+  .qr-frame canvas { max-width: 100%; max-height: 100%; }
+  .qr-placeholder { color: #c8c8c8; font-family: var(--font-mono); font-size: 13px; text-align: center; line-height: 1.8; }
+
+  .actions { display: flex; gap: 10px; margin-top: 18px; }
+  .action-btn {
+    flex: 1; padding: 13px 0; border-radius: 12px; border: none; font-family: var(--font-fa);
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: transform .2s ease, opacity .2s ease;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .action-btn:active { transform: scale(0.97); }
+  .action-btn.primary { background: var(--blue); color: #fff; }
+  .action-btn.ghost { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--line-deep); }
+  .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .send-status { margin-top: 12px; font-size: 12px; text-align: center; font-family: var(--font-mono); color: rgba(255,255,255,0.5); min-height: 16px; }
+
+  @media (max-width: 780px) {
+    .workbench { grid-template-columns: 1fr; padding: 30px; }
+  }
+
+  /* ===== SECTIONS (shared) ===== */
+  .section-head { text-align: center; margin-bottom: 56px; }
+  .section-head .eyebrow-plain { font-family: var(--font-mono); font-size: 12px; color: var(--blue); margin-bottom: 14px; display: block; }
+  .section-head h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 800; letter-spacing: -0.01em; }
+  .section-head p { color: var(--ink-soft); max-width: 460px; margin: 16px auto 0; font-size: 15px; }
+
+  section { padding: 100px 0; }
+  section.alt { background: var(--bg-alt); }
+
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  .grid-features {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
+  }
+  .feature { background: #fff; padding: 36px 26px; transition: background .25s ease; }
+  .feature:hover { background: var(--bg-alt); }
+  .feature .icon {
+    width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--blue), var(--blue-deep));
+    display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; margin-bottom: 20px;
+  }
+  .feature h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .feature p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.7; }
+
+  @media (max-width: 860px) { .grid-features { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ===== FOOTER ===== */
+  footer { padding: 44px 0; border-top: 1px solid var(--line); }
+  .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+  .footer-brand { font-weight: 800; font-size: 16px; }
+  .footer-credit { font-size: 13px; color: var(--ink-soft); }
+  .footer-bot-link {
+    font-family: var(--font-mono); font-size: 13px; padding: 9px 20px; border-radius: 100px;
+    background: var(--ink); color: #fff; transition: background .2s ease, transform .2s ease;
+  }
+  .footer-bot-link:hover { background: var(--blue); transform: translateY(-1px); }
+  .footer-note { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="brand">کُدینو <span class="en">Codino</span></div>
+    <a href="#workbench" class="nav-cta mono">شروع کن</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow"><span class="dot"></span>مینی‌اپ تلگرام</span>
+    <h1 class="title">
+      کد بساز، در یک لحظه
+      <span class="en">Codino — instant QR &amp; barcode</span>
+    </h1>
+    <p class="lead">متن یا لینکت رو بنویس، رنگ و اندازه رو خودت انتخاب کن، و همون لحظه کد آماده می‌شه — می‌تونی دانلودش کنی یا مستقیم تو تلگرام برات بفرستمش.</p>
+
+    <div class="workbench-shell" id="workbench">
+      <div class="workbench">
+        <div class="wb-left">
+          <div class="tab-switch">
+            <div class="tab-btn active" data-mode="qr">QR کد</div>
+            <div class="tab-btn" data-mode="barcode">بارکد</div>
+          </div>
+
+          <span class="field-label mono">// متن یا لینک</span>
+          <textarea id="inputText" placeholder="مثلاً: یک لینک، یک شماره، یا هر متنی..."></textarea>
+          <div id="barcodeNote">بارکد فقط حروف انگلیسی و عدد رو پشتیبانی می‌کنه.</div>
+
+          <div class="controls">
+            <div class="control-row">
+              <label>رنگ کد</label>
+              <div class="color-pair">
+                <button class="color-swatch" style="background:#0a0a0c"><input type="color" id="colorDark" value="#0a0a0c"></button>
+                <button class="color-swatch" style="background:#ffffff"><input type="color" id="colorLight" value="#ffffff"></button>
+              </div>
+            </div>
+            <div class="control-row">
+              <label>اندازه: <span id="sizeLabel">280</span>px</label>
+              <input type="range" id="sizeRange" min="160" max="520" value="280">
+            </div>
+            <div class="control-row" id="eccRow">
+              <label>سطح تصحیح خطا</label>
+              <select id="eccSelect">
+                <option value="L">پایین (L)</option>
+                <option value="M" selected>متوسط (M)</option>
+                <option value="Q">بالا (Q)</option>
+                <option value="H">حداکثر (H)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="wb-right">
+          <div class="qr-frame" id="qrFrame">
+            <div class="qr-placeholder">چیزی بنویس<br>تا کد رو ببینی</div>
+          </div>
+          <div class="actions">
+            <button class="action-btn ghost" id="downloadBtn">⬇ دانلود</button>
+            <button class="action-btn primary" id="sendBtn">✈ ارسال در تلگرام</button>
+          </div>
+          <div class="send-status mono" id="sendStatus"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow-plain mono">// ویژگی‌ها</span>
+      <h2>ساده، سریع، کامل</h2>
+      <p>هرچی برای ساخت یه کد حرفه‌ای لازم داری، همین‌جاست.</p>
+    </div>
+    <div class="grid-features reveal">
+      <div class="feature">
+        <div class="icon">⚡</div>
+        <h3>ساخت آنی</h3>
+        <p>به‌محض تایپ، کد جلوی چشمت به‌روز می‌شه؛ بدون تاخیر.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🎨</div>
+        <h3>سفارشی‌سازی کامل</h3>
+        <p>رنگ، اندازه و سطح تصحیح خطا رو خودت تنظیم کن.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">▦</div>
+        <h3>QR و بارکد</h3>
+        <p>هم کد دو‌بعدی بساز، هم بارکد استاندارد؛ هر دو در یک‌جا.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">✈</div>
+        <h3>ارسال مستقیم</h3>
+        <p>کد رو مستقیم به چت تلگرامت بفرست، بدون دانلود و آپلود دستی.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div class="footer-brand">کُدینو <span class="en" style="font-weight:500; color:var(--ink-soft); font-size:14px;">Codino</span></div>
+    <a href="https://t.me/qrcodesazzbot" class="footer-bot-link" id="botLink">ورود به ربات ←</a>
+    <div class="footer-credit">ساخته شده توسط بهرام عزت</div>
+    <div class="footer-note">Codino © 2026</div>
+  </div>
+</footer>
+
+<script>
+  const tg = window.Telegram ? window.Telegram.WebApp : null;
+  if (tg) { tg.ready(); tg.expand(); }
+
+  const input = document.getElementById('inputText');
+  const qrFrame = document.getElementById('qrFrame');
+  const colorDark = document.getElementById('colorDark');
+  const colorLight = document.getElementById('colorLight');
+  const sizeRange = document.getElementById('sizeRange');
+  const sizeLabel = document.getElementById('sizeLabel');
+  const eccSelect = document.getElementById('eccSelect');
+  const eccRow = document.getElementById('eccRow');
+  const barcodeNote = document.getElementById('barcodeNote');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const sendBtn = document.getElementById('sendBtn');
+  const sendStatus = document.getElementById('sendStatus');
+  const tabBtns = document.querySelectorAll('.tab-btn');
+
+  let mode = 'qr';
+  let debounceTimer;
+  let lastCanvas = null;
+
+  // رنگ سواچ‌ها رو با تغییر مقدار input[type=color] هماهنگ کن
+  [colorDark, colorLight].forEach((el) => {
+    el.addEventListener('input', () => {
+      el.closest('.color-swatch').style.background = el.value;
+      render();
+    });
+  });
+
+  tabBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      mode = btn.dataset.mode;
+      eccRow.style.display = mode === 'qr' ? 'flex' : 'none';
+      barcodeNote.classList.toggle('show', mode === 'barcode');
+      render();
+    });
+  });
+
+  sizeRange.addEventListener('input', () => {
+    sizeLabel.textContent = sizeRange.value;
+    render();
+  });
+  eccSelect.addEventListener('change', render);
+
+  input.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(render, 180);
+  });
+
+  function render() {
+    const text = input.value.trim();
+    if (!text) {
+      qrFrame.innerHTML = '<div class="qr-placeholder">چیزی بنویس<br>تا کد رو ببینی</div>';
+      lastCanvas = null;
+      return;
+    }
+
+    const size = parseInt(sizeRange.value, 10);
+    const dark = colorDark.value;
+    const light = colorLight.value;
+
+    if (mode === 'qr') {
+      QRCode.toCanvas(text, {
+        width: size,
+        margin: 1,
+        errorCorrectionLevel: eccSelect.value,
+        color: { dark, light },
+      }, (err, canvas) => {
+        if (err) return;
+        qrFrame.innerHTML = '';
+        qrFrame.appendChild(canvas);
+        lastCanvas = canvas;
+      });
+    } else {
+      const canvas = document.createElement('canvas');
+      try {
+        JsBarcode(canvas, text, {
+          format: 'CODE128',
+          lineColor: dark,
+          background: light,
+          width: 2,
+          height: Math.max(60, size / 3),
+          displayValue: true,
+          fontSize: 14,
+          margin: 10,
+        });
+        qrFrame.innerHTML = '';
+        qrFrame.appendChild(canvas);
+        lastCanvas = canvas;
+      } catch (err) {
+        qrFrame.innerHTML = '<div class="qr-placeholder">این متن برای بارکد مناسب نیست</div>';
+        lastCanvas = null;
+      }
+    }
+  }
+
+  downloadBtn.addEventListener('click', () => {
+    if (!lastCanvas) return;
+    const link = document.createElement('a');
+    link.download = `codino-${mode}.png`;
+    link.href = lastCanvas.toDataURL('image/png');
+    link.click();
+  });
+
+  sendBtn.addEventListener('click', async () => {
+    if (!lastCanvas) return;
+
+    if (!tg || !tg.initData) {
+      sendStatus.textContent = 'این گزینه فقط داخل تلگرام کار می‌کند.';
+      return;
+    }
+
+    sendBtn.disabled = true;
+    sendStatus.textContent = 'در حال ارسال...';
+
+    try {
+      const dataUrl = lastCanvas.toDataURL('image/png');
+      const base64 = dataUrl.split(',')[1];
+
+      const response = await fetch('/api/send-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          initData: tg.initData,
+          imageBase64: base64,
+          caption: input.value.trim().slice(0, 200),
+        }),
+      });
+      const data = await response.json();
+
+      if (data.ok) {
+        sendStatus.textContent = '✓ به تلگرام فرستاده شد';
+        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      } else {
+        sendStatus.textContent = 'ارسال ناموفق بود، دوباره امتحان کن.';
+      }
+    } catch (err) {
+      sendStatus.textContent = 'خطا در ارتباط با سرور.';
+    } finally {
+      sendBtn.disabled = false;
+      setTimeout(() => { sendStatus.textContent = ''; }, 3000);
+    }
+  });
+
+  // پیش‌نمایش اولیه
+  input.value = 'Codino';
+  render();
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach((el) => io.observe(el));
+</script>
+
+</body>
+</html>
