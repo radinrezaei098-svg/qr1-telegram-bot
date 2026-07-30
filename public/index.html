@@ -1,811 +1,302 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>کُدینو | Codino</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Codino</title>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode/dist/JsBarcode.all.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
-  :root {
-    --bg: #ffffff;
-    --bg-alt: #f5f5f7;
-    --bg-deep: #05060a;
-    --ink: #0a0a0c;
-    --ink-soft: #6e6e73;
-    --ink-faint: #a9a9ae;
-    --blue: #0055ff;
-    --blue-deep: #0026a3;
-    --blue-glow: rgba(0, 85, 255, 0.35);
-    --line: #e2e2e6;
-    --line-deep: rgba(255,255,255,0.12);
-    --nav-bg: rgba(255,255,255,0.72);
-    --radius-lg: 28px;
-    --radius-md: 18px;
-    --radius-sm: 12px;
-    --font-fa: 'Vazirmatn', sans-serif;
-    --font-en: 'Space Grotesk', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-    transition: background .35s ease, color .35s ease;
-  }
 
-  body.dark-mode {
-    --bg: #05060a;
-    --bg-alt: #0d0f16;
-    --ink: #f2f2f4;
-    --ink-soft: #a3a3ab;
-    --ink-faint: #6a6a72;
-    --line: rgba(255,255,255,0.1);
-    --nav-bg: rgba(5,6,10,0.72);
-  }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Vazirmatn,sans-serif;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+body{
+background:#111827;
+color:white;
+padding:20px;
+}
 
-  body {
-    font-family: var(--font-fa);
-    background: var(--bg);
-    color: var(--ink);
-    line-height: 1.6;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-    transition: background .35s ease, color .35s ease;
-  }
+.container{
+max-width:700px;
+margin:auto;
+}
 
-  .en { font-family: var(--font-en); }
-  .mono { font-family: var(--font-mono); letter-spacing: 0.02em; }
-  a { color: inherit; text-decoration: none; }
+h1{
+text-align:center;
+margin-bottom:20px;
+}
 
-  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.card{
 
-  /* ===== NAV ===== */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    background: var(--nav-bg);
-    border-bottom: 1px solid var(--line);
-    transition: background .35s ease, border-color .35s ease;
-  }
-  .nav-inner {
-    max-width: 1120px; margin: 0 auto; padding: 16px 24px;
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  }
-  .brand { display: flex; align-items: baseline; gap: 8px; font-weight: 800; font-size: 20px; }
-  .brand .en { font-weight: 600; font-size: 14px; color: var(--ink-soft); }
-  .nav-right { display: flex; align-items: center; gap: 10px; }
-  .theme-toggle {
-    width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line);
-    background: transparent; color: var(--ink); font-size: 16px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; transition: background .25s ease, transform .2s ease;
-  }
-  .theme-toggle:hover { background: var(--bg-alt); transform: translateY(-1px); }
-  .nav-cta {
-    font-family: var(--font-mono); font-size: 13px; padding: 9px 18px;
-    border-radius: 100px; background: var(--ink); color: var(--bg);
-    transition: transform .25s ease, background .25s ease, color .25s ease;
-  }
-  .nav-cta:hover { background: var(--blue); color: #fff; transform: translateY(-1px); }
+background:#1f2937;
 
-  /* ===== HERO ===== */
-  .hero { padding: 150px 0 60px; text-align: center; }
-  .eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-family: var(--font-mono); font-size: 12px; color: var(--blue);
-    background: rgba(0,85,255,0.08); border: 1px solid rgba(0,85,255,0.18);
-    padding: 6px 16px; border-radius: 100px; margin-bottom: 24px;
-    opacity: 0; animation: fadeUp .7s ease .05s forwards;
-  }
-  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 3px rgba(0,85,255,0.18); }
-  h1.title {
-    font-size: clamp(38px, 7vw, 72px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.08;
-    opacity: 0; animation: fadeUp .8s ease .15s forwards;
-  }
-  h1.title .en { display: block; font-size: clamp(16px, 2.2vw, 22px); font-weight: 500; color: var(--ink-soft); margin-top: 12px; }
-  .hero p.lead {
-    max-width: 540px; margin: 20px auto 0; font-size: clamp(15px, 2vw, 18px); color: var(--ink-soft);
-    opacity: 0; animation: fadeUp .8s ease .28s forwards;
-  }
+padding:20px;
 
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+border-radius:18px;
 
-  /* ===== WORKBENCH ===== */
-  .workbench-shell { margin: 48px auto 0; max-width: 980px; opacity: 0; animation: fadeUp .9s ease .4s forwards; }
-  .workbench {
-    background: var(--bg-deep); border-radius: var(--radius-lg); padding: 44px;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
-    position: relative; overflow: hidden;
-    box-shadow: 0 40px 100px -30px rgba(0,20,80,0.45);
-  }
-  .workbench::before {
-    content: ''; position: absolute; inset: -40% -20%;
-    background: radial-gradient(circle at 30% 15%, rgba(0,85,255,0.32), transparent 55%);
-    pointer-events: none;
-  }
-  .wb-left, .wb-right { position: relative; z-index: 1; }
-  .wb-left { max-height: 640px; overflow-y: auto; padding-inline-end: 6px; }
-  .wb-left::-webkit-scrollbar { width: 5px; }
-  .wb-left::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+margin-bottom:20px;
 
-  /* type chips */
-  .type-chips {
-    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 18px;
-    scrollbar-width: thin;
-  }
-  .type-chips::-webkit-scrollbar { height: 4px; }
-  .type-chips::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
-  .type-chip {
-    flex: 0 0 auto; display: flex; align-items: center; gap: 6px;
-    background: rgba(255,255,255,0.06); border: 1px solid var(--line-deep); color: rgba(255,255,255,0.7);
-    font-family: var(--font-fa); font-size: 13px; padding: 9px 14px; border-radius: 100px;
-    cursor: pointer; transition: background .2s ease, color .2s ease, border-color .2s ease; user-select: none;
-    white-space: nowrap;
-  }
-  .type-chip .ic { font-size: 14px; }
-  .type-chip.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+}
 
-  .field-label { font-family: var(--font-mono); font-size: 11px; color: #7ea8ff; display: block; margin-bottom: 8px; }
+label{
+display:block;
+margin-bottom:8px;
+font-size:14px;
+}
 
-  .dyn-fields { display: flex; flex-direction: column; gap: 14px; }
-  .dyn-field label {
-    display: block; font-size: 12.5px; color: rgba(255,255,255,0.6); margin-bottom: 6px; font-family: var(--font-fa);
-  }
-  .field-input, textarea.field-input, select.field-input {
-    width: 100%; background: rgba(255,255,255,0.06);
-    border: 1px solid var(--line-deep); border-radius: var(--radius-sm); padding: 12px 14px;
-    color: #fff; font-family: var(--font-fa); font-size: 14.5px; outline: none;
-    transition: border-color .25s ease, background .25s ease;
-  }
-  textarea.field-input { min-height: 76px; resize: none; }
-  .field-input:focus { border-color: var(--blue); background: rgba(255,255,255,0.09); }
-  .field-input::placeholder { color: rgba(255,255,255,0.32); }
-  select.field-input option { background: #101018; color: #fff; }
-  .field-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.6); }
-  .checkbox-row input { width: 16px; height: 16px; accent-color: var(--blue); }
+select,
+input,
+textarea{
 
-  .controls { margin-top: 24px; display: flex; flex-direction: column; gap: 18px; border-top: 1px solid var(--line-deep); padding-top: 20px; }
-  .control-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .control-row label { font-size: 13px; color: rgba(255,255,255,0.65); }
-  .color-pair { display: flex; gap: 10px; }
-  .color-swatch {
-    width: 34px; height: 34px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.2);
-    cursor: pointer; padding: 0; overflow: hidden; background: none;
-  }
-  .color-swatch input[type="color"] { width: 140%; height: 140%; margin: -20%; border: none; cursor: pointer; }
+width:100%;
 
-  input[type="range"] {
-    -webkit-appearance: none; width: 130px; height: 4px; border-radius: 4px;
-    background: rgba(255,255,255,0.15); outline: none;
-  }
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
-    background: var(--blue); cursor: pointer; box-shadow: 0 0 0 4px rgba(0,85,255,0.25);
-  }
+padding:12px;
 
-  select#eccSelect {
-    background: rgba(255,255,255,0.08); border: 1px solid var(--line-deep); color: #fff;
-    font-family: var(--font-fa); font-size: 13px; padding: 7px 10px; border-radius: 8px; outline: none;
-  }
-  select#eccSelect option { background: #101018; color: #fff; }
-  select#eccSelect:disabled { opacity: 0.5; }
+border:none;
 
-  .logo-row { display: flex; align-items: center; gap: 10px; }
-  .logo-upload-btn {
-    font-family: var(--font-fa); font-size: 12.5px; color: rgba(255,255,255,0.75);
-    background: rgba(255,255,255,0.08); border: 1px solid var(--line-deep); border-radius: 10px;
-    padding: 8px 14px; cursor: pointer; transition: background .2s ease;
-  }
-  .logo-upload-btn:hover { background: rgba(255,255,255,0.14); }
-  .logo-thumb {
-    width: 34px; height: 34px; border-radius: 8px; object-fit: cover; border: 1px solid var(--line-deep); display: none;
-  }
-  .logo-thumb.show { display: block; }
-  .logo-clear { font-size: 12px; color: #ff8a8a; cursor: pointer; display: none; }
-  .logo-clear.show { display: inline; }
+border-radius:12px;
 
-  /* ===== PREVIEW ===== */
-  .qr-frame {
-    aspect-ratio: 1; background: #fff; border-radius: 20px; display: flex;
-    align-items: center; justify-content: center; padding: 20px; position: relative;
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 20px 60px -20px var(--blue-glow);
-  }
-  .qr-frame canvas { max-width: 100%; max-height: 100%; }
-  .qr-placeholder { color: #c8c8c8; font-family: var(--font-mono); font-size: 13px; text-align: center; line-height: 1.8; }
+margin-bottom:15px;
 
-  .actions { display: flex; gap: 10px; margin-top: 18px; }
-  .action-btn {
-    flex: 1; padding: 13px 0; border-radius: 12px; border: none; font-family: var(--font-fa);
-    font-size: 14px; font-weight: 700; cursor: pointer; transition: transform .2s ease, opacity .2s ease;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
-  .action-btn:active { transform: scale(0.97); }
-  .action-btn.primary { background: var(--blue); color: #fff; }
-  .action-btn.ghost { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--line-deep); }
-  .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .send-status { margin-top: 12px; font-size: 12px; text-align: center; font-family: var(--font-mono); color: rgba(255,255,255,0.5); min-height: 16px; }
+background:#374151;
 
-  @media (max-width: 780px) {
-    .workbench { grid-template-columns: 1fr; padding: 26px; }
-    .wb-left { max-height: none; overflow: visible; }
-  }
+color:white;
 
-  /* ===== SECTIONS (shared) ===== */
-  .section-head { text-align: center; margin-bottom: 56px; }
-  .section-head .eyebrow-plain { font-family: var(--font-mono); font-size: 12px; color: var(--blue); margin-bottom: 14px; display: block; }
-  .section-head h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 800; letter-spacing: -0.01em; }
-  .section-head p { color: var(--ink-soft); max-width: 460px; margin: 16px auto 0; font-size: 15px; }
+font-size:15px;
 
-  section { padding: 100px 0; }
-  section.alt { background: var(--bg-alt); }
+}
 
-  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
-  .reveal.in { opacity: 1; transform: translateY(0); }
+textarea{
 
-  .grid-features {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
-    background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
-  }
-  .feature { background: var(--bg); padding: 36px 26px; transition: background .25s ease; }
-  .feature:hover { background: var(--bg-alt); }
-  .feature .icon {
-    width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--blue), var(--blue-deep));
-    display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; margin-bottom: 20px;
-  }
-  .feature h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
-  .feature p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.7; }
+height:90px;
 
-  @media (max-width: 860px) { .grid-features { grid-template-columns: repeat(2, 1fr); } }
+resize:none;
 
-  /* ===== FOOTER ===== */
-  footer { padding: 44px 0; border-top: 1px solid var(--line); }
-  .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
-  .footer-brand { font-weight: 800; font-size: 16px; }
-  .footer-credit { font-size: 13px; color: var(--ink-soft); }
-  .footer-bot-link {
-    font-family: var(--font-mono); font-size: 13px; padding: 9px 20px; border-radius: 100px;
-    background: var(--ink); color: var(--bg); transition: background .2s ease, transform .2s ease, color .2s ease;
-  }
-  .footer-bot-link:hover { background: var(--blue); color: #fff; transform: translateY(-1px); }
-  .footer-note { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); }
+}
 
-  @media (prefers-reduced-motion: reduce) {
-    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  }
+button{
+
+width:100%;
+
+padding:14px;
+
+border:none;
+
+border-radius:12px;
+
+background:#2563eb;
+
+color:white;
+
+font-size:16px;
+
+cursor:pointer;
+
+margin-top:10px;
+
+}
+
+button:hover{
+
+background:#1d4ed8;
+
+}
+
+#preview{
+
+margin-top:25px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+background:white;
+
+border-radius:18px;
+
+padding:20px;
+
+min-height:320px;
+
+}
+
+#preview canvas{
+
+max-width:100%;
+
+}
+
+.actions{
+
+display:flex;
+
+gap:10px;
+
+}
+
+.actions button{
+
+flex:1;
+
+}
+
+.hidden{
+
+display:none;
+
+}
+
+.footer{
+
+margin-top:30px;
+
+text-align:center;
+
+color:#9ca3af;
+
+font-size:14px;
+
+}
+
 </style>
+
 </head>
+
 <body>
 
-<nav>
-  <div class="nav-inner">
-    <div class="brand">کُدینو <span class="en">Codino</span></div>
-    <div class="nav-right">
-      <button class="theme-toggle" id="themeToggle" title="تغییر پوسته" aria-label="تغییر پوسته تاریک/روشن">🌙</button>
-      <a href="#workbench" class="nav-cta mono">شروع کن</a>
-    </div>
-  </div>
-</nav>
+<div class="container">
 
-<section class="hero">
-  <div class="wrap">
-    <span class="eyebrow"><span class="dot"></span>مینی‌اپ تلگرام</span>
-    <h1 class="title">
-      کد بساز، در یک لحظه
-      <span class="en">Codino — instant QR &amp; barcode</span>
-    </h1>
-    <p class="lead">لینک، شماره، وای‌فای، کارت ویزیت یا هر چیز دیگه رو انتخاب کن، رنگ و لوگو و اندازه رو خودت بچین، و همون لحظه کد آماده می‌شه — دانلودش کن یا مستقیم تو تلگرام برات بفرستمش.</p>
+<h1>Codino</h1>
 
-    <div class="workbench-shell" id="workbench">
-      <div class="workbench">
-        <div class="wb-left">
-          <div class="type-chips" id="typeChips"></div>
+<div class="card">
 
-          <div class="dyn-fields" id="dynFields"></div>
+<label>
 
-          <div class="controls">
-            <div class="control-row">
-              <label>رنگ کد</label>
-              <div class="color-pair">
-                <button class="color-swatch" style="background:#0a0a0c"><input type="color" id="colorDark" value="#0a0a0c"></button>
-                <button class="color-swatch" style="background:#ffffff"><input type="color" id="colorLight" value="#ffffff"></button>
-              </div>
-            </div>
-            <div class="control-row">
-              <label>اندازه: <span id="sizeLabel">280</span>px</label>
-              <input type="range" id="sizeRange" min="160" max="520" value="280">
-            </div>
-            <div class="control-row" id="eccRow">
-              <label>سطح تصحیح خطا</label>
-              <select id="eccSelect">
-                <option value="L">پایین (L)</option>
-                <option value="M" selected>متوسط (M)</option>
-                <option value="Q">بالا (Q)</option>
-                <option value="H">حداکثر (H)</option>
-              </select>
-            </div>
-            <div class="control-row" id="logoRow">
-              <label>لوگوی وسط QR (اختیاری)</label>
-              <div class="logo-row">
-                <span class="logo-clear" id="logoClear">حذف</span>
-                <img class="logo-thumb" id="logoThumb" alt="لوگو">
-                <label class="logo-upload-btn" for="logoInput">آپلود لوگو</label>
-                <input type="file" id="logoInput" accept="image/*" hidden>
-              </div>
-            </div>
-          </div>
-        </div>
+نوع کد
 
-        <div class="wb-right">
-          <div class="qr-frame" id="qrFrame">
-            <div class="qr-placeholder">چیزی بنویس<br>تا کد رو ببینی</div>
-          </div>
-          <div class="actions">
-            <button class="action-btn ghost" id="downloadBtn">⬇ دانلود PNG</button>
-            <button class="action-btn primary" id="sendBtn">✈ ارسال در تلگرام</button>
-          </div>
-          <div class="send-status mono" id="sendStatus"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+</label>
 
-<section class="alt">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow-plain mono">// ویژگی‌ها</span>
-      <h2>ساده، سریع، کامل</h2>
-      <p>هرچی برای ساخت یه کد حرفه‌ای لازم داری، همین‌جاست.</p>
-    </div>
-    <div class="grid-features reveal">
-      <div class="feature">
-        <div class="icon">⚡</div>
-        <h3>ساخت آنی</h3>
-        <p>به‌محض تایپ، کد جلوی چشمت به‌روز می‌شه؛ بدون تاخیر.</p>
-      </div>
-      <div class="feature">
-        <div class="icon">🎨</div>
-        <h3>سفارشی‌سازی کامل</h3>
-        <p>رنگ، اندازه، لوگوی وسط و سطح تصحیح خطا رو خودت تنظیم کن.</p>
-      </div>
-      <div class="feature">
-        <div class="icon">▦</div>
-        <h3>۱۰ نوع QR + بارکد</h3>
-        <p>لینک، متن، تلفن، ایمیل، وای‌فای، موقعیت، کارت ویزیت، پیامک، واتساپ، تلگرام و بارکد.</p>
-      </div>
-      <div class="feature">
-        <div class="icon">✈</div>
-        <h3>ارسال مستقیم</h3>
-        <p>کد رو مستقیم به چت تلگرامت بفرست، بدون دانلود و آپلود دستی.</p>
-      </div>
-    </div>
-  </div>
-</section>
+<select id="type">
 
-<footer>
-  <div class="wrap footer-inner">
-    <div class="footer-brand">کُدینو <span class="en" style="font-weight:500; color:var(--ink-soft); font-size:14px;">Codino</span></div>
-    <a href="https://t.me/qrcodesazzbot" class="footer-bot-link" id="botLink">ورود به ربات ←</a>
-    <div class="footer-credit">ساخته شده توسط بهرام عزت</div>
-    <div class="footer-note">Codino © 2026</div>
-  </div>
-</footer>
+<option value="link">🌐 لینک</option>
+
+<option value="text">📝 متن</option>
+
+<option value="phone">📞 تلفن</option>
+
+<option value="email">📧 ایمیل</option>
+
+<option value="wifi">📶 وای فای</option>
+
+<option value="telegram">✈️ تلگرام</option>
+
+<option value="whatsapp">💚 واتساپ</option>
+
+<option value="barcode">▦ بارکد</option>
+
+</select>
+
+<div id="fields"></div>
+
+<label>
+
+رنگ کد
+
+</label>
+
+<input type="color" id="dark" value="#000000">
+
+<label>
+
+رنگ زمینه
+
+</label>
+
+<input type="color" id="light" value="#ffffff">
+
+<label>
+
+اندازه
+
+</label>
+
+<input
+type="range"
+id="size"
+min="180"
+max="500"
+value="280">
+
+<button id="generate">
+
+ساخت کد
+
+</button>
+
+</div>
+
+<div class="card">
+
+<div id="preview">
+
+کدی ساخته نشده است
+
+</div>
+
+<div class="actions">
+
+<button id="download">
+
+دانلود PNG
+
+</button>
+
+<button id="telegramSend">
+
+ارسال به تلگرام
+
+</button>
+
+</div>
+
+</div>
+
+<div class="footer">
+
+Created by Pedram AZ
+
+</div>
+
+</div>
 
 <script>
-  const tg = window.Telegram ? window.Telegram.WebApp : null;
-  if (tg) { tg.ready(); tg.expand(); }
 
-  /* ---------- تعریف انواع QR ---------- */
-  function escWifi(s) { return (s || '').replace(/([\\;,:"])/g, '\\$1'); }
+const tg=window.Telegram?.WebApp;
 
-  const QR_TYPES = {
-    link: {
-      label: 'لینک وب', icon: '🌐',
-      fields: [{ id: 'url', type: 'url', label: 'آدرس لینک', placeholder: 'https://example.com' }],
-      build: v => (v.url || '').trim(),
-    },
-    text: {
-      label: 'متن', icon: '📝',
-      fields: [{ id: 'text', type: 'textarea', label: 'متن دلخواه', placeholder: 'هر متنی که می‌خوای...' }],
-      build: v => (v.text || '').trim(),
-    },
-    phone: {
-      label: 'شماره تلفن', icon: '📞',
-      fields: [{ id: 'phone', type: 'tel', label: 'شماره تلفن', placeholder: '+98912xxxxxxx' }],
-      build: v => `tel:${(v.phone || '').trim()}`,
-    },
-    email: {
-      label: 'ایمیل', icon: '📧',
-      fields: [
-        { id: 'to', type: 'email', label: 'ایمیل گیرنده', placeholder: 'someone@mail.com' },
-        { id: 'subject', type: 'text', label: 'موضوع (اختیاری)' },
-        { id: 'body', type: 'textarea', label: 'متن پیام (اختیاری)' },
-      ],
-      build: v => {
-        let s = `mailto:${(v.to || '').trim()}`;
-        const p = [];
-        if (v.subject) p.push('subject=' + encodeURIComponent(v.subject));
-        if (v.body) p.push('body=' + encodeURIComponent(v.body));
-        if (p.length) s += '?' + p.join('&');
-        return s;
-      },
-    },
-    wifi: {
-      label: 'وای‌فای', icon: '📶',
-      fields: [
-        { id: 'ssid', type: 'text', label: 'نام شبکه (SSID)' },
-        { id: 'password', type: 'text', label: 'رمز عبور' },
-        { id: 'enc', type: 'select', label: 'نوع رمزنگاری', options: [['WPA', 'WPA/WPA2'], ['WEP', 'WEP'], ['nopass', 'بدون رمز']] },
-      ],
-      build: v => `WIFI:T:${v.enc || 'WPA'};S:${escWifi(v.ssid)};P:${escWifi(v.password)};;`,
-    },
-    location: {
-      label: 'موقعیت مکانی', icon: '📍',
-      fields: [
-        { id: 'lat', type: 'text', label: 'عرض جغرافیایی (Lat)', placeholder: '35.6892' },
-        { id: 'lng', type: 'text', label: 'طول جغرافیایی (Lng)', placeholder: '51.3890' },
-      ],
-      build: v => `geo:${(v.lat || '0').trim()},${(v.lng || '0').trim()}`,
-    },
-    vcard: {
-      label: 'کارت ویزیت', icon: '👤',
-      fields: [
-        { id: 'name', type: 'text', label: 'نام کامل' },
-        { id: 'phone', type: 'tel', label: 'شماره تلفن' },
-        { id: 'email', type: 'email', label: 'ایمیل (اختیاری)' },
-        { id: 'org', type: 'text', label: 'سازمان (اختیاری)' },
-      ],
-      build: v => [
-        'BEGIN:VCARD', 'VERSION:3.0',
-        `FN:${v.name || ''}`,
-        `TEL:${v.phone || ''}`,
-        v.email ? `EMAIL:${v.email}` : null,
-        v.org ? `ORG:${v.org}` : null,
-        'END:VCARD',
-      ].filter(Boolean).join('\n'),
-    },
-    sms: {
-      label: 'پیامک', icon: '💬',
-      fields: [
-        { id: 'phone', type: 'tel', label: 'شماره گیرنده' },
-        { id: 'message', type: 'textarea', label: 'متن پیام (اختیاری)' },
-      ],
-      build: v => `sms:${(v.phone || '').trim()}${v.message ? ('?body=' + encodeURIComponent(v.message)) : ''}`,
-    },
-    whatsapp: {
-      label: 'واتساپ', icon: '💚',
-      fields: [
-        { id: 'phone', type: 'tel', label: 'شماره واتساپ (با کد کشور، بدون +)', placeholder: '98912xxxxxxx' },
-        { id: 'message', type: 'textarea', label: 'پیام آماده (اختیاری)' },
-      ],
-      build: v => {
-        const num = (v.phone || '').replace(/[^0-9]/g, '');
-        return `https://wa.me/${num}${v.message ? ('?text=' + encodeURIComponent(v.message)) : ''}`;
-      },
-    },
-    telegram: {
-      label: 'تلگرام', icon: '✈️',
-      fields: [{ id: 'username', type: 'text', label: 'یوزرنیم یا لینک', placeholder: 'username یا t.me/username' }],
-      build: v => {
-        let u = (v.username || '').trim().replace(/^@/, '');
-        if (!u) return '';
-        if (u.startsWith('http')) return u;
-        if (u.startsWith('t.me/')) return 'https://' + u;
-        return `https://t.me/${u}`;
-      },
-    },
-    barcode: {
-      label: 'بارکد', icon: '▦', isBarcode: true,
-      fields: [{ id: 'code', type: 'text', label: 'کد (فقط حروف انگلیسی و عدد)', placeholder: 'ABC12345' }],
-      build: v => (v.code || '').trim(),
-    },
-  };
+if(tg){
 
-  /* ---------- عناصر DOM ---------- */
-  const typeChipsEl = document.getElementById('typeChips');
-  const dynFieldsEl = document.getElementById('dynFields');
-  const qrFrame = document.getElementById('qrFrame');
-  const colorDark = document.getElementById('colorDark');
-  const colorLight = document.getElementById('colorLight');
-  const sizeRange = document.getElementById('sizeRange');
-  const sizeLabel = document.getElementById('sizeLabel');
-  const eccSelect = document.getElementById('eccSelect');
-  const eccRow = document.getElementById('eccRow');
-  const logoRow = document.getElementById('logoRow');
-  const logoInput = document.getElementById('logoInput');
-  const logoThumb = document.getElementById('logoThumb');
-  const logoClear = document.getElementById('logoClear');
-  const downloadBtn = document.getElementById('downloadBtn');
-  const sendBtn = document.getElementById('sendBtn');
-  const sendStatus = document.getElementById('sendStatus');
-  const themeToggle = document.getElementById('themeToggle');
+tg.ready();
 
-  let currentType = 'link';
-  let debounceTimer;
-  let lastCanvas = null;
-  let logoImage = null;
+tg.expand();
 
-  /* ---------- ساخت چیپ‌های انتخاب نوع ---------- */
-  Object.keys(QR_TYPES).forEach((key) => {
-    const t = QR_TYPES[key];
-    const chip = document.createElement('div');
-    chip.className = 'type-chip' + (key === currentType ? ' active' : '');
-    chip.dataset.type = key;
-    chip.innerHTML = `<span class="ic">${t.icon}</span><span>${t.label}</span>`;
-    chip.addEventListener('click', () => selectType(key));
-    typeChipsEl.appendChild(chip);
-  });
+}
 
-  function selectType(key) {
-    currentType = key;
-    document.querySelectorAll('.type-chip').forEach((c) => c.classList.toggle('active', c.dataset.type === key));
-    renderFields();
-    const isBarcode = QR_TYPES[key].isBarcode;
-    eccRow.style.display = isBarcode ? 'none' : 'flex';
-    logoRow.style.display = isBarcode ? 'none' : 'flex';
-    render();
-  }
+const fields=document.getElementById("fields");
 
-  function renderFields() {
-    const t = QR_TYPES[currentType];
-    dynFieldsEl.innerHTML = '';
-    t.fields.forEach((f) => {
-      const wrap = document.createElement('div');
-      wrap.className = 'dyn-field';
-      const label = document.createElement('label');
-      label.textContent = f.label;
-      wrap.appendChild(label);
+const preview=document.getElementById("preview");
 
-      let input;
-      if (f.type === 'textarea') {
-        input = document.createElement('textarea');
-      } else if (f.type === 'select') {
-        input = document.createElement('select');
-        f.options.forEach(([val, text]) => {
-          const opt = document.createElement('option');
-          opt.value = val; opt.textContent = text;
-          input.appendChild(opt);
-        });
-      } else {
-        input = document.createElement('input');
-        input.type = f.type;
-      }
-      input.className = 'field-input';
-      input.id = 'f_' + f.id;
-      input.dataset.key = f.id;
-      if (f.placeholder) input.placeholder = f.placeholder;
-      wrap.appendChild(input);
-      dynFieldsEl.appendChild(wrap);
-    });
-
-    dynFieldsEl.querySelectorAll('.field-input').forEach((el) => {
-      el.addEventListener('input', () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(render, 180);
-      });
-      el.addEventListener('change', render);
-    });
-
-    // پیش‌فرض ساده برای نمایش اولیه در حالت لینک
-    if (currentType === 'link') {
-      document.getElementById('f_url').value = 'https://t.me/qrcodesazzbot';
-    }
-  }
-
-  function collectValues() {
-    const values = {};
-    dynFieldsEl.querySelectorAll('.field-input').forEach((el) => {
-      values[el.dataset.key] = el.value;
-    });
-    return values;
-  }
-
-  /* ---------- رنگ‌ها ---------- */
-  [colorDark, colorLight].forEach((el) => {
-    el.addEventListener('input', () => {
-      el.closest('.color-swatch').style.background = el.value;
-      render();
-    });
-  });
-
-  sizeRange.addEventListener('input', () => {
-    sizeLabel.textContent = sizeRange.value;
-    render();
-  });
-  eccSelect.addEventListener('change', render);
-
-  /* ---------- لوگو ---------- */
-  logoInput.addEventListener('change', () => {
-    const file = logoInput.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        logoImage = img;
-        logoThumb.src = reader.result;
-        logoThumb.classList.add('show');
-        logoClear.classList.add('show');
-        eccSelect.value = 'H';
-        eccSelect.disabled = true;
-        render();
-      };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  });
-
-  logoClear.addEventListener('click', () => {
-    logoImage = null;
-    logoInput.value = '';
-    logoThumb.classList.remove('show');
-    logoClear.classList.remove('show');
-    eccSelect.disabled = false;
-    render();
-  });
-
-  /* ---------- رندر ---------- */
-  function render() {
-    const t = QR_TYPES[currentType];
-    const values = collectValues();
-    const content = t.build(values);
-
-    if (!content) {
-      qrFrame.innerHTML = '<div class="qr-placeholder">اطلاعات رو پر کن<br>تا کد رو ببینی</div>';
-      lastCanvas = null;
-      return;
-    }
-
-    const size = parseInt(sizeRange.value, 10);
-    const dark = colorDark.value;
-    const light = colorLight.value;
-
-    if (t.isBarcode) {
-      const canvas = document.createElement('canvas');
-      try {
-        JsBarcode(canvas, content, {
-          format: 'CODE128',
-          lineColor: dark,
-          background: light,
-          width: 2,
-          height: Math.max(60, size / 3),
-          displayValue: true,
-          fontSize: 14,
-          margin: 10,
-        });
-        qrFrame.innerHTML = '';
-        qrFrame.appendChild(canvas);
-        lastCanvas = canvas;
-      } catch (err) {
-        qrFrame.innerHTML = '<div class="qr-placeholder">این کد برای بارکد مناسب نیست</div>';
-        lastCanvas = null;
-      }
-      return;
-    }
-
-    QRCode.toCanvas(content, {
-      width: size,
-      margin: 1,
-      errorCorrectionLevel: eccSelect.value,
-      color: { dark, light },
-    }, (err, canvas) => {
-      if (err) return;
-      if (logoImage) drawLogoOnCanvas(canvas);
-      qrFrame.innerHTML = '';
-      qrFrame.appendChild(canvas);
-      lastCanvas = canvas;
-    });
-  }
-
-  function drawLogoOnCanvas(canvas) {
-    const ctx = canvas.getContext('2d');
-    const size = canvas.width;
-    const logoSize = size * 0.22;
-    const x = (size - logoSize) / 2;
-    const y = (size - logoSize) / 2;
-    const pad = logoSize * 0.14;
-
-    ctx.save();
-    ctx.fillStyle = '#ffffff';
-    roundRect(ctx, x - pad, y - pad, logoSize + pad * 2, logoSize + pad * 2, 10);
-    ctx.fill();
-    ctx.restore();
-
-    ctx.drawImage(logoImage, x, y, logoSize, logoSize);
-  }
-
-  function roundRect(ctx, x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x + w, y, x + w, y + h, r);
-    ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.arcTo(x, y + h, x, y, r);
-    ctx.arcTo(x, y, x + w, y, r);
-    ctx.closePath();
-  }
-
-  /* ---------- دانلود ---------- */
-  downloadBtn.addEventListener('click', () => {
-    if (!lastCanvas) return;
-    const link = document.createElement('a');
-    link.download = `codino-${currentType}.png`;
-    link.href = lastCanvas.toDataURL('image/png');
-    link.click();
-  });
-
-  /* ---------- ارسال به تلگرام ---------- */
-  sendBtn.addEventListener('click', async () => {
-    if (!lastCanvas) return;
-
-    if (!tg || !tg.initData) {
-      sendStatus.textContent = 'این گزینه فقط داخل تلگرام کار می‌کند.';
-      return;
-    }
-
-    sendBtn.disabled = true;
-    sendStatus.textContent = 'در حال ارسال...';
-
-    try {
-      const dataUrl = lastCanvas.toDataURL('image/png');
-      const base64 = dataUrl.split(',')[1];
-      const values = collectValues();
-      const caption = Object.values(values).filter(Boolean).join(' | ').slice(0, 200);
-
-      const response = await fetch('/api/send-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          initData: tg.initData,
-          imageBase64: base64,
-          caption,
-        }),
-      });
-      const data = await response.json();
-
-      if (data.ok) {
-        sendStatus.textContent = '✓ به تلگرام فرستاده شد';
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-      } else {
-        sendStatus.textContent = 'ارسال ناموفق بود، دوباره امتحان کن.';
-      }
-    } catch (err) {
-      sendStatus.textContent = 'خطا در ارتباط با سرور.';
-    } finally {
-      sendBtn.disabled = false;
-      setTimeout(() => { sendStatus.textContent = ''; }, 3000);
-    }
-  });
-
-  /* ---------- حالت تاریک ---------- */
-  function applyTheme(dark) {
-    document.body.classList.toggle('dark-mode', dark);
-    themeToggle.textContent = dark ? '☀️' : '🌙';
-    localStorage && (window.__codinoTheme = dark ? 'dark' : 'light');
-  }
-  themeToggle.addEventListener('click', () => {
-    applyTheme(!document.body.classList.contains('dark-mode'));
-  });
-  // پیش‌فرض بر اساس تنظیمات تلگرام/سیستم
-  const prefersDark = (tg && tg.colorScheme === 'dark') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  applyTheme(!!prefersDark);
-
-  /* ---------- شروع ---------- */
-  renderFields();
-  render();
-
-  /* ---------- اسکرول‌ریویل ---------- */
-  const revealEls = document.querySelectorAll('.reveal');
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((e) => {
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-    });
-  }, { threshold: 0.15 });
-  revealEls.forEach((el) => io.observe(el));
-</script>
-
-</body>
-</html>
+let canvas=null;
