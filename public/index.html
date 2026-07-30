@@ -3,158 +3,163 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>درحال بروزرسانی</title>
 
-<title>در حال بروزرسانی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Vazirmatn", Tahoma, sans-serif;
-    }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Vazirmatn",sans-serif;
+}
 
-    body {
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
-        color: white;
-        overflow: hidden;
-    }
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#f5f5f5;
+    overflow:hidden;
+}
 
-    .container {
-        text-align: center;
-        padding: 40px;
-        width: 90%;
-        max-width: 500px;
-        background: rgba(255,255,255,0.08);
-        backdrop-filter: blur(15px);
-        border-radius: 25px;
-        box-shadow: 0 20px 50px rgba(0,0,0,.3);
-        animation: fade 1s ease;
-    }
+/* مناسب برای نمایش موبایل 19:6 */
+.phone{
+    width:360px;
+    height:780px;
+    background:#fff;
+    border-radius:35px;
+    box-shadow:0 20px 50px rgba(0,0,0,.15);
+    overflow:hidden;
+    position:relative;
+}
 
-    h1 {
-        font-size: 32px;
-        margin-bottom: 15px;
-    }
+/* هدر */
+.header{
+    height:70px;
+    background:#e6123d;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#fff;
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:.5px;
+}
 
-    p {
-        color: #cbd5e1;
-        font-size: 17px;
-        line-height: 2;
-    }
+/* بک گراند */
+.bg{
+    position:absolute;
+    inset:0;
+    background:
+    radial-gradient(circle at top right,#ffebef 0%,transparent 40%),
+    radial-gradient(circle at bottom left,#f3f4f6 0%,transparent 40%);
+}
 
-    .loader {
-        width: 90px;
-        height: 90px;
-        margin: 30px auto;
-        border-radius: 50%;
-        border: 8px solid rgba(255,255,255,.2);
-        border-top-color: #38bdf8;
-        animation: spin 1s linear infinite;
-    }
+/* محتوا */
+.content{
+    position:relative;
+    z-index:2;
+    height:calc(100% - 70px);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:25px;
+}
 
-    .dots span {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        margin: 5px;
-        background: #38bdf8;
-        border-radius: 50%;
-        animation: bounce 1.2s infinite;
-    }
+/* آیکون */
+.loader{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    border:6px solid #eee;
+    border-top:6px solid #e6123d;
+    animation:spin 1s linear infinite;
+    margin-bottom:35px;
+}
 
-    .dots span:nth-child(2){
-        animation-delay: .2s;
-    }
+@keyframes spin{
+to{transform:rotate(360deg);}
+}
 
-    .dots span:nth-child(3){
-        animation-delay: .4s;
-    }
+h1{
+    color:#333;
+    font-size:28px;
+    margin-bottom:12px;
+}
 
-    .footer {
-        margin-top: 25px;
-        font-size: 13px;
-        color: #94a3b8;
-    }
+p{
+    color:#777;
+    line-height:2;
+    font-size:15px;
+}
 
-    @keyframes spin {
-        to {
-            transform: rotate(360deg);
-        }
-    }
+.footer{
+    position:absolute;
+    bottom:30px;
+    width:100%;
+    text-align:center;
+    color:#aaa;
+    font-size:13px;
+}
 
-    @keyframes bounce {
-        50% {
-            transform: translateY(-12px);
-        }
-    }
+.line{
+    width:170px;
+    height:5px;
+    background:#ececec;
+    border-radius:10px;
+    overflow:hidden;
+    margin:30px auto 0;
+}
 
-    @keyframes fade {
-        from {
-            opacity:0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity:1;
-            transform: translateY(0);
-        }
-    }
+.line span{
+    display:block;
+    width:40%;
+    height:100%;
+    background:#e6123d;
+    animation:move 1.5s infinite ease-in-out;
+}
 
-    .bg-circle {
-        position:absolute;
-        border-radius:50%;
-        filter:blur(80px);
-        opacity:.5;
-    }
-
-    .one {
-        width:300px;
-        height:300px;
-        background:#0ea5e9;
-        top:-100px;
-        left:-100px;
-    }
-
-    .two {
-        width:250px;
-        height:250px;
-        background:#8b5cf6;
-        bottom:-80px;
-        right:-80px;
-    }
-
+@keyframes move{
+0%{margin-right:-40%;}
+100%{margin-right:100%;}
+}
 </style>
 </head>
 
 <body>
 
-<div class="bg-circle one"></div>
-<div class="bg-circle two"></div>
+<div class="phone">
 
-<div class="container">
+<div class="bg"></div>
 
-    <div class="loader"></div>
+<div class="header">
+درحال بروزرسانی
+</div>
 
-    <h1>در حال ساخت و بروزرسانی صفحه</h1>
+<div class="content">
 
-    <p>
-        ما در حال آماده‌سازی یک تجربه‌ی جدید برای شما هستیم.
-        لطفاً چند لحظه صبر کنید...
-    </p>
+<div class="loader"></div>
 
-    <div class="dots">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
+<h1>درحال بروزرسانی</h1>
 
-    <div class="footer">
-        © 2026 - تمامی حقوق محفوظ است
-    </div>
+<p>
+در حال ارتقاء و بهبود خدمات هستیم.<br>
+به‌زودی با امکانات جدید بازمی‌گردیم.
+</p>
+
+<div class="line">
+<span></span>
+</div>
+
+</div>
+
+<div class="footer">
+© 2026 تمامی حقوق محفوظ است.
+</div>
 
 </div>
 
