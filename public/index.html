@@ -3,15 +3,16 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>Codino</title>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode/dist/JsBarcode.all.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
 <style>
 
@@ -23,42 +24,46 @@ font-family:Vazirmatn,sans-serif;
 }
 
 body{
-background:#111827;
+
+background:#0f172a;
+
 color:white;
+
 padding:20px;
+
 }
 
 .container{
-max-width:700px;
-margin:auto;
-}
 
-h1{
-text-align:center;
-margin-bottom:20px;
+max-width:700px;
+
+margin:auto;
+
 }
 
 .card{
 
-background:#1f2937;
+background:#1e293b;
+
+border-radius:20px;
 
 padding:20px;
 
-border-radius:18px;
+margin-top:20px;
+
+box-shadow:0 10px 30px rgba(0,0,0,.3);
+
+}
+
+h1{
+
+text-align:center;
 
 margin-bottom:20px;
 
 }
 
-label{
-display:block;
-margin-bottom:8px;
-font-size:14px;
-}
-
-select,
-input,
-textarea{
+select,input,textarea{
 
 width:100%;
 
@@ -68,21 +73,13 @@ border:none;
 
 border-radius:12px;
 
-margin-bottom:15px;
-
-background:#374151;
+background:#334155;
 
 color:white;
 
-font-size:15px;
+margin-top:8px;
 
-}
-
-textarea{
-
-height:90px;
-
-resize:none;
+margin-bottom:15px;
 
 }
 
@@ -104,7 +101,7 @@ font-size:16px;
 
 cursor:pointer;
 
-margin-top:10px;
+transition:.3s;
 
 }
 
@@ -116,7 +113,13 @@ background:#1d4ed8;
 
 #preview{
 
-margin-top:25px;
+margin-top:20px;
+
+background:white;
+
+border-radius:15px;
+
+padding:20px;
 
 display:flex;
 
@@ -124,51 +127,7 @@ justify-content:center;
 
 align-items:center;
 
-background:white;
-
-border-radius:18px;
-
-padding:20px;
-
-min-height:320px;
-
-}
-
-#preview canvas{
-
-max-width:100%;
-
-}
-
-.actions{
-
-display:flex;
-
-gap:10px;
-
-}
-
-.actions button{
-
-flex:1;
-
-}
-
-.hidden{
-
-display:none;
-
-}
-
-.footer{
-
-margin-top:30px;
-
-text-align:center;
-
-color:#9ca3af;
-
-font-size:14px;
+min-height:300px;
 
 }
 
@@ -180,21 +139,17 @@ font-size:14px;
 
 <div class="container">
 
-<h1>Codino</h1>
+<h1>📱 Codino</h1>
 
 <div class="card">
 
-<label>
-
-نوع کد
-
-</label>
+<label>نوع کد</label>
 
 <select id="type">
 
-<option value="link">🌐 لینک</option>
-
 <option value="text">📝 متن</option>
+
+<option value="link">🌐 لینک</option>
 
 <option value="phone">📞 تلفن</option>
 
@@ -206,78 +161,27 @@ font-size:14px;
 
 <option value="whatsapp">💚 واتساپ</option>
 
-<option value="barcode">▦ بارکد</option>
-
 </select>
 
-<div id="fields"></div>
+<label>متن</label>
 
-<label>
+<textarea id="content" placeholder="اینجا بنویس..."></textarea>
 
-رنگ کد
+<button onclick="makeQR()">
 
-</label>
-
-<input type="color" id="dark" value="#000000">
-
-<label>
-
-رنگ زمینه
-
-</label>
-
-<input type="color" id="light" value="#ffffff">
-
-<label>
-
-اندازه
-
-</label>
-
-<input
-type="range"
-id="size"
-min="180"
-max="500"
-value="280">
-
-<button id="generate">
-
-ساخت کد
+ساخت QR Code
 
 </button>
-
-</div>
-
-<div class="card">
 
 <div id="preview">
 
-کدی ساخته نشده است
+<span style="color:#555">
+
+هنوز چیزی ساخته نشده
+
+</span>
 
 </div>
-
-<div class="actions">
-
-<button id="download">
-
-دانلود PNG
-
-</button>
-
-<button id="telegramSend">
-
-ارسال به تلگرام
-
-</button>
-
-</div>
-
-</div>
-
-<div class="footer">
-
-Created by Pedram AZ
 
 </div>
 
@@ -295,8 +199,32 @@ tg.expand();
 
 }
 
-const fields=document.getElementById("fields");
+function makeQR(){
 
-const preview=document.getElementById("preview");
+let text=document.getElementById("content").value;
 
-let canvas=null;
+let box=document.getElementById("preview");
+
+box.innerHTML="";
+
+QRCode.toCanvas(text,function(err,canvas){
+
+if(err){
+
+box.innerHTML="خطا";
+
+return;
+
+}
+
+box.appendChild(canvas);
+
+});
+
+}
+
+</script>
+
+</body>
+
+</html>
