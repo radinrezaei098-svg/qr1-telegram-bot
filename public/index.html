@@ -3,298 +3,938 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Codina | بروزرسانی</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
-
+<title>کُدینو — ساخت کیوآرکد حرفه‌ای</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.0/qrcode.min.js"></script>
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Vazirmatn,sans-serif;
-}
-
-body{
-
-height:100vh;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-background:
-radial-gradient(circle at top,#2563eb33,transparent 35%),
-linear-gradient(135deg,#020617,#0f172a,#111827);
-
-overflow:hidden;
-
-color:#fff;
-
-}
-
-body::before{
-
-content:"";
-
-position:absolute;
-
-width:350px;
-
-height:350px;
-
-background:#2563eb;
-
-filter:blur(160px);
-
-opacity:.25;
-
-top:-120px;
-
-right:-120px;
-
-animation:move 8s infinite alternate;
-
-}
-
-@keyframes move{
-
-100%{
-
-transform:translate(-80px,60px);
-
-}
-
-}
-
-.card{
-
-width:min(92%,420px);
-
-padding:45px 30px;
-
-border-radius:32px;
-
-background:rgba(255,255,255,.08);
-
-backdrop-filter:blur(18px);
-
-border:1px solid rgba(255,255,255,.12);
-
-box-shadow:
-
-0 20px 60px rgba(0,0,0,.45),
-
-0 0 40px rgba(37,99,235,.25);
-
-text-align:center;
-
-}
-
-.logo{
-
-width:82px;
-
-height:82px;
-
-margin:auto;
-
-border-radius:22px;
-
-background:linear-gradient(135deg,#3b82f6,#06b6d4);
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:38px;
-
-font-weight:800;
-
-margin-bottom:25px;
-
-box-shadow:0 0 35px #2563eb88;
-
-}
-
-h1{
-
-font-size:32px;
-
-font-weight:800;
-
-margin-bottom:12px;
-
-}
-
-h2{
-
-font-size:18px;
-
-font-weight:600;
-
-color:#60a5fa;
-
-margin-bottom:18px;
-
-}
-
-p{
-
-line-height:2;
-
-font-size:15px;
-
-color:#d1d5db;
-
-}
-
-.loader{
-
-margin:35px auto;
-
-display:flex;
-
-justify-content:center;
-
-gap:10px;
-
-}
-
-.loader span{
-
-width:11px;
-
-height:11px;
-
-background:#3b82f6;
-
-border-radius:50%;
-
-animation:bounce 1.2s infinite;
-
-}
-
-.loader span:nth-child(2){
-
-animation-delay:.2s;
-
-}
-
-.loader span:nth-child(3){
-
-animation-delay:.4s;
-
-}
-
-@keyframes bounce{
-
-0%,80%,100%{
-
-transform:scale(.5);
-
-opacity:.3;
-
-}
-
-40%{
-
-transform:scale(1.2);
-
-opacity:1;
-
-}
-
-}
-
-.badge{
-
-display:inline-block;
-
-margin-top:10px;
-
-padding:10px 18px;
-
-border-radius:50px;
-
-background:#2563eb22;
-
-border:1px solid #3b82f655;
-
-color:#93c5fd;
-
-font-size:14px;
-
-}
-
-footer{
-
-margin-top:35px;
-
-font-size:13px;
-
-color:#64748b;
-
-}
-
+  :root{
+    --ink:#0a0e1a;
+    --panel:#111a2c;
+    --panel2:#0d1524;
+    --line: rgba(255,255,255,.08);
+    --paper:#e9edf3;
+    --paper-soft:#f4f6f9;
+    --signal:#00d9a3;
+    --signal-dim: rgba(0,217,163,.16);
+    --coral:#ff6b4a;
+    --muted:#8b96ad;
+    --text:#e9edf3;
+    --text-dim:#b6c0d4;
+    --radius:20px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Vazirmatn', sans-serif;
+    background:var(--ink);
+    color:var(--text);
+    overflow-x:hidden;
+  }
+
+  ::selection{ background:var(--signal); color:#04140f; }
+
+  a{color:inherit;}
+
+  /* ---------- ambient grid backdrop ---------- */
+  .grid-field{
+    position:absolute; inset:0;
+    display:grid;
+    grid-template-columns:repeat(28, 1fr);
+    grid-template-rows:repeat(16, 1fr);
+    opacity:.5;
+    pointer-events:none;
+  }
+  .grid-field span{
+    border:1px solid rgba(255,255,255,.025);
+  }
+  .grid-field span.lit{
+    background:rgba(0,217,163,.06);
+    animation: flicker 4.5s ease-in-out infinite;
+  }
+  @keyframes flicker{
+    0%,100%{ background:rgba(0,217,163,.05); }
+    50%{ background:rgba(0,217,163,.16); }
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:60px 24px 40px;
+    text-align:center;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(0,217,163,.10), transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(255,107,74,.08), transparent 45%),
+      var(--ink);
+  }
+
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:.5px;
+    color:var(--signal);
+    background:var(--signal-dim);
+    border:1px solid rgba(0,217,163,.3);
+    padding:7px 16px;
+    border-radius:999px;
+    margin-bottom:28px;
+  }
+  .eyebrow .sq{
+    width:7px; height:7px; background:var(--signal); border-radius:2px;
+    animation: blink 1.4s steps(1) infinite;
+  }
+  @keyframes blink{ 50%{ opacity:.15; } }
+
+  .hero h1{
+    font-size:clamp(48px, 9vw, 104px);
+    font-weight:900;
+    letter-spacing:-2px;
+    line-height:1;
+    margin-bottom:20px;
+  }
+  .hero h1 .dot-accent{ color:var(--signal); }
+
+  .hero p.lead{
+    font-size:clamp(15px, 2vw, 19px);
+    color:var(--text-dim);
+    max-width:560px;
+    line-height:1.9;
+    margin-bottom:44px;
+  }
+
+  .hero .cta-row{
+    display:flex;
+    gap:14px;
+    margin-bottom:64px;
+  }
+  .btn{
+    font-family:inherit;
+    font-size:15px;
+    font-weight:700;
+    padding:15px 30px;
+    border-radius:14px;
+    border:none;
+    cursor:pointer;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .btn:active{ transform:scale(.96); }
+  .btn-primary{
+    background:var(--signal);
+    color:#052018;
+    box-shadow:0 10px 30px -8px rgba(0,217,163,.5);
+  }
+  .btn-primary:hover{ box-shadow:0 14px 36px -6px rgba(0,217,163,.65); }
+  .btn-ghost{
+    background:transparent;
+    color:var(--text);
+    border:1px solid var(--line);
+  }
+  .btn-ghost:hover{ border-color:rgba(255,255,255,.25); }
+
+  /* wide banner, ratio 19:6 */
+  .hero-banner{
+    position:relative;
+    width:min(1000px, 92vw);
+    aspect-ratio: 19 / 6;
+    border-radius:24px;
+    background:linear-gradient(135deg, var(--panel), var(--panel2));
+    border:1px solid var(--line);
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 40px 80px -30px rgba(0,0,0,.7);
+  }
+  .hero-banner .modules{
+    position:absolute; inset:0;
+    display:grid;
+    grid-template-columns:repeat(38, 1fr);
+    grid-template-rows:repeat(12, 1fr);
+    opacity:.9;
+  }
+  .hero-banner .modules i{
+    border-radius:2px;
+    background:transparent;
+  }
+  .hero-banner .modules i.on{
+    background:rgba(0,217,163,.9);
+    animation:module-pop .6s ease both;
+  }
+  @keyframes module-pop{
+    from{ transform:scale(.3); opacity:0; }
+    to{ transform:scale(1); opacity:1; }
+  }
+  .hero-banner .scanline{
+    position:absolute;
+    top:0; bottom:0; width:120px;
+    background:linear-gradient(90deg, transparent, rgba(0,217,163,.35), transparent);
+    animation: sweep 3.2s ease-in-out infinite;
+  }
+  @keyframes sweep{
+    0%{ left:-10%; }
+    50%{ left:60%; }
+    100%{ left:-10%; }
+  }
+  .hero-banner .banner-label{
+    position:relative;
+    z-index:2;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--muted);
+    background:rgba(10,14,26,.55);
+    backdrop-filter:blur(4px);
+    padding:8px 16px;
+    border-radius:10px;
+    border:1px solid var(--line);
+  }
+
+  .scroll-cue{
+    margin-top:40px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    color:var(--muted);
+    font-size:12px;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .scroll-cue .arrow{
+    width:22px; height:22px;
+    border-left:2px solid var(--muted);
+    border-bottom:2px solid var(--muted);
+    transform:rotate(-45deg);
+    animation:bob 1.8s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%,100%{ transform:translateY(0) rotate(-45deg); }
+    50%{ transform:translateY(8px) rotate(-45deg); }
+  }
+
+  /* ---------- generator section ---------- */
+  .studio{
+    position:relative;
+    padding:100px 24px 120px;
+    max-width:1180px;
+    margin:0 auto;
+  }
+  .studio-head{
+    text-align:center;
+    margin-bottom:56px;
+  }
+  .studio-head .kicker{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--signal);
+    letter-spacing:.5px;
+    margin-bottom:14px;
+  }
+  .studio-head h2{
+    font-size:clamp(28px, 4vw, 42px);
+    font-weight:800;
+    margin-bottom:14px;
+  }
+  .studio-head p{
+    color:var(--text-dim);
+    font-size:15px;
+    max-width:480px;
+    margin:0 auto;
+    line-height:1.8;
+  }
+
+  .studio-grid{
+    display:grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap:28px;
+    align-items:start;
+  }
+  @media (max-width: 880px){
+    .studio-grid{ grid-template-columns:1fr; }
+  }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:28px;
+  }
+
+  /* tabs */
+  .tabs{
+    display:flex;
+    gap:6px;
+    background:var(--panel2);
+    padding:6px;
+    border-radius:14px;
+    margin-bottom:24px;
+    overflow-x:auto;
+  }
+  .tab{
+    flex:1;
+    text-align:center;
+    white-space:nowrap;
+    font-size:13px;
+    font-weight:600;
+    padding:10px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    color:var(--muted);
+    transition:.15s ease;
+    user-select:none;
+  }
+  .tab.active{
+    background:var(--signal);
+    color:#052018;
+  }
+
+  .field-group{ display:none; flex-direction:column; gap:14px; }
+  .field-group.active{ display:flex; }
+
+  label{
+    font-size:12.5px;
+    color:var(--text-dim);
+    margin-bottom:6px;
+    display:block;
+    font-weight:600;
+  }
+  input[type=text], input[type=url], input[type=email], input[type=tel], textarea, select{
+    width:100%;
+    background:var(--panel2);
+    border:1px solid var(--line);
+    color:var(--text);
+    font-family:inherit;
+    font-size:14px;
+    padding:12px 14px;
+    border-radius:12px;
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  textarea{ resize:vertical; min-height:90px; }
+  input:focus, textarea:focus, select:focus{ border-color:var(--signal); }
+  ::placeholder{ color:#5b6b85; }
+
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  /* customize panel */
+  .divider{
+    height:1px; background:var(--line); margin:26px 0;
+  }
+  .sub-title{
+    font-size:13px; font-weight:700; color:var(--text);
+    margin-bottom:16px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .sub-title .bar{ width:4px; height:14px; background:var(--signal); border-radius:2px; }
+
+  .color-row{ display:flex; gap:12px; }
+  .color-field{ flex:1; }
+  .color-field .swatch-wrap{
+    display:flex; align-items:center; gap:10px;
+    background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:8px 10px;
+  }
+  input[type=color]{
+    width:34px; height:34px; border:none; border-radius:8px; padding:0; background:none; cursor:pointer;
+  }
+  .swatch-wrap span{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--text-dim); }
+
+  .pill-toggle{ display:flex; gap:8px; }
+  .pill-toggle button{
+    flex:1;
+    font-family:inherit; font-size:13px; font-weight:600;
+    padding:10px; border-radius:10px; border:1px solid var(--line);
+    background:var(--panel2); color:var(--text-dim); cursor:pointer;
+  }
+  .pill-toggle button.active{ background:var(--signal); color:#052018; border-color:var(--signal); }
+
+  .range-row{ display:flex; align-items:center; gap:12px; }
+  input[type=range]{ flex:1; accent-color:var(--signal); }
+  .range-val{ font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--signal); min-width:52px; text-align:left; }
+
+  .logo-drop{
+    border:1.5px dashed var(--line);
+    border-radius:14px;
+    padding:16px;
+    display:flex; align-items:center; gap:12px;
+    cursor:pointer;
+    transition:border-color .15s ease;
+  }
+  .logo-drop:hover{ border-color:var(--signal); }
+  .logo-drop .icon{
+    width:38px; height:38px; border-radius:10px; background:var(--panel2);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:16px;
+  }
+  .logo-drop .txt{ font-size:12.5px; color:var(--text-dim); }
+  .logo-drop .txt b{ color:var(--text); }
+  #logoInput{ display:none; }
+  .logo-clear{
+    font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--coral); background:none; border:none; cursor:pointer; text-decoration:underline;
+  }
+
+  /* preview */
+  .preview-panel{
+    position:sticky;
+    top:24px;
+    text-align:center;
+  }
+  .preview-stage{
+    background:var(--paper);
+    border-radius:18px;
+    padding:26px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:20px;
+    position:relative;
+    overflow:hidden;
+  }
+  #qrCanvas{
+    max-width:100%;
+    border-radius:8px;
+    display:block;
+  }
+  .preview-stage .scan-fx{
+    position:absolute; left:0; right:0; height:3px;
+    background:linear-gradient(90deg, transparent, var(--signal), transparent);
+    opacity:0;
+  }
+  .preview-stage.scanning .scan-fx{
+    animation:scanfx 1.1s ease-out;
+  }
+  @keyframes scanfx{
+    0%{ top:6%; opacity:1; }
+    100%{ top:94%; opacity:0; }
+  }
+
+  .meta-row{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--muted);
+    margin-bottom:22px;
+  }
+  .meta-row b{ color:var(--signal); }
+
+  .download-row{ display:flex; gap:10px; }
+  .download-row .btn{ flex:1; font-size:14px; padding:13px; }
+
+  .footnote-panel{
+    margin-top:18px;
+    font-size:11.5px;
+    color:var(--muted);
+    line-height:1.8;
+  }
+
+  footer{
+    text-align:center;
+    padding:40px 24px 60px;
+    color:var(--muted);
+    font-size:12.5px;
+    border-top:1px solid var(--line);
+  }
+  footer .brand-mini{ color:var(--signal); font-weight:700; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; }
+  }
 </style>
-
 </head>
-
 <body>
 
-<div class="card">
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="grid-field" id="gridField"></div>
 
-<div class="logo">
+  <div class="eyebrow"><span class="sq"></span> ابزار ساخت کیوآرکد آنلاین</div>
 
-Q
+  <h1>کُد<span class="dot-accent">ی</span>نو</h1>
+  <p class="lead">
+    خوش اومدی 👋 کُدینو یه استودیوی کوچیکه برای ساختن کیوآرکدهای واقعی، شیک و قابل‌اسکن —
+    برای لینک، وای‌فای، ایمیل، شماره تماس یا هر متنی که بخوای. کاملاً توی همین صفحه، بدون نیاز به نصب چیزی.
+  </p>
 
-</div>
+  <div class="cta-row">
+    <button class="btn btn-primary" onclick="document.getElementById('studio').scrollIntoView({behavior:'smooth'})">
+      بزن بریم بسازیم ↓
+    </button>
+    <button class="btn btn-ghost" onclick="document.getElementById('studio').scrollIntoView({behavior:'smooth'})">
+      یه نگاه به امکانات
+    </button>
+  </div>
 
-<h1>کُدینو</h1>
+  <div class="hero-banner">
+    <div class="modules" id="bannerModules"></div>
+    <div class="scanline"></div>
+    <span class="banner-label">// در حال آماده‌سازی موتور کیوآرکد...</span>
+  </div>
 
-<h2>در حال بروزرسانی...</h2>
+  <div class="scroll-cue">
+    <span>اسکرول کن پایین</span>
+    <span class="arrow"></span>
+  </div>
+</section>
 
-<p>
+<!-- ============ STUDIO / GENERATOR ============ -->
+<section class="studio" id="studio">
+  <div class="studio-head">
+    <div class="kicker">// شروع ساخت</div>
+    <h2>کیوآرکدت رو بساز</h2>
+    <p>یه نوع محتوا انتخاب کن، اطلاعاتش رو وارد کن، ظاهرش رو دلخواه بچین — همه‌چیز آنی و زنده به‌روز می‌شه.</p>
+  </div>
 
-ما در حال طراحی نسل جدید سیستم ساخت
-<b>QR Code</b>
-هستیم.
+  <div class="studio-grid">
+    <!-- LEFT: form + customize -->
+    <div class="panel">
+      <div class="tabs" id="tabs">
+        <div class="tab active" data-tab="url">لینک</div>
+        <div class="tab" data-tab="text">متن</div>
+        <div class="tab" data-tab="wifi">وای‌فای</div>
+        <div class="tab" data-tab="email">ایمیل</div>
+        <div class="tab" data-tab="tel">تماس</div>
+      </div>
 
-<br><br>
+      <div class="field-group active" data-group="url">
+        <div>
+          <label>آدرس لینک</label>
+          <input type="url" id="urlInput" placeholder="https://example.com" value="https://claude.ai">
+        </div>
+      </div>
 
-نسخه جدید با امکانات پیشرفته‌تر، سرعت بیشتر و تجربه‌ای حرفه‌ای‌تر برای کاربران آسیا به‌زودی منتشر خواهد شد.
+      <div class="field-group" data-group="text">
+        <div>
+          <label>متن دلخواه</label>
+          <textarea id="textInput" placeholder="هر متنی که دوست داری اینجا بنویس...">سلام از طرف کُدینو 👋</textarea>
+        </div>
+      </div>
 
-</p>
+      <div class="field-group" data-group="wifi">
+        <div>
+          <label>نام شبکه (SSID)</label>
+          <input type="text" id="wifiSsid" placeholder="نام وای‌فای">
+        </div>
+        <div>
+          <label>رمز عبور</label>
+          <input type="text" id="wifiPass" placeholder="رمز شبکه">
+        </div>
+        <div>
+          <label>نوع رمزنگاری</label>
+          <select id="wifiType">
+            <option value="WPA">WPA / WPA2</option>
+            <option value="WEP">WEP</option>
+            <option value="nopass">بدون رمز</option>
+          </select>
+        </div>
+      </div>
 
-<div class="loader">
+      <div class="field-group" data-group="email">
+        <div>
+          <label>آدرس ایمیل</label>
+          <input type="email" id="emailTo" placeholder="[email protected]">
+        </div>
+        <div>
+          <label>موضوع</label>
+          <input type="text" id="emailSubject" placeholder="موضوع ایمیل">
+        </div>
+        <div>
+          <label>متن پیام</label>
+          <textarea id="emailBody" placeholder="متن ایمیل..."></textarea>
+        </div>
+      </div>
 
-<span></span>
+      <div class="field-group" data-group="tel">
+        <div>
+          <label>شماره تماس</label>
+          <input type="tel" id="telInput" placeholder="+98912xxxxxxx">
+        </div>
+      </div>
 
-<span></span>
+      <div class="divider"></div>
 
-<span></span>
+      <div class="sub-title"><span class="bar"></span> رنگ‌بندی</div>
+      <div class="color-row">
+        <div class="color-field">
+          <label>رنگ نقاط</label>
+          <div class="swatch-wrap">
+            <input type="color" id="colorDark" value="#0a0e1a">
+            <span id="colorDarkLabel">#0A0E1A</span>
+          </div>
+        </div>
+        <div class="color-field">
+          <label>رنگ پس‌زمینه</label>
+          <div class="swatch-wrap">
+            <input type="color" id="colorLight" value="#ffffff">
+            <span id="colorLightLabel">#FFFFFF</span>
+          </div>
+        </div>
+      </div>
 
-</div>
+      <div class="divider"></div>
 
-<div class="badge">
+      <div class="sub-title"><span class="bar"></span> استایل نقاط</div>
+      <div class="pill-toggle" id="styleToggle">
+        <button class="active" data-style="square">مربعی</button>
+        <button data-style="round">گرد</button>
+        <button data-style="dot">نقطه‌ای</button>
+      </div>
 
-🚀 نسخه جدید به‌زودی منتشر می‌شود
+      <div class="divider"></div>
 
-</div>
+      <div class="sub-title"><span class="bar"></span> سطح تصحیح خطا</div>
+      <div class="pill-toggle" id="eccToggle">
+        <button data-ecc="L">L — پایین</button>
+        <button data-ecc="M" class="active">M — متوسط</button>
+        <button data-ecc="Q">Q — بالا</button>
+        <button data-ecc="H">H — عالی</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="sub-title"><span class="bar"></span> اندازه خروجی</div>
+      <div class="range-row">
+        <input type="range" id="sizeRange" min="300" max="1200" step="50" value="600">
+        <span class="range-val" id="sizeVal">600px</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="sub-title"><span class="bar"></span> لوگو در مرکز (اختیاری)</div>
+      <label class="logo-drop" for="logoInput">
+        <span class="icon">🖼️</span>
+        <span class="txt" id="logoTxt"><b>یه تصویر انتخاب کن</b><br>لوگو وسط کیوآرکد قرار می‌گیره</span>
+      </label>
+      <input type="file" id="logoInput" accept="image/*">
+      <button class="logo-clear" id="clearLogo" style="display:none; margin-top:10px;">حذف لوگو</button>
+    </div>
+
+    <!-- RIGHT: preview -->
+    <div class="preview-panel">
+      <div class="preview-stage" id="previewStage">
+        <div class="scan-fx"></div>
+        <canvas id="qrCanvas" width="600" height="600"></canvas>
+      </div>
+
+      <div class="meta-row">
+        <span>ماژول: <b id="metaModules">—</b></span>
+        <span>خطا: <b id="metaEcc">M</b></span>
+        <span>حجم داده: <b id="metaBytes">۰ بایت</b></span>
+      </div>
+
+      <div class="download-row">
+        <button class="btn btn-primary" id="downloadPng">دانلود PNG</button>
+        <button class="btn btn-ghost" id="downloadSvg">دانلود SVG</button>
+      </div>
+
+      <p class="footnote-panel">
+        کیوآرکد کاملاً واقعیه و با هر اپ اسکنری خونده می‌شه. اگه لوگو گذاشتی،
+        سطح تصحیح خطا خودکار روی H تنظیم می‌شه تا خوانایی حفظ بشه.
+      </p>
+    </div>
+  </div>
+</section>
 
 <footer>
-
-© 2026 Codina • Powered by Pedram AZ
-
+  ساخته‌شده با ❤ توسط <span class="brand-mini">کُدینو</span> — همه‌چیز توی مرورگر خودت اجرا می‌شه، هیچ داده‌ای جایی ارسال نمی‌شه.
 </footer>
 
-</div>
+<script>
+/* ================= ambient hero grid ================= */
+(function(){
+  const field = document.getElementById('gridField');
+  const total = 28*16;
+  for(let i=0;i<total;i++){
+    const s = document.createElement('span');
+    if(Math.random() < 0.05){
+      s.classList.add('lit');
+      s.style.animationDelay = (Math.random()*4)+'s';
+    }
+    field.appendChild(s);
+  }
+})();
 
+/* banner decorative modules (random QR-like pattern, purely visual) */
+(function(){
+  const wrap = document.getElementById('bannerModules');
+  const cols = 38, rows = 12;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const i = document.createElement('i');
+      const isCorner = (r<3 && c<3) || (r<3 && c>=cols-3) || (r>=rows-3 && c<3);
+      if(isCorner || Math.random() < 0.32){
+        i.classList.add('on');
+        i.style.animationDelay = (Math.random()*1.2)+'s';
+      }
+      wrap.appendChild(i);
+    }
+  }
+})();
+
+/* ================= tabs ================= */
+const tabs = document.querySelectorAll('.tab');
+const groups = document.querySelectorAll('.field-group');
+tabs.forEach(t => t.addEventListener('click', () => {
+  tabs.forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  groups.forEach(g => g.classList.toggle('active', g.dataset.group === t.dataset.tab));
+  scheduleRender();
+}));
+
+/* ================= style toggle ================= */
+let moduleStyle = 'square';
+document.getElementById('styleToggle').addEventListener('click', e=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  document.querySelectorAll('#styleToggle button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  moduleStyle = btn.dataset.style;
+  scheduleRender();
+});
+
+/* ================= ecc toggle ================= */
+let eccLevel = 'M';
+let eccAuto = false; // true when forced by logo
+document.getElementById('eccToggle').addEventListener('click', e=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  document.querySelectorAll('#eccToggle button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  eccLevel = btn.dataset.ecc;
+  eccAuto = false;
+  scheduleRender();
+});
+function setEccUI(level){
+  document.querySelectorAll('#eccToggle button').forEach(b=>b.classList.toggle('active', b.dataset.ecc===level));
+}
+
+/* ================= colors ================= */
+const colorDark = document.getElementById('colorDark');
+const colorLight = document.getElementById('colorLight');
+const colorDarkLabel = document.getElementById('colorDarkLabel');
+const colorLightLabel = document.getElementById('colorLightLabel');
+colorDark.addEventListener('input', ()=>{ colorDarkLabel.textContent = colorDark.value.toUpperCase(); scheduleRender(); });
+colorLight.addEventListener('input', ()=>{ colorLightLabel.textContent = colorLight.value.toUpperCase(); scheduleRender(); });
+
+/* ================= size ================= */
+const sizeRange = document.getElementById('sizeRange');
+const sizeVal = document.getElementById('sizeVal');
+sizeRange.addEventListener('input', ()=>{ sizeVal.textContent = sizeRange.value+'px'; scheduleRender(); });
+
+/* ================= logo ================= */
+let logoImage = null;
+const logoInput = document.getElementById('logoInput');
+const logoTxt = document.getElementById('logoTxt');
+const clearLogoBtn = document.getElementById('clearLogo');
+
+logoInput.addEventListener('change', ()=>{
+  const file = logoInput.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      logoImage = img;
+      logoTxt.innerHTML = '<b>'+file.name+'</b><br>برای تعویض دوباره کلیک کن';
+      clearLogoBtn.style.display = 'inline-block';
+      eccLevel = 'H'; eccAuto = true; setEccUI('H');
+      scheduleRender();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+clearLogoBtn.addEventListener('click', (e)=>{
+  e.preventDefault();
+  logoImage = null;
+  logoInput.value = '';
+  logoTxt.innerHTML = '<b>یه تصویر انتخاب کن</b><br>لوگو وسط کیوآرکد قرار می‌گیره';
+  clearLogoBtn.style.display = 'none';
+  scheduleRender();
+});
+
+/* ================= build payload from active tab ================= */
+function buildPayload(){
+  const active = document.querySelector('.tab.active').dataset.tab;
+  switch(active){
+    case 'url': {
+      let v = document.getElementById('urlInput').value.trim();
+      if(v && !/^https?:\/\//i.test(v)) v = 'https://' + v;
+      return v || 'https://example.com';
+    }
+    case 'text':
+      return document.getElementById('textInput').value || ' ';
+    case 'wifi': {
+      const ssid = document.getElementById('wifiSsid').value || 'MyWiFi';
+      const pass = document.getElementById('wifiPass').value || '';
+      const type = document.getElementById('wifiType').value;
+      return `WIFI:T:${type};S:${escapeWifi(ssid)};P:${escapeWifi(pass)};H:false;;`;
+    }
+    case 'email': {
+      const to = document.getElementById('emailTo').value || '[email protected]';
+      const subj = encodeURIComponent(document.getElementById('emailSubject').value || '');
+      const body = encodeURIComponent(document.getElementById('emailBody').value || '');
+      return `mailto:${to}?subject=${subj}&body=${body}`;
+    }
+    case 'tel':
+      return `tel:${document.getElementById('telInput').value || ''}`;
+  }
+  return ' ';
+}
+function escapeWifi(s){ return s.replace(/([\\;,:"])/g, '\\$1'); }
+
+/* ================= render QR ================= */
+const canvas = document.getElementById('qrCanvas');
+const ctx = canvas.getContext('2d');
+const previewStage = document.getElementById('previewStage');
+
+let renderTimer = null;
+function scheduleRender(){
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(render, 180);
+}
+
+function render(){
+  const data = buildPayload();
+  const size = parseInt(sizeRange.value, 10);
+  canvas.width = size;
+  canvas.height = size;
+
+  let qr;
+  try{
+    qr = qrcode(0, eccLevel);
+    qr.addData(data);
+    qr.make();
+  }catch(err){
+    // payload too large for chosen ECC — fall back to a lower level automatically
+    try{
+      qr = qrcode(0, 'L');
+      qr.addData(data);
+      qr.make();
+    }catch(err2){ return; }
+  }
+
+  const count = qr.getModuleCount();
+  const cell = size / count;
+  const dark = colorDark.value;
+  const light = colorLight.value;
+
+  ctx.clearRect(0,0,size,size);
+  ctx.fillStyle = light;
+  ctx.fillRect(0,0,size,size);
+
+  ctx.fillStyle = dark;
+  for(let r=0;r<count;r++){
+    for(let c=0;c<count;c++){
+      if(!qr.isDark(r,c)) continue;
+      const x = c*cell, y = r*cell;
+      drawModule(ctx, x, y, cell, moduleStyle);
+    }
+  }
+
+  if(logoImage){
+    const logoSize = size * 0.22;
+    const lx = (size - logoSize)/2, ly = (size - logoSize)/2;
+    const pad = logoSize * 0.14;
+    ctx.fillStyle = light;
+    roundRect(ctx, lx-pad, ly-pad, logoSize+pad*2, logoSize+pad*2, 14);
+    ctx.fill();
+    ctx.save();
+    roundRect(ctx, lx, ly, logoSize, logoSize, 10);
+    ctx.clip();
+    ctx.drawImage(logoImage, lx, ly, logoSize, logoSize);
+    ctx.restore();
+  }
+
+  // meta
+  document.getElementById('metaModules').textContent = count + '×' + count;
+  document.getElementById('metaEcc').textContent = eccLevel + (eccAuto ? ' (خودکار)' : '');
+  document.getElementById('metaBytes').textContent = new Blob([data]).size + ' بایت';
+
+  // scan fx
+  previewStage.classList.remove('scanning');
+  void previewStage.offsetWidth;
+  previewStage.classList.add('scanning');
+
+  window._lastMatrix = { qr, count, dark, light };
+}
+
+function drawModule(ctx, x, y, cell, style){
+  if(style === 'square'){
+    ctx.fillRect(x, y, cell, cell);
+  } else if(style === 'round'){
+    const r = cell*0.28;
+    roundRect(ctx, x+cell*0.06, y+cell*0.06, cell*0.88, cell*0.88, r);
+    ctx.fill();
+  } else if(style === 'dot'){
+    ctx.beginPath();
+    ctx.arc(x+cell/2, y+cell/2, cell*0.42, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath();
+}
+
+/* ================= downloads ================= */
+document.getElementById('downloadPng').addEventListener('click', ()=>{
+  const link = document.createElement('a');
+  link.download = 'kodino-qr.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+});
+
+document.getElementById('downloadSvg').addEventListener('click', ()=>{
+  const m = window._lastMatrix;
+  if(!m) return;
+  const { qr, count, dark, light } = m;
+  const size = 1000;
+  const cell = size / count;
+  let shapes = '';
+  for(let r=0;r<count;r++){
+    for(let c=0;c<count;c++){
+      if(!qr.isDark(r,c)) continue;
+      const x = c*cell, y = r*cell;
+      if(moduleStyle === 'dot'){
+        shapes += `<circle cx="${x+cell/2}" cy="${y+cell/2}" r="${cell*0.42}" fill="${dark}"/>`;
+      } else if(moduleStyle === 'round'){
+        const rad = cell*0.28;
+        shapes += `<rect x="${x+cell*0.06}" y="${y+cell*0.06}" width="${cell*0.88}" height="${cell*0.88}" rx="${rad}" fill="${dark}"/>`;
+      } else {
+        shapes += `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" fill="${dark}"/>`;
+      }
+    }
+  }
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+  <rect width="${size}" height="${size}" fill="${light}"/>
+  ${shapes}
+</svg>`;
+  const blob = new Blob([svg], {type:'image/svg+xml'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.download = 'kodino-qr.svg';
+  link.href = url;
+  link.click();
+  URL.revokeObjectURL(url);
+});
+
+/* ================= input listeners ================= */
+document.querySelectorAll('input[type=text], input[type=url], input[type=email], input[type=tel], textarea, select')
+  .forEach(el => el.addEventListener('input', scheduleRender));
+
+/* initial render */
+window.addEventListener('load', render);
+</script>
 </body>
 </html>
