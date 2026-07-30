@@ -1,78 +1,98 @@
+// این فایل خودکار به آدرس  /api/send-qr  در Vercel تبدیل می‌شه.
+// مینی‌اپ وقتی دکمه‌ی «ارسال توسط ربات» زده می‌شه، یه POST به همین آدرس می‌فرسته.
+
 const crypto = require('crypto');
+const formidable = require('formidable');
+const fs = require('fs');
+const FormData = require('form-data');
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
+
+/* اعتبارسنجی initData طبق مستندات رسمی تلگرام:
+   https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app */
+function verifyInitData(initData, botToken) {
+  if (!initData) return null;
+
+  const params = new URLSearchParams(initData);
+  const hash = params.get('hash');
+  if (!hash) return null;
+  params.delete('hash');
+
+  const sortedKeys = [...params.keys()].sort();
+  const dataCheckString = sortedKeys.map((k) => `${k}=${params.get(k)}`).join('\n');
+
+  const secretKey = crypto.createHmac('sha256', 'WebAppData').update(botToken).digest();
+  const computedHash = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
+
+  if (computedHash !== hash) return null;
+
+  const authDate = parseInt(params.get('auth_date'), 10);
+  if (!authDate || Date.now() / 1000 - authDate > 86400) return null;
+
+  const userJson = params.get('user');
+  if (!userJson) return null;
+
+  try {
+    return JSON.parse(userJson);
+  } catch {
+    return null;
+  }
+}
+
+function first(value) {
+  return Array.isArray(value) ? value[0] : value;
+}
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
-    return res.status(405).json({ ok: false, error: 'Method not allowed' });
+    return res.status(405).json({ ok: false, error: 'روش درخواست اشتباهه' });
   }
 
-  try {
-    const { initData, imageBase64, caption } = req.body || {};
+  const form = formidable({ maxFileSize: 5 * 1024 * 1024 });
 
-    const validation = validateInitData(initData, BOT_TOKEN);
-    if (!validation.valid) {
-      return res.status(401).json({ ok: false, error: 'اعتبارسنجی تلگرام ناموفق بود.' });
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(400).json({ ok: false, error: 'خطا در خوندن فایل آپلودی' });
     }
 
-    if (!imageBase64) {
-      return res.status(400).json({ ok: false, error: 'تصویری ارسال نشده.' });
+    const initData = first(fields.initData);
+    const user = verifyInitData(initData, BOT_TOKEN);
+    if (!user) {
+      return res.status(401).json({ ok: false, error: 'احراز هویت نامعتبره. از داخل تلگرام باز کن.' });
     }
 
-    const chatId = validation.user.id;
-    const buffer = Buffer.from(imageBase64, 'base64');
-
-    const form = new FormData();
-    form.append('chat_id', chatId);
-    if (caption) form.append('caption', String(caption).slice(0, 1024));
-    form.append('photo', new Blob([buffer], { type: 'image/png' }), 'codino.png');
-
-    const response = await fetch(`${TELEGRAM_API}/sendPhoto`, {
-      method: 'POST',
-      body: form,
-    });
-    const data = await response.json();
-
-    if (!data.ok) {
-      return res.status(502).json({ ok: false, error: data.description || 'ارسال ناموفق بود.' });
+    const photoFile = first(files.photo);
+    if (!photoFile) {
+      return res.status(400).json({ ok: false, error: 'عکسی دریافت نشد.' });
     }
 
-    return res.status(200).json({ ok: true });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ ok: false, error: 'خطای داخلی سرور.' });
-  }
+    try {
+      const buffer = fs.readFileSync(photoFile.filepath);
+
+      const tgForm = new FormData();
+      tgForm.append('chat_id', user.id);
+      tgForm.append('caption', '✅ کیوآرکدت آماده‌ست — ساخته‌شده با کُدینو');
+      tgForm.append('photo', buffer, { filename: 'kodino-qr.png', contentType: 'image/png' });
+
+      const tgRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+        method: 'POST',
+        body: tgForm,
+        headers: tgForm.getHeaders(),
+      });
+      const tgData = await tgRes.json();
+
+      if (!tgData.ok) {
+        const desc = tgData.description || '';
+        if (/chat not found/i.test(desc)) {
+          return res.status(400).json({ ok: false, error: 'اول باید یه بار به ربات /start بزنی.' });
+        }
+        return res.status(500).json({ ok: false, error: 'تلگرام ارسال رو رد کرد.' });
+      }
+
+      res.status(200).json({ ok: true });
+    } catch (sendErr) {
+      console.error('send-qr error:', sendErr);
+      res.status(500).json({ ok: false, error: 'خطای داخلی سرور' });
+    }
+  });
 };
-
-// اعتبارسنجی initData طبق روش رسمی تلگرام برای Mini Apps
-// https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app
-function validateInitData(initData, botToken) {
-  if (!initData || !botToken) return { valid: false };
-
-  try {
-    const params = new URLSearchParams(initData);
-    const hash = params.get('hash');
-    if (!hash) return { valid: false };
-    params.delete('hash');
-
-    const entries = [...params.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-    const dataCheckString = entries.map(([key, value]) => `${key}=${value}`).join('\n');
-
-    const secretKey = crypto.createHmac('sha256', 'WebAppData').update(botToken).digest();
-    const computedHash = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
-
-    if (computedHash !== hash) return { valid: false };
-
-    const userStr = params.get('user');
-    if (!userStr) return { valid: false };
-
-    const user = JSON.parse(userStr);
-    if (!user.id) return { valid: false };
-
-    return { valid: true, user };
-  } catch (err) {
-    console.error('initData validation error:', err);
-    return { valid: false };
-  }
-}
