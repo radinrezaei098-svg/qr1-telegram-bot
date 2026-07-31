@@ -1,137 +1,113 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>در حال بروزرسانی</title>
+import { ThinkingOrb } from "thinking-orbs";
 
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+export default function UpdatePage() {
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#fff",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+        fontFamily: "sans-serif",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 390,
+          textAlign: "center",
+        }}
+      >
+        <ThinkingOrb
+          state="solving"
+          size={82}
+          speed={1.85}
+          color="#1f6bdc"
+        />
 
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Vazirmatn',sans-serif;
+        <h2
+          style={{
+            color: "#114ba1",
+            marginTop: 24,
+            marginBottom: 12,
+            fontSize: 28,
+            fontWeight: 700,
+          }}
+        >
+          کُدینو
+        </h2>
+
+        <p
+          style={{
+            color: "#4b5563",
+            lineHeight: 2,
+            fontSize: 15,
+            marginBottom: 28,
+          }}
+        >
+          کُدینو در حال دریافت یک بروزرسانی بزرگ است.
+          <br />
+          به همین دلیل، مینی‌اپ به صورت موقت در دسترس نیست.
+          <br />
+          تا پایان بروزرسانی، می‌توانید از طریق ربات کُدینو متن دلخواه خود را
+          ارسال کرده و بارکد دریافت کنید.
+        </p>
+
+        <div
+          style={{
+            width: "100%",
+            height: 8,
+            background: "#d3e4fc",
+            borderRadius: 100,
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              width: "87%",
+              height: "100%",
+              background: "#1f6bdc",
+              borderRadius: 100,
+              animation: "progress 2.5s ease-in-out infinite alternate",
+            }}
+          />
+        </div>
+
+        <div
+          style={{
+            marginTop: 10,
+            color: "#114ba1",
+            fontSize: 13,
+          }}
+        >
+          تکمیل بروزرسانی تا فردا ساعت ۲۳:۰۰
+        </div>
+
+        <a
+          href="https://t.me/YourBot"
+          style={{
+            display: "inline-block",
+            marginTop: 28,
+            background: "#1f6bdc",
+            color: "#fff",
+            padding: "13px 28px",
+            borderRadius: 12,
+            textDecoration: "none",
+            fontWeight: 600,
+          }}
+        >
+          ورود به ربات
+        </a>
+      </div>
+
+      <style>{`
+        @keyframes progress{
+          from{width:84%;}
+          to{width:89%;}
+        }
+      `}</style>
+    </div>
+  );
 }
-
-body{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:radial-gradient(circle,#16213e,#0f172a,#020617);
-overflow:hidden;
-color:white;
-}
-
-.glow{
-position:absolute;
-width:450px;
-height:450px;
-background:#3b82f655;
-border-radius:50%;
-filter:blur(120px);
-animation:pulse 3s infinite;
-}
-
-.card{
-position:relative;
-z-index:5;
-width:90%;
-max-width:600px;
-padding:50px;
-text-align:center;
-background:rgba(255,255,255,.05);
-backdrop-filter:blur(18px);
-border:1px solid rgba(255,255,255,.08);
-border-radius:25px;
-box-shadow:0 20px 60px rgba(0,0,0,.4);
-}
-
-.orb{
-width:90px;
-height:90px;
-margin:auto;
-border-radius:50%;
-background:linear-gradient(45deg,#3b82f6,#06b6d4,#22c55e);
-animation:spin 2s linear infinite;
-box-shadow:0 0 40px #3b82f6;
-}
-
-h1{
-margin-top:30px;
-font-size:38px;
-font-weight:800;
-}
-
-p{
-margin-top:20px;
-font-size:18px;
-line-height:2;
-color:#cbd5e1;
-}
-
-.progress{
-margin-top:35px;
-height:8px;
-background:#ffffff15;
-border-radius:20px;
-overflow:hidden;
-}
-
-.bar{
-height:100%;
-width:40%;
-background:linear-gradient(90deg,#3b82f6,#06b6d4,#22c55e);
-animation:loading 2s infinite;
-}
-
-small{
-display:block;
-margin-top:18px;
-color:#94a3b8;
-letter-spacing:2px;
-}
-
-@keyframes spin{
-100%{transform:rotate(360deg);}
-}
-
-@keyframes loading{
-0%{margin-left:-40%;}
-100%{margin-left:100%;}
-}
-
-@keyframes pulse{
-50%{transform:scale(1.2);}
-}
-</style>
-
-</head>
-<body>
-
-<div class="glow"></div>
-
-<div class="card">
-
-<div class="orb"></div>
-
-<h1>🚀 در حال بروزرسانی</h1>
-
-<p>
-در حال ساخت نسخه‌ای سریع‌تر، هوشمندتر و قدرتمندتر هستیم.
-<br>
-به‌زودی با امکانات جدید بازخواهیم گشت.
-</p>
-
-<div class="progress">
-<div class="bar"></div>
-</div>
-
-<small>SYSTEM UPGRADE IN PROGRESS</small>
-
-</div>
-
-</body>
-</html>
