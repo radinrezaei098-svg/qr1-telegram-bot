@@ -1,113 +1,385 @@
-import { ThinkingOrb } from "thinking-orbs";
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>کُدینو | Codino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:      #1f6bdc;
+    --blue-deep: #114ba1;
+    --blue-tint: #d3e4fc;
+    --ink:       #0e1b2b;
+    --ink-soft:  #55647a;
+    --white:     #ffffff;
+  }
 
-export default function UpdatePage() {
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#fff",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20,
-        fontFamily: "sans-serif",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 390,
-          textAlign: "center",
-        }}
-      >
-        <ThinkingOrb
-          state="solving"
-          size={82}
-          speed={1.85}
-          color="#1f6bdc"
-        />
+  *{ box-sizing:border-box; margin:0; padding:0; }
 
-        <h2
-          style={{
-            color: "#114ba1",
-            marginTop: 24,
-            marginBottom: 12,
-            fontSize: 28,
-            fontWeight: 700,
-          }}
-        >
-          کُدینو
-        </h2>
+  html,body{
+    height:100%;
+    background:var(--white);
+  }
 
-        <p
-          style={{
-            color: "#4b5563",
-            lineHeight: 2,
-            fontSize: 15,
-            marginBottom: 28,
-          }}
-        >
-          کُدینو در حال دریافت یک بروزرسانی بزرگ است.
-          <br />
-          به همین دلیل، مینی‌اپ به صورت موقت در دسترس نیست.
-          <br />
-          تا پایان بروزرسانی، می‌توانید از طریق ربات کُدینو متن دلخواه خود را
-          ارسال کرده و بارکد دریافت کنید.
-        </p>
+  body{
+    font-family:'Vazirmatn', Tahoma, sans-serif;
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100dvh;
+    padding:28px 18px;
+    -webkit-font-smoothing:antialiased;
+  }
 
-        <div
-          style={{
-            width: "100%",
-            height: 8,
-            background: "#d3e4fc",
-            borderRadius: 100,
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              width: "87%",
-              height: "100%",
-              background: "#1f6bdc",
-              borderRadius: 100,
-              animation: "progress 2.5s ease-in-out infinite alternate",
-            }}
-          />
-        </div>
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
 
-        <div
-          style={{
-            marginTop: 10,
-            color: "#114ba1",
-            fontSize: 13,
-          }}
-        >
-          تکمیل بروزرسانی تا فردا ساعت ۲۳:۰۰
-        </div>
+  .card{
+    width:100%;
+    max-width:380px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
 
-        <a
-          href="https://t.me/YourBot"
-          style={{
-            display: "inline-block",
-            marginTop: 28,
-            background: "#1f6bdc",
-            color: "#fff",
-            padding: "13px 28px",
-            borderRadius: 12,
-            textDecoration: "none",
-            fontWeight: 600,
-          }}
-        >
-          ورود به ربات
-        </a>
-      </div>
+  /* ---------- eyebrow ---------- */
+  .eyebrow{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.5px;
+    color:var(--blue-deep);
+    background:var(--blue-tint);
+    padding:6px 14px;
+    border-radius:999px;
+    margin-bottom:30px;
+  }
+  .eyebrow .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--blue);
+    animation:blink 1.6s ease-in-out infinite;
+  }
+  @keyframes blink{
+    0%,100%{ opacity:1; box-shadow:0 0 0 0 rgba(31,107,220,.5); }
+    50%{ opacity:.4; box-shadow:0 0 0 4px rgba(31,107,220,0); }
+  }
 
-      <style>{`
-        @keyframes progress{
-          from{width:84%;}
-          to{width:89%;}
-        }
-      `}</style>
+  /* ---------- thinking orb ---------- */
+  .orb-wrap{
+    position:relative;
+    width:112px;
+    height:112px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:34px;
+  }
+  .orb-halo{
+    position:absolute;
+    inset:-18px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(31,107,220,.16) 0%, rgba(211,228,252,0) 70%);
+    animation:halo 2.2s ease-in-out infinite;
+  }
+  @keyframes halo{
+    0%,100%{ transform:scale(.9); opacity:.7; }
+    50%{ transform:scale(1.15); opacity:1; }
+  }
+  .orb-ring{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    padding:3px;
+    background:conic-gradient(from 0deg, var(--blue) 0deg, var(--blue-deep) 140deg, var(--blue-tint) 220deg, var(--blue) 360deg);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+    mask-composite:exclude;
+    animation:spin 1.62s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .orb-core{
+    position:absolute;
+    inset:14px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #4f8bee 0%, var(--blue) 45%, var(--blue-deep) 100%);
+    box-shadow:0 8px 22px rgba(17,75,161,.35), inset 0 -6px 14px rgba(0,0,0,.12), inset 0 4px 10px rgba(255,255,255,.35);
+    animation:breathe 2.2s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(.92); }
+  }
+  .orb-satellite{
+    position:absolute;
+    inset:0;
+    animation:spin 1.62s linear infinite;
+  }
+  .orb-satellite::after{
+    content:'';
+    position:absolute;
+    top:2px; left:50%;
+    width:8px; height:8px;
+    margin-left:-4px;
+    border-radius:50%;
+    background:var(--white);
+    box-shadow:0 0 8px 2px rgba(31,107,220,.7);
+  }
+
+  /* ---------- text ---------- */
+  h1{
+    font-size:23px;
+    font-weight:800;
+    letter-spacing:.2px;
+    color:var(--ink);
+    margin-bottom:14px;
+    display:flex;
+    align-items:baseline;
+    justify-content:center;
+    gap:8px;
+    direction:ltr;
+  }
+  h1 .fa{ direction:rtl; }
+  h1 .sep{ color:var(--blue-tint); font-weight:400; }
+  h1 .en{
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:16px;
+    font-weight:700;
+    color:var(--blue-deep);
+    letter-spacing:.4px;
+  }
+  .lead{
+    font-size:14.5px;
+    font-weight:500;
+    color:var(--ink-soft);
+    line-height:1.9;
+    margin-bottom:26px;
+    max-width:320px;
+  }
+  .lead b{ color:var(--blue-deep); font-weight:700; }
+
+  /* ---------- progress ---------- */
+  .progress-block{
+    width:100%;
+    margin-bottom:26px;
+  }
+  .progress-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    font-weight:600;
+  }
+  .progress-meta .pct{
+    font-size:15px;
+    font-weight:800;
+    color:var(--blue-deep);
+    font-variant-numeric:tabular-nums;
+  }
+  .track{
+    position:relative;
+    width:100%;
+    height:10px;
+    border-radius:999px;
+    background:var(--blue-tint);
+    overflow:hidden;
+  }
+  .fill{
+    position:absolute;
+    top:0; right:0;
+    height:100%;
+    width:0%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--blue-deep), var(--blue));
+    transition:width 1s linear;
+  }
+  .fill::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(100deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%);
+    background-size:200% 100%;
+    animation:shimmer 1.6s linear infinite;
+  }
+  @keyframes shimmer{
+    0%{ background-position:160% 0; }
+    100%{ background-position:-60% 0; }
+  }
+  .eta{
+    margin-top:10px;
+    font-size:12px;
+    color:var(--ink-soft);
+    font-weight:500;
+  }
+  .eta span{
+    font-weight:700;
+    color:var(--blue-deep);
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------- bot notice ---------- */
+  .notice{
+    width:100%;
+    background:var(--blue-tint);
+    border-radius:16px;
+    padding:16px 18px;
+    font-size:13px;
+    line-height:2;
+    color:var(--blue-deep);
+    font-weight:600;
+  }
+  .notice .step{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    justify-content:flex-start;
+  }
+  .notice .step + .step{ margin-top:4px; }
+  .notice .num{
+    flex:none;
+    width:20px; height:20px;
+    border-radius:50%;
+    background:var(--blue);
+    color:var(--white);
+    font-size:11px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+  }
+
+  .cta{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    margin-top:16px;
+    padding:14px 20px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg, var(--blue), var(--blue-deep));
+    color:var(--white);
+    font-family:'Vazirmatn', Tahoma, sans-serif;
+    font-size:14.5px;
+    font-weight:700;
+    letter-spacing:.2px;
+    text-decoration:none;
+    cursor:pointer;
+    box-shadow:0 10px 22px rgba(17,75,161,.28);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .cta:active{
+    transform:translateY(1px) scale(.99);
+    box-shadow:0 6px 14px rgba(17,75,161,.24);
+  }
+  .cta svg{ flex:none; }
+
+  .footnote{
+    margin-top:24px;
+    font-size:11px;
+    color:#9aa6b8;
+    font-weight:500;
+    letter-spacing:.3px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="card">
+
+    <div class="eyebrow"><span class="dot"></span>در حال به‌روزرسانی</div>
+
+    <div class="orb-wrap">
+      <div class="orb-halo"></div>
+      <div class="orb-ring"></div>
+      <div class="orb-satellite"></div>
+      <div class="orb-core"></div>
     </div>
-  );
-}
+
+    <h1><span class="en">Codino</span><span class="sep">|</span><span class="fa">کُدینو</span></h1>
+    <p class="lead">
+      کدینو در حال آپدیت <b>بزرگ‌تری</b> است و به همین دلیل، فعلاً صفحه مینی‌اپ کدینو در حال به‌روزرسانی می‌باشد.
+    </p>
+
+    <div class="progress-block">
+      <div class="progress-meta">
+        <span>پیشرفت به‌روزرسانی</span>
+        <span class="pct" id="pct">0%</span>
+      </div>
+      <div class="track"><div class="fill" id="fill"></div></div>
+      <div class="eta">زمان تقریبی تکمیل &nbsp;<span id="eta-time">—</span>&nbsp; &middot; &nbsp;باقی‌مانده <span id="eta-count">—</span></div>
+    </div>
+
+    <div class="notice">
+      <div class="step"><span class="num">۱</span>در حال حاضر می‌توانید از خود ربات بارکد بسازید</div>
+      <div class="step"><span class="num">۲</span>ربات را استارت کنید</div>
+      <div class="step"><span class="num">۳</span>متن دلخواه خود را ارسال کنید تا بارکد دریافت کنید</div>
+    </div>
+
+    <a class="cta" href="https://t.me/qrcodesazzbot" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21.5 3.5L2.75 10.9c-1.03.42-1.02 1-.19 1.26l4.78 1.5 1.85 5.6c.22.6.38.85.77.85.39 0 .56-.18.78-.4l2.1-2.03 4.6 3.4c.85.47 1.46.23 1.68-.79l3.03-14.3c.32-1.25-.47-1.82-1.6-1.43z" fill="currentColor"/>
+      </svg>
+      ساخت بارکد با ربات
+    </a>
+
+    <div class="footnote">CODINO PLATFORM</div>
+
+  </div>
+
+<script>
+  // Target completion: tomorrow at 23:00 local time
+  const now = new Date();
+  const target = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 0, 0);
+  // Progress window start: ~22 hours before target, so it already feels "underway"
+  const start = new Date(target.getTime() - 22 * 60 * 60 * 1000);
+
+  const fillEl = document.getElementById('fill');
+  const pctEl = document.getElementById('pct');
+  const etaTimeEl = document.getElementById('eta-time');
+  const etaCountEl = document.getElementById('eta-count');
+
+  const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+  function toFa(str){
+    return String(str).replace(/[0-9]/g, d => persianDigits[d]);
+  }
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+
+  const etaHour = pad(target.getHours());
+  const etaMin = pad(target.getMinutes());
+  etaTimeEl.textContent = toFa(`فردا ساعت ${etaHour}:${etaMin}`);
+
+  function tick(){
+    const nowMs = Date.now();
+    const span = target.getTime() - start.getTime();
+    const elapsed = nowMs - start.getTime();
+    let pct = (elapsed / span) * 100;
+    pct = Math.max(3, Math.min(98.5, pct));
+
+    fillEl.style.width = pct.toFixed(3) + '%';
+    pctEl.textContent = toFa(pct.toFixed(1)) + '٪';
+
+    let remain = target.getTime() - nowMs;
+    if (remain < 0) remain = 0;
+    const h = Math.floor(remain / 3600000);
+    const m = Math.floor((remain % 3600000) / 60000);
+    const s = Math.floor((remain % 60000) / 1000);
+    etaCountEl.textContent = toFa(`${pad(h)}:${pad(m)}:${pad(s)}`);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
