@@ -316,6 +316,58 @@
   }
 
   .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+  .btn-screenshot{
+    margin-top:10px;
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    border: 1.5px solid var(--surface-border);
+  }
+
+  .lightbox{
+    position:fixed;
+    inset:0;
+    background: rgba(6,10,18,0.82);
+    backdrop-filter: blur(6px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:16px;
+    z-index:1200;
+    padding: 26px 20px;
+  }
+
+  .lightbox.visible{ display:flex; }
+
+  .lightbox img{
+    max-width: 86vw;
+    max-height: 62vh;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px -10px rgba(0,0,0,0.6);
+    -webkit-touch-callout: default;
+  }
+
+  .lightbox-hint{
+    color:#EAF4FF;
+    font-size: 13px;
+    font-weight:600;
+    text-align:center;
+    max-width: 300px;
+    line-height:1.8;
+  }
+
+  .lightbox-close{
+    background: rgba(255,255,255,0.14);
+    color:#FFFFFF;
+    border:none;
+    padding: 12px 26px;
+    border-radius: 12px;
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:700;
+    cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -365,6 +417,11 @@
         <button class="btn btn-download" id="download-btn">دانلود عکس</button>
       </div>
 
+      <button class="btn btn-screenshot" id="screenshot-btn">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none"><path d="M4 8V6a2 2 0 0 1 2-2h2M4 16v2a2 2 0 0 0 2 2h2M20 8V6a2 2 0 0 0-2-2h-2M20 16v2a2 2 0 0 1-2 2h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/></svg>
+        گرفتن اسکرین‌شات
+      </button>
+
       <div class="hint" id="hint-text">در حال آماده‌سازی تصویر برای ارسال...</div>
     </div>
 
@@ -372,6 +429,12 @@
   </div>
 
   <div class="toast" id="toast"></div>
+
+  <div class="lightbox" id="lightbox">
+    <img id="lightbox-img" src="" alt="اسکرین‌شات کیوارکد" />
+    <div class="lightbox-hint">برای ذخیره یا ارسال مستقیم در تلگرام، روی عکس نگه‌دارید (لمس طولانی) و گزینه‌ی ذخیره یا اشتراک‌گذاری را بزنید</div>
+    <button class="lightbox-close" id="lightbox-close">بستن</button>
+  </div>
 
 <script>
   const input = document.getElementById('qr-input');
@@ -382,6 +445,10 @@
   const qrCaption = document.getElementById('qr-caption');
   const telegramBtn = document.getElementById('telegram-btn');
   const downloadBtn = document.getElementById('download-btn');
+  const screenshotBtn = document.getElementById('screenshot-btn');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxClose = document.getElementById('lightbox-close');
   const hintText = document.getElementById('hint-text');
   const toast = document.getElementById('toast');
   const themeDots = document.querySelectorAll('.theme-dot');
@@ -486,6 +553,40 @@
     }
     downloadBlob(currentBlob, 'codino-qr.png');
     showToast('تصویر کیوارکد دانلود شد');
+  });
+
+  screenshotBtn.addEventListener('click', async ()=>{
+    if(!qrSection.classList.contains('visible')){
+      showToast('ابتدا یک کیوارکد بسازید');
+      return;
+    }
+
+    let blobToShow = currentBlob;
+
+    if(!blobToShow){
+      showToast('در حال گرفتن اسکرین‌شات...');
+      try{
+        await nextPaint();
+        const canvas = await html2canvas(qrCard, { backgroundColor:'#FFFFFF', scale: 3 });
+        blobToShow = await new Promise(res => canvas.toBlob(res, 'image/png'));
+        currentBlob = blobToShow;
+      }catch(e){
+        showToast('گرفتن اسکرین‌شات ناموفق بود');
+        return;
+      }
+    }
+
+    const objUrl = URL.createObjectURL(blobToShow);
+    lightboxImg.src = objUrl;
+    lightbox.classList.add('visible');
+  });
+
+  lightboxClose.addEventListener('click', ()=>{
+    lightbox.classList.remove('visible');
+  });
+
+  lightbox.addEventListener('click', (e)=>{
+    if(e.target === lightbox) lightbox.classList.remove('visible');
   });
 
   telegramBtn.addEventListener('click', async ()=>{
