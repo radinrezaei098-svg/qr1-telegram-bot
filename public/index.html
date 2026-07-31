@@ -73,6 +73,23 @@
     pointer-events:none; transition: background .35s ease;
   }
 
+  .update-badge{
+    display:flex; align-items:center; gap:8px;
+    background: var(--accent-soft);
+    border: 1px solid var(--surface-border);
+    color: var(--accent-deep);
+    font-size: 11.5px; font-weight:700;
+    padding: 8px 14px; border-radius: 999px;
+    margin: 0 auto 18px; width: fit-content; max-width: 100%;
+    text-align:center; line-height:1.6;
+  }
+  .update-badge .dot-wrap{ position:relative; width:9px; height:9px; flex-shrink:0; }
+  .update-badge .dot-wrap::before, .update-badge .dot-wrap::after{
+    content:""; position:absolute; inset:0; border-radius:50%; background: var(--accent);
+  }
+  .update-badge .dot-wrap::before{ animation: pulse-ring 1.8s ease-out infinite; }
+  @keyframes pulse-ring{ 0%{ transform: scale(1); opacity:0.6; } 100%{ transform: scale(2.8); opacity:0; } }
+
   .theme-switcher{ display:flex; justify-content:center; gap:10px; margin-bottom: 18px; }
   .theme-dot{ width:28px; height:28px; border-radius:50%; border:2px solid transparent; cursor:pointer; padding:0; transition: transform .15s ease, border-color .15s ease; }
   .theme-dot:active{ transform: scale(0.9); }
@@ -119,7 +136,18 @@
   .copy-btn:active{ transform: scale(0.92); }
   .copy-btn svg{ width:18px; height:18px; }
 
+  .customize-panel{
+    margin-top:16px; padding:16px; border-radius:18px;
+    background: var(--input-bg); border: 1.5px solid var(--input-border);
+  }
+  .customize-title{
+    font-size:13px; font-weight:800; color: var(--text); margin-bottom:14px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .customize-title svg{ width:15px; height:15px; color: var(--accent); }
+
   .option-block{ margin-top: 14px; }
+  .option-block:first-of-type{ margin-top:0; }
   .option-title{ font-size:12px; font-weight:600; color: var(--muted); margin-bottom:8px; padding-right:4px; }
 
   .color-row{ display:flex; align-items:center; gap:10px; }
@@ -137,23 +165,45 @@
     width:26px; height:26px; border-radius:50%; overflow:hidden; position:relative;
     border:2px dashed var(--muted); flex-shrink:0; cursor:pointer;
   }
-  .color-custom-wrap input[type="color"]{
-    position:absolute; inset:-4px; width:34px; height:34px; border:none; padding:0; cursor:pointer;
+  .color-custom-wrap input[type="color"]{ position:absolute; inset:-4px; width:34px; height:34px; border:none; padding:0; cursor:pointer; }
+
+  .segmented{
+    display:flex; background: var(--surface); border-radius:12px; padding:3px;
+    border:1.5px solid var(--input-border); gap:3px;
   }
+  .segmented button{
+    flex:1; border:none; background:transparent; font-family:inherit; font-size:11.5px;
+    font-weight:700; color: var(--muted); padding:9px 4px; border-radius:9px; cursor:pointer;
+    transition: all .15s ease;
+  }
+  .segmented button.active{ background: var(--accent); color:#FFFFFF; }
+
+  .upload-row{
+    display:none; align-items:center; gap:8px; margin-top:10px;
+  }
+  .upload-row.visible{ display:flex; }
+  .upload-btn{
+    flex:1; padding:10px; border-radius:10px; border:1.5px dashed var(--input-border);
+    background: var(--surface); color: var(--muted); font-family:inherit; font-size:12px;
+    font-weight:600; cursor:pointer; text-align:center;
+  }
+  .upload-name{ font-size:11px; color: var(--accent-deep); font-weight:600; max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .caption-input{
+    width:100%; margin-top:10px; padding:11px 14px; border-radius:12px;
+    border:1.5px solid var(--input-border); background: var(--surface);
+    font-family:inherit; font-size:13px; color: var(--text); outline:none; text-align:right;
+    display:none;
+  }
+  .caption-input.visible{ display:block; }
 
   .toggle-row{ display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
   .toggle-label{ font-size:12.5px; font-weight:600; color: var(--text); }
 
   .switch{ position:relative; width:44px; height:26px; flex-shrink:0; }
   .switch input{ opacity:0; width:0; height:0; }
-  .slider{
-    position:absolute; cursor:pointer; inset:0; background: var(--input-border);
-    border-radius:999px; transition:.25s;
-  }
-  .slider::before{
-    content:""; position:absolute; height:20px; width:20px; right:3px; bottom:3px;
-    background: white; border-radius:50%; transition:.25s; box-shadow:0 1px 3px rgba(0,0,0,0.3);
-  }
+  .slider{ position:absolute; cursor:pointer; inset:0; background: var(--input-border); border-radius:999px; transition:.25s; }
+  .slider::before{ content:""; position:absolute; height:20px; width:20px; right:3px; bottom:3px; background: white; border-radius:50%; transition:.25s; box-shadow:0 1px 3px rgba(0,0,0,0.3); }
   input:checked + .slider{ background: var(--accent); }
   input:checked + .slider::before{ transform: translateX(-18px); }
 
@@ -175,10 +225,29 @@
   .qr-section.visible{ display:block; }
   @keyframes fadeUp{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
 
+  #qr-frame{
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+    border-radius: 20px; transition: all .2s ease;
+  }
+
+  #qr-frame.frame-simple, #qr-frame.frame-caption{
+    padding: 18px; border: 2px solid var(--accent); background: #FFFFFF;
+    box-shadow: 0 10px 26px -10px var(--shadow-tint);
+  }
+
   #qr-card{
     background: #FFFFFF; border: 1.5px solid var(--surface-border); border-radius: 20px;
     padding: 22px; display:flex; flex-direction:column; align-items:center; gap:14px;
   }
+  #qr-frame.frame-simple #qr-card, #qr-frame.frame-caption #qr-card{
+    border: none; padding: 0;
+  }
+
+  .frame-caption-text{
+    display:none; font-size:12.5px; font-weight:800; color: var(--accent-deep);
+    text-align:center; letter-spacing:0.3px;
+  }
+  #qr-frame.frame-caption .frame-caption-text{ display:block; }
 
   #qrcode-wrap{ position:relative; display:flex; }
   #qrcode{ background:#FFFFFF; padding: 12px; border-radius: 14px; box-shadow: 0 6px 18px -6px var(--shadow-tint); display:flex; }
@@ -188,7 +257,7 @@
     position:absolute; top:50%; left:50%; transform: translate(-50%,-50%);
     width:46px; height:46px; background:#FFFFFF; border-radius:12px;
     display:none; align-items:center; justify-content:center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25); padding:4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25); padding:4px; overflow:hidden;
   }
   .qr-logo-overlay.visible{ display:flex; }
   .qr-logo-overlay .mini-badge{
@@ -197,6 +266,7 @@
     display:flex; align-items:center; justify-content:center;
   }
   .qr-logo-overlay svg{ width:22px; height:22px; }
+  .qr-logo-overlay img.custom-logo-img{ width:100%; height:100%; object-fit:cover; border-radius:8px; display:block; }
 
   .qr-caption{ font-size: 12.5px; color: #6E7480; text-align:center; word-break: break-all; max-width: 260px; font-weight:500; }
 
@@ -235,53 +305,51 @@
   .lightbox-hint{ color:#EAF4FF; font-size: 13px; font-weight:600; text-align:center; max-width: 300px; line-height:1.8; }
   .lightbox-close{ background: rgba(255,255,255,0.14); color:#FFFFFF; border:none; padding: 12px 26px; border-radius: 12px; font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer; }
 
-  .update-badge{
-    display:flex; align-items:center; gap:8px;
-    background: var(--accent-soft);
-    border: 1px solid var(--surface-border);
-    color: var(--accent-deep);
-    font-size: 11.5px;
-    font-weight:700;
-    padding: 8px 14px;
-    border-radius: 999px;
-    margin: 0 auto 18px;
-    width: fit-content;
-    max-width: 100%;
-    text-align:center;
-    line-height:1.6;
+  #bg-grid{
+    position:fixed; inset:0; width:100%; height:100%;
+    z-index:0; display:block;
+    transition: opacity .4s ease;
   }
 
-  .update-badge .dot-wrap{
-    position:relative;
-    width:9px; height:9px;
-    flex-shrink:0;
-  }
+  .phone-frame, .theme-switcher, .toast, .lightbox{ position:relative; z-index:1; }
 
-  .update-badge .dot-wrap::before,
-  .update-badge .dot-wrap::after{
-    content:"";
-    position:absolute; inset:0;
-    border-radius:50%;
-    background: var(--accent);
+  #splash{
+    position:fixed; inset:0; z-index:3000;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px;
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 55%);
+    transition: opacity .6s ease, visibility .6s ease;
   }
+  #splash.hide{ opacity:0; visibility:hidden; pointer-events:none; }
 
-  .update-badge .dot-wrap::before{
-    animation: pulse-ring 1.8s ease-out infinite;
+  #orb-canvas{ width:84px; height:84px; border-radius:50%; }
+
+  .splash-title{
+    font-family:"Vazirmatn", -apple-system, sans-serif;
+    font-size:16px; font-weight:800; color: var(--text); letter-spacing:-.2px;
   }
-
-  @keyframes pulse-ring{
-    0%{ transform: scale(1); opacity:0.6; }
-    100%{ transform: scale(2.8); opacity:0; }
+  .splash-title span{ color: var(--accent); }
+  .splash-sub{
+    font-family:"Vazirmatn", -apple-system, sans-serif;
+    font-size:11.5px; font-weight:600; color: var(--muted); margin-top:-14px;
   }
 </style>
 </head>
 <body>
+
+  <canvas id="bg-grid"></canvas>
+
+  <div id="splash">
+    <canvas id="orb-canvas" width="168" height="168"></canvas>
+    <div class="splash-title">کُدینو <span>| Codino</span></div>
+    <div class="splash-sub">در حال آماده‌سازی...</div>
+  </div>
 
   <div class="phone-frame">
     <div class="update-badge">
       <span class="dot-wrap"></span>
       <span>کُدینو هنوز آپدیت نشده، در حال آپدیت است — امکانات جدید به‌زودی اضافه می‌شوند</span>
     </div>
+
     <div class="theme-switcher">
       <button class="theme-dot active" data-t="classic" title="تم کلاسیک آبی"></button>
       <button class="theme-dot" data-t="dark" title="تم شب"></button>
@@ -314,46 +382,73 @@
       </div>
     </div>
 
-    <div class="option-block">
-      <div class="option-title">رنگ کیوارکد</div>
-      <div class="color-row">
-        <button class="color-dot active" data-c="#0A84FF" title="آبی"></button>
-        <button class="color-dot" data-c="#0B0D12" title="مشکی"></button>
-        <button class="color-dot" data-c="#00B8D9" title="فیروزه‌ای"></button>
-        <div class="color-custom-wrap" title="رنگ دلخواه">
-          <input type="color" id="custom-color" value="#0A84FF" />
+    <div class="customize-panel">
+      <div class="customize-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="4"/></svg>
+        سفارشی‌سازی کیوارکد
+      </div>
+
+      <div class="option-block">
+        <div class="option-title">رنگ کیوارکد</div>
+        <div class="color-row">
+          <button class="color-dot active" data-c="#0A84FF" title="آبی"></button>
+          <button class="color-dot" data-c="#0B0D12" title="مشکی"></button>
+          <button class="color-dot" data-c="#00B8D9" title="فیروزه‌ای"></button>
+          <div class="color-custom-wrap" title="رنگ دلخواه">
+            <input type="color" id="custom-color" value="#0A84FF" />
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="toggle-row">
-      <span class="toggle-label">افزودن لوگوی کُدینو در مرکز</span>
-      <label class="switch">
-        <input type="checkbox" id="logo-toggle">
-        <span class="slider"></span>
-      </label>
+      <div class="option-block">
+        <div class="option-title">قاب گرفتن</div>
+        <div class="segmented" id="frame-segmented">
+          <button class="active" data-f="none">بدون قاب</button>
+          <button data-f="simple">قاب ساده</button>
+          <button data-f="caption">قاب با متن</button>
+        </div>
+        <input type="text" class="caption-input" id="caption-input" placeholder="متن دلخواه، مثلاً: برای اسکن دوربین را بگیرید" value="برای اسکن، دوربین را بگیرید" />
+      </div>
+
+      <div class="option-block">
+        <div class="option-title">لوگو در مرکز کیوارکد</div>
+        <div class="segmented" id="logo-segmented">
+          <button class="active" data-l="none">بدون لوگو</button>
+          <button data-l="brand">لوگوی کُدینو</button>
+          <button data-l="custom">لوگوی دلخواه</button>
+        </div>
+        <div class="upload-row" id="upload-row">
+          <button class="upload-btn" id="upload-trigger">انتخاب تصویر لوگو</button>
+          <span class="upload-name" id="upload-name"></span>
+          <input type="file" id="logo-file" accept="image/*" style="display:none" />
+        </div>
+      </div>
     </div>
 
     <button class="btn btn-primary" id="generate-btn">ساخت کیوارکد</button>
 
     <div class="qr-section" id="qr-section">
       <div class="divider"></div>
-      <div id="qr-card">
-        <div id="qrcode-wrap">
-          <div id="qrcode"></div>
-          <div class="qr-logo-overlay" id="qr-logo-overlay">
-            <div class="mini-badge">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
-                <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
-                <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
-                <path d="M14 14H17V17H14V14Z" fill="white"/><path d="M18 14H21V17H18V14Z" fill="white"/>
-                <path d="M14 18H17V21H14V18Z" fill="white"/><path d="M18 18H21V21H18V18Z" fill="white"/>
-              </svg>
+
+      <div id="qr-frame" class="frame-none">
+        <div id="qr-card">
+          <div id="qrcode-wrap">
+            <div id="qrcode"></div>
+            <div class="qr-logo-overlay" id="qr-logo-overlay">
+              <div class="mini-badge" id="mini-badge">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+                  <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+                  <path d="M14 14H17V17H14V14Z" fill="white"/><path d="M18 14H21V17H18V14Z" fill="white"/>
+                  <path d="M14 18H17V21H14V18Z" fill="white"/><path d="M18 18H21V21H18V18Z" fill="white"/>
+                </svg>
+              </div>
             </div>
           </div>
+          <div class="qr-caption" id="qr-caption"></div>
         </div>
-        <div class="qr-caption" id="qr-caption"></div>
+        <div class="frame-caption-text" id="frame-caption-text">برای اسکن، دوربین را بگیرید</div>
       </div>
 
       <div class="action-row">
@@ -393,11 +488,13 @@
   const copyBtn = document.getElementById('copy-btn');
   const genBtn = document.getElementById('generate-btn');
   const qrSection = document.getElementById('qr-section');
+  const qrFrame = document.getElementById('qr-frame');
   const qrCard = document.getElementById('qr-card');
   const qrContainer = document.getElementById('qrcode');
   const qrLogoOverlay = document.getElementById('qr-logo-overlay');
-  const logoToggle = document.getElementById('logo-toggle');
+  const miniBadge = document.getElementById('mini-badge');
   const qrCaption = document.getElementById('qr-caption');
+  const frameCaptionText = document.getElementById('frame-caption-text');
   const telegramBtn = document.getElementById('telegram-btn');
   const downloadBtn = document.getElementById('download-btn');
   const shareMoreBtn = document.getElementById('share-more-btn');
@@ -410,12 +507,22 @@
   const themeDots = document.querySelectorAll('.theme-dot');
   const colorDots = document.querySelectorAll('.color-dot');
   const customColorInput = document.getElementById('custom-color');
+  const frameSegmented = document.getElementById('frame-segmented');
+  const captionInput = document.getElementById('caption-input');
+  const logoSegmented = document.getElementById('logo-segmented');
+  const uploadRow = document.getElementById('upload-row');
+  const uploadTrigger = document.getElementById('upload-trigger');
+  const uploadName = document.getElementById('upload-name');
+  const logoFile = document.getElementById('logo-file');
   const htmlEl = document.documentElement;
 
   let currentQR = null;
   let currentBlob = null;
   let currentValue = '';
   let qrColor = '#0A84FF';
+  let frameStyle = 'none';
+  let logoMode = 'none';
+  let customLogoDataUrl = null;
 
   themeDots.forEach(dot=>{
     dot.addEventListener('click', ()=>{
@@ -441,11 +548,79 @@
     if(currentValue) generateQR(true);
   });
 
-  logoToggle.addEventListener('change', ()=>{
-    qrLogoOverlay.classList.toggle('visible', logoToggle.checked);
+  frameSegmented.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      frameStyle = btn.dataset.f;
+      frameSegmented.querySelectorAll('button').forEach(b=> b.classList.remove('active'));
+      btn.classList.add('active');
+      captionInput.classList.toggle('visible', frameStyle === 'caption');
+      applyFrameStyle();
+    });
+  });
+
+  captionInput.addEventListener('input', ()=>{
+    frameCaptionText.textContent = captionInput.value.trim() || 'برای اسکن، دوربین را بگیرید';
     currentBlob = null;
     if(qrSection.classList.contains('visible')) renderShareImage();
   });
+
+  function applyFrameStyle(){
+    qrFrame.classList.remove('frame-none','frame-simple','frame-caption');
+    qrFrame.classList.add('frame-' + frameStyle);
+    frameCaptionText.textContent = captionInput.value.trim() || 'برای اسکن، دوربین را بگیرید';
+    currentBlob = null;
+    if(qrSection.classList.contains('visible')) renderShareImage();
+  }
+
+  logoSegmented.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      logoMode = btn.dataset.l;
+      logoSegmented.querySelectorAll('button').forEach(b=> b.classList.remove('active'));
+      btn.classList.add('active');
+      uploadRow.classList.toggle('visible', logoMode === 'custom');
+      applyLogoMode();
+    });
+  });
+
+  uploadTrigger.addEventListener('click', ()=> logoFile.click());
+
+  logoFile.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev)=>{
+      customLogoDataUrl = ev.target.result;
+      uploadName.textContent = file.name.length > 14 ? file.name.slice(0,12) + '…' : file.name;
+      applyLogoMode();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function applyLogoMode(){
+    if(logoMode === 'none'){
+      qrLogoOverlay.classList.remove('visible');
+    } else if(logoMode === 'brand'){
+      qrLogoOverlay.classList.add('visible');
+      miniBadge.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+        <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+        <path d="M14 14H17V17H14V14Z" fill="white"/><path d="M18 14H21V17H18V14Z" fill="white"/>
+        <path d="M14 18H17V21H14V18Z" fill="white"/><path d="M18 18H21V21H18V18Z" fill="white"/></svg>`;
+      miniBadge.style.background = '';
+      miniBadge.classList.remove('custom-fill');
+    } else if(logoMode === 'custom'){
+      if(customLogoDataUrl){
+        qrLogoOverlay.classList.add('visible');
+        miniBadge.innerHTML = `<img class="custom-logo-img" src="${customLogoDataUrl}" alt="لوگو" />`;
+        miniBadge.style.background = 'transparent';
+      } else {
+        qrLogoOverlay.classList.remove('visible');
+      }
+    }
+    currentBlob = null;
+    if(qrSection.classList.contains('visible')) renderShareImage();
+  }
 
   copyBtn.addEventListener('click', async ()=>{
     const value = input.value.trim();
@@ -474,7 +649,7 @@
     downloadBtn.disabled = true;
     await nextPaint();
     try{
-      const canvas = await html2canvas(qrCard, { backgroundColor: '#FFFFFF', scale: 3, useCORS: true });
+      const canvas = await html2canvas(qrFrame, { backgroundColor: '#FFFFFF', scale: 3, useCORS: true });
       currentBlob = await new Promise(res => canvas.toBlob(res, 'image/png'));
       telegramBtn.disabled = false;
       downloadBtn.disabled = false;
@@ -542,7 +717,7 @@
       showToast('در حال گرفتن اسکرین‌شات...');
       try{
         await nextPaint();
-        const canvas = await html2canvas(qrCard, { backgroundColor:'#FFFFFF', scale: 3 });
+        const canvas = await html2canvas(qrFrame, { backgroundColor:'#FFFFFF', scale: 3 });
         blobToShow = await new Promise(res => canvas.toBlob(res, 'image/png'));
         currentBlob = blobToShow;
       }catch(e){ showToast('گرفتن اسکرین‌شات ناموفق بود'); return; }
@@ -600,6 +775,185 @@
     const url = 'https://t.me/share/url?url=' + encodeURIComponent(currentValue) + '&text=' + text;
     window.open(url, '_blank');
   });
+
+  // ---------- Background animated grid (adapted from ShapeGrid) ----------
+  (function initBgGrid(){
+    const canvas = document.getElementById('bg-grid');
+    const ctx = canvas.getContext('2d');
+
+    const squareSize = 44;
+    const speed = 0.35;
+    let borderColor = getComputedStyle(htmlEl).getPropertyValue('--surface-border').trim() || '#EAF4FF';
+    let hoverFillColor = getComputedStyle(htmlEl).getPropertyValue('--accent-soft').trim() || '#EAF4FF';
+
+    function refreshColors(){
+      borderColor = getComputedStyle(htmlEl).getPropertyValue('--surface-border').trim();
+      hoverFillColor = getComputedStyle(htmlEl).getPropertyValue('--accent-soft').trim();
+    }
+    themeDots.forEach(d => d.addEventListener('click', ()=> setTimeout(refreshColors, 50)));
+
+    let gridOffset = { x: 0, y: 0 };
+    let hoveredSquare = null;
+    const cellOpacities = new Map();
+
+    function resizeCanvas(){
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function drawGrid(){
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const offsetX = ((gridOffset.x % squareSize) + squareSize) % squareSize;
+      const offsetY = ((gridOffset.y % squareSize) + squareSize) % squareSize;
+      const cols = Math.ceil(canvas.width / squareSize) + 3;
+      const rows = Math.ceil(canvas.height / squareSize) + 3;
+
+      for(let col = -2; col < cols; col++){
+        for(let row = -2; row < rows; row++){
+          const sx = col * squareSize + offsetX;
+          const sy = row * squareSize + offsetY;
+          const key = col + ',' + row;
+          const alpha = cellOpacities.get(key);
+          if(alpha){
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = hoverFillColor;
+            ctx.fillRect(sx, sy, squareSize, squareSize);
+            ctx.globalAlpha = 1;
+          }
+          ctx.strokeStyle = borderColor;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(sx, sy, squareSize, squareSize);
+        }
+      }
+
+      const gradient = ctx.createRadialGradient(
+        canvas.width/2, canvas.height/2, 0,
+        canvas.width/2, canvas.height/2,
+        Math.sqrt(canvas.width**2 + canvas.height**2)/2
+      );
+      gradient.addColorStop(0, 'rgba(0,0,0,0)');
+      gradient.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function updateOpacities(){
+      const targets = new Map();
+      if(hoveredSquare){
+        targets.set(hoveredSquare.x + ',' + hoveredSquare.y, 0.9);
+      }
+      for(const [key] of targets){
+        if(!cellOpacities.has(key)) cellOpacities.set(key, 0);
+      }
+      for(const [key, opacity] of cellOpacities){
+        const target = targets.get(key) || 0;
+        const next = opacity + (target - opacity) * 0.15;
+        if(next < 0.01) cellOpacities.delete(key);
+        else cellOpacities.set(key, next);
+      }
+    }
+
+    function tick(){
+      gridOffset.x = (gridOffset.x - speed + squareSize) % squareSize;
+      gridOffset.y = (gridOffset.y - speed + squareSize) % squareSize;
+      updateOpacities();
+      drawGrid();
+      requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('mousemove', (e)=>{
+      const offsetX = ((gridOffset.x % squareSize) + squareSize) % squareSize;
+      const offsetY = ((gridOffset.y % squareSize) + squareSize) % squareSize;
+      const col = Math.floor((e.clientX - offsetX) / squareSize);
+      const row = Math.floor((e.clientY - offsetY) / squareSize);
+      hoveredSquare = { x: col, y: row };
+    });
+    window.addEventListener('mouseleave', ()=> hoveredSquare = null);
+
+    requestAnimationFrame(tick);
+  })();
+
+  // ---------- Splash screen orb animation (10s on load) ----------
+  (function initSplashOrb(){
+    const splash = document.getElementById('splash');
+    const orbCanvas = document.getElementById('orb-canvas');
+    const octx = orbCanvas.getContext('2d');
+    const W = orbCanvas.width, H = orbCanvas.height;
+    const cx = W/2, cy = H/2, radius = W/2 - 4;
+    let t = 0;
+
+    function accentColors(){
+      const theme = htmlEl.getAttribute('data-theme');
+      if(theme === 'dark') return ['#3AA0FF', '#0A84FF', '#0B0D12'];
+      if(theme === 'ocean') return ['#00B8D9', '#0086A8', '#062A33'];
+      return ['#0A84FF', '#0060DF', '#EAF4FF'];
+    }
+
+    function drawOrb(){
+      octx.clearRect(0, 0, W, H);
+      const [c1, c2, bgTint] = accentColors();
+
+      octx.save();
+      octx.beginPath();
+      octx.arc(cx, cy, radius, 0, Math.PI*2);
+      octx.clip();
+
+      const bg = octx.createRadialGradient(cx, cy, radius*0.1, cx, cy, radius);
+      bg.addColorStop(0, bgTint);
+      bg.addColorStop(1, '#FFFFFF');
+      octx.fillStyle = bg;
+      octx.fillRect(0, 0, W, H);
+
+      const bands = 5;
+      for(let b = 0; b < bands; b++){
+        const amp = radius * (0.16 + b*0.04);
+        const freq = 1.6 + b*0.35;
+        const phase = t*0.03 + b*1.1;
+        const yBase = cy - radius*0.5 + (b/(bands-1)) * radius;
+
+        octx.beginPath();
+        for(let x = -radius; x <= radius; x += 4){
+          const y = yBase + Math.sin((x/radius)*Math.PI*freq + phase) * amp * 0.25;
+          if(x === -radius) octx.moveTo(cx + x, cy + y - cy);
+          else octx.lineTo(cx + x, y);
+        }
+        octx.strokeStyle = b % 2 === 0 ? c1 : c2;
+        octx.globalAlpha = 0.55 - b*0.06;
+        octx.lineWidth = 3.2;
+        octx.stroke();
+      }
+      octx.globalAlpha = 1;
+
+      const ringGrad = octx.createRadialGradient(cx, cy, radius*0.7, cx, cy, radius);
+      ringGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      ringGrad.addColorStop(1, 'rgba(0,0,0,0.12)');
+      octx.fillStyle = ringGrad;
+      octx.fillRect(0, 0, W, H);
+
+      octx.restore();
+
+      octx.beginPath();
+      octx.arc(cx, cy, radius, 0, Math.PI*2);
+      octx.lineWidth = 2;
+      octx.strokeStyle = c1;
+      octx.globalAlpha = 0.5;
+      octx.stroke();
+      octx.globalAlpha = 1;
+
+      t++;
+      if(!splash.classList.contains('hide')){
+        requestAnimationFrame(drawOrb);
+      }
+    }
+
+    drawOrb();
+
+    setTimeout(()=>{
+      splash.classList.add('hide');
+    }, 10000);
+  })();
 </script>
 
 </body>
