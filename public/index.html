@@ -47,327 +47,193 @@
 
   *{box-sizing:border-box; margin:0; padding:0;}
 
-  html,body{
-    height:100%;
-    font-family:"Vazirmatn", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  }
+  html,body{ height:100%; font-family:"Vazirmatn", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; }
 
   body{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height:100vh;
-    padding: 24px 14px;
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; padding: 24px 14px;
     background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 45%);
     color: var(--text);
     transition: background .35s ease, color .35s ease;
   }
 
   .phone-frame{
-    width:100%;
-    max-width: 380px;
+    width:100%; max-width: 380px;
     background: var(--surface);
     border-radius: 34px;
-    box-shadow:
-      0 1px 2px rgba(10,20,40,0.04),
-      0 20px 50px -12px var(--shadow-tint),
-      0 0 0 1px var(--surface-border);
+    box-shadow: 0 1px 2px rgba(10,20,40,0.04), 0 20px 50px -12px var(--shadow-tint), 0 0 0 1px var(--surface-border);
     padding: 26px 22px 22px;
-    position:relative;
-    overflow:hidden;
+    position:relative; overflow:hidden;
     transition: background .35s ease, box-shadow .35s ease;
   }
 
   .phone-frame::before{
-    content:"";
-    position:absolute;
-    top:-120px; right:-90px;
-    width:260px; height:260px;
+    content:""; position:absolute; top:-120px; right:-90px; width:260px; height:260px;
     background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
-    pointer-events:none;
-    transition: background .35s ease;
+    pointer-events:none; transition: background .35s ease;
   }
 
-  .theme-switcher{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    margin-bottom: 18px;
-    position:relative;
-  }
-
-  .theme-dot{
-    width:28px; height:28px;
-    border-radius:50%;
-    border: 2px solid transparent;
-    cursor:pointer;
-    padding:0;
-    position:relative;
-    transition: transform .15s ease, border-color .15s ease;
-  }
-
+  .theme-switcher{ display:flex; justify-content:center; gap:10px; margin-bottom: 18px; }
+  .theme-dot{ width:28px; height:28px; border-radius:50%; border:2px solid transparent; cursor:pointer; padding:0; transition: transform .15s ease, border-color .15s ease; }
   .theme-dot:active{ transform: scale(0.9); }
   .theme-dot.active{ border-color: var(--text); }
-
   .theme-dot[data-t="classic"]{ background: linear-gradient(135deg,#0A84FF,#0060DF); }
   .theme-dot[data-t="dark"]{ background: linear-gradient(135deg,#12151C,#3AA0FF); }
   .theme-dot[data-t="ocean"]{ background: linear-gradient(135deg,#00B8D9,#062A33); }
 
-  header{
-    text-align:center;
-    margin-bottom: 24px;
-    position:relative;
-  }
+  header{ text-align:center; margin-bottom: 22px; position:relative; }
 
   .logo-badge{
-    width:56px; height:56px;
-    margin:0 auto 14px;
-    border-radius:16px;
+    width:56px; height:56px; margin:0 auto 14px; border-radius:16px;
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
     display:flex; align-items:center; justify-content:center;
     box-shadow: 0 8px 20px -6px var(--glow-tint);
     transition: background .35s ease, box-shadow .35s ease;
   }
-
   .logo-badge svg{ width:28px; height:28px; }
 
-  .brand-title{
-    font-size: 21px;
-    font-weight: 800;
-    letter-spacing: -0.2px;
-    color: var(--text);
-  }
-
+  .brand-title{ font-size: 21px; font-weight: 800; letter-spacing: -0.2px; color: var(--text); }
   .brand-title span{ color: var(--accent); }
-
-  .brand-sub{
-    font-size: 12.5px;
-    color: var(--muted);
-    margin-top: 4px;
-    font-weight:500;
-  }
+  .brand-sub{ font-size: 12.5px; color: var(--muted); margin-top: 4px; font-weight:500; }
 
   .field-group{ margin-bottom: 14px; }
+  .field-label{ font-size: 12.5px; font-weight:600; color: var(--muted); margin-bottom: 8px; display:block; padding-right:4px; }
 
-  .field-label{
-    font-size: 12.5px;
-    font-weight:600;
-    color: var(--muted);
-    margin-bottom: 8px;
-    display:block;
-    padding-right:4px;
-  }
+  .input-row{ display:flex; gap:8px; }
 
   input[type="text"]{
-    width:100%;
-    padding: 14px 16px;
-    border-radius: 14px;
-    border: 1.5px solid var(--input-border);
-    background: var(--input-bg);
-    font-family: inherit;
-    font-size: 14.5px;
-    color: var(--text);
-    outline:none;
+    width:100%; padding: 14px 16px; border-radius: 14px;
+    border: 1.5px solid var(--input-border); background: var(--input-bg);
+    font-family: inherit; font-size: 14.5px; color: var(--text); outline:none;
     transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
     text-align:right;
   }
-
   input[type="text"]::placeholder{ color: var(--muted); opacity:.8; }
+  input[type="text"]:focus{ border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
 
-  input[type="text"]:focus{
-    border-color: var(--accent);
-    box-shadow: 0 0 0 4px var(--accent-soft);
+  .copy-btn{
+    flex-shrink:0; width:48px; border-radius:14px; border:1.5px solid var(--input-border);
+    background: var(--input-bg); color: var(--muted); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition: all .15s ease;
   }
+  .copy-btn:active{ transform: scale(0.92); }
+  .copy-btn svg{ width:18px; height:18px; }
+
+  .option-block{ margin-top: 14px; }
+  .option-title{ font-size:12px; font-weight:600; color: var(--muted); margin-bottom:8px; padding-right:4px; }
+
+  .color-row{ display:flex; align-items:center; gap:10px; }
+  .color-dot{
+    width:26px; height:26px; border-radius:50%; border:2px solid transparent; cursor:pointer;
+    transition: transform .15s ease, border-color .15s ease; flex-shrink:0;
+  }
+  .color-dot:active{ transform: scale(0.9); }
+  .color-dot.active{ border-color: var(--text); }
+  .color-dot[data-c="#0A84FF"]{ background:#0A84FF; }
+  .color-dot[data-c="#0B0D12"]{ background:#0B0D12; }
+  .color-dot[data-c="#00B8D9"]{ background:#00B8D9; }
+
+  .color-custom-wrap{
+    width:26px; height:26px; border-radius:50%; overflow:hidden; position:relative;
+    border:2px dashed var(--muted); flex-shrink:0; cursor:pointer;
+  }
+  .color-custom-wrap input[type="color"]{
+    position:absolute; inset:-4px; width:34px; height:34px; border:none; padding:0; cursor:pointer;
+  }
+
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
+  .toggle-label{ font-size:12.5px; font-weight:600; color: var(--text); }
+
+  .switch{ position:relative; width:44px; height:26px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{
+    position:absolute; cursor:pointer; inset:0; background: var(--input-border);
+    border-radius:999px; transition:.25s;
+  }
+  .slider::before{
+    content:""; position:absolute; height:20px; width:20px; right:3px; bottom:3px;
+    background: white; border-radius:50%; transition:.25s; box-shadow:0 1px 3px rgba(0,0,0,0.3);
+  }
+  input:checked + .slider{ background: var(--accent); }
+  input:checked + .slider::before{ transform: translateX(-18px); }
 
   .btn{
-    width:100%;
-    padding: 15px 16px;
-    border:none;
-    border-radius: 14px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight:700;
-    cursor:pointer;
+    width:100%; padding: 15px 16px; border:none; border-radius: 14px; font-family: inherit;
+    font-size: 15px; font-weight:700; cursor:pointer;
     transition: transform .12s ease, box-shadow .18s ease, opacity .15s ease;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
+    display:flex; align-items:center; justify-content:center; gap:8px;
   }
-
   .btn:active{ transform: scale(0.97); }
   .btn:disabled{ opacity:.5; cursor:not-allowed; }
 
   .btn-primary{
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
-    color:#FFFFFF;
-    box-shadow: 0 10px 24px -8px var(--glow-tint);
-    margin-top:4px;
+    color:#FFFFFF; box-shadow: 0 10px 24px -8px var(--glow-tint); margin-top:16px;
   }
 
-  .qr-section{
-    margin-top: 22px;
-    display:none;
-    animation: fadeUp .35s ease;
-  }
-
+  .qr-section{ margin-top: 22px; display:none; animation: fadeUp .35s ease; }
   .qr-section.visible{ display:block; }
-
-  @keyframes fadeUp{
-    from{ opacity:0; transform: translateY(10px); }
-    to{ opacity:1; transform: translateY(0); }
-  }
+  @keyframes fadeUp{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
 
   #qr-card{
-    background: #FFFFFF;
-    border: 1.5px solid var(--surface-border);
-    border-radius: 20px;
-    padding: 22px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:14px;
+    background: #FFFFFF; border: 1.5px solid var(--surface-border); border-radius: 20px;
+    padding: 22px; display:flex; flex-direction:column; align-items:center; gap:14px;
   }
 
-  #qrcode{
-    background:#FFFFFF;
-    padding: 12px;
-    border-radius: 14px;
-    box-shadow: 0 6px 18px -6px var(--shadow-tint);
-    display:flex;
-  }
-
+  #qrcode-wrap{ position:relative; display:flex; }
+  #qrcode{ background:#FFFFFF; padding: 12px; border-radius: 14px; box-shadow: 0 6px 18px -6px var(--shadow-tint); display:flex; }
   #qrcode img, #qrcode canvas{ border-radius: 6px; display:block; }
 
-  .qr-caption{
-    font-size: 12.5px;
-    color: #6E7480;
-    text-align:center;
-    word-break: break-all;
-    max-width: 260px;
-    font-weight:500;
+  .qr-logo-overlay{
+    position:absolute; top:50%; left:50%; transform: translate(-50%,-50%);
+    width:46px; height:46px; background:#FFFFFF; border-radius:12px;
+    display:none; align-items:center; justify-content:center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25); padding:4px;
   }
-
-  .action-row{
-    display:flex;
-    gap:10px;
-    margin-top:16px;
+  .qr-logo-overlay.visible{ display:flex; }
+  .qr-logo-overlay .mini-badge{
+    width:100%; height:100%; border-radius:8px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+    display:flex; align-items:center; justify-content:center;
   }
+  .qr-logo-overlay svg{ width:22px; height:22px; }
 
-  .btn-telegram{
-    background: var(--tg-bg);
-    color: var(--tg-text);
-    flex:2;
-  }
+  .qr-caption{ font-size: 12.5px; color: #6E7480; text-align:center; word-break: break-all; max-width: 260px; font-weight:500; }
 
+  .action-row{ display:flex; gap:10px; margin-top:16px; }
+  .btn-telegram{ background: var(--tg-bg); color: var(--tg-text); flex:2; }
   .btn-telegram svg{ width:18px; height:18px; fill: var(--tg-text); }
+  .btn-download{ background: var(--dl-bg); color: var(--dl-text); border: 1.5px solid var(--dl-border); flex:1; padding: 15px 10px; }
 
-  .btn-download{
-    background: var(--dl-bg);
-    color: var(--dl-text);
-    border: 1.5px solid var(--dl-border);
-    flex:1;
-    padding: 15px 10px;
-  }
-
-  .hint{
-    text-align:center;
-    font-size:11.5px;
-    color: var(--muted);
-    margin-top:10px;
-    line-height:1.7;
-  }
-
-  footer{
-    margin-top: 24px;
-    text-align:center;
-    font-size: 11.5px;
-    color: var(--muted);
-    font-weight:600;
-    letter-spacing: 0.1px;
-  }
-
-  footer span{ color: var(--accent); }
-
-  .divider{
-    height:1px;
-    background: linear-gradient(90deg, transparent, var(--surface-border), transparent);
-    margin: 18px 0 14px;
-  }
-
-  .toast{
-    position:fixed;
-    bottom: 26px;
-    left:50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--text);
-    color: var(--surface);
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight:600;
-    opacity:0;
-    transition: all .25s ease;
-    pointer-events:none;
-    box-shadow: 0 10px 24px -8px rgba(0,0,0,0.35);
-    z-index:999;
-    max-width:88vw;
-    text-align:center;
-  }
-
-  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
-
-  .btn-screenshot{
-    margin-top:10px;
-    background: var(--accent-soft);
-    color: var(--accent-deep);
+  .btn-screenshot, .btn-share-more{
+    margin-top:10px; background: var(--accent-soft); color: var(--accent-deep);
     border: 1.5px solid var(--surface-border);
   }
 
+  .hint{ text-align:center; font-size:11.5px; color: var(--muted); margin-top:10px; line-height:1.7; }
+
+  footer{ margin-top: 24px; text-align:center; font-size: 11.5px; color: var(--muted); font-weight:600; letter-spacing: 0.1px; }
+  footer span{ color: var(--accent); }
+
+  .divider{ height:1px; background: linear-gradient(90deg, transparent, var(--surface-border), transparent); margin: 18px 0 14px; }
+
+  .toast{
+    position:fixed; bottom: 26px; left:50%; transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: var(--surface); padding: 12px 20px; border-radius: 12px;
+    font-size: 13px; font-weight:600; opacity:0; transition: all .25s ease; pointer-events:none;
+    box-shadow: 0 10px 24px -8px rgba(0,0,0,0.35); z-index:999; max-width:88vw; text-align:center;
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
   .lightbox{
-    position:fixed;
-    inset:0;
-    background: rgba(6,10,18,0.82);
-    backdrop-filter: blur(6px);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    gap:16px;
-    z-index:1200;
-    padding: 26px 20px;
+    position:fixed; inset:0; background: rgba(6,10,18,0.82); backdrop-filter: blur(6px);
+    display:none; align-items:center; justify-content:center; flex-direction:column; gap:16px;
+    z-index:1200; padding: 26px 20px;
   }
-
   .lightbox.visible{ display:flex; }
-
-  .lightbox img{
-    max-width: 86vw;
-    max-height: 62vh;
-    border-radius: 18px;
-    box-shadow: 0 20px 60px -10px rgba(0,0,0,0.6);
-    -webkit-touch-callout: default;
-  }
-
-  .lightbox-hint{
-    color:#EAF4FF;
-    font-size: 13px;
-    font-weight:600;
-    text-align:center;
-    max-width: 300px;
-    line-height:1.8;
-  }
-
-  .lightbox-close{
-    background: rgba(255,255,255,0.14);
-    color:#FFFFFF;
-    border:none;
-    padding: 12px 26px;
-    border-radius: 12px;
-    font-family:inherit;
-    font-size:13.5px;
-    font-weight:700;
-    cursor:pointer;
-  }
+  .lightbox img{ max-width: 86vw; max-height: 62vh; border-radius: 18px; box-shadow: 0 20px 60px -10px rgba(0,0,0,0.6); -webkit-touch-callout: default; }
+  .lightbox-hint{ color:#EAF4FF; font-size: 13px; font-weight:600; text-align:center; max-width: 300px; line-height:1.8; }
+  .lightbox-close{ background: rgba(255,255,255,0.14); color:#FFFFFF; border:none; padding: 12px 26px; border-radius: 12px; font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -397,7 +263,32 @@
 
     <div class="field-group">
       <label class="field-label">متن یا لینک مورد نظر را وارد کنید</label>
-      <input type="text" id="qr-input" placeholder="مثلاً: https://example.com" />
+      <div class="input-row">
+        <input type="text" id="qr-input" placeholder="مثلاً: https://example.com" />
+        <button class="copy-btn" id="copy-btn" title="کپی متن">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="option-block">
+      <div class="option-title">رنگ کیوارکد</div>
+      <div class="color-row">
+        <button class="color-dot active" data-c="#0A84FF" title="آبی"></button>
+        <button class="color-dot" data-c="#0B0D12" title="مشکی"></button>
+        <button class="color-dot" data-c="#00B8D9" title="فیروزه‌ای"></button>
+        <div class="color-custom-wrap" title="رنگ دلخواه">
+          <input type="color" id="custom-color" value="#0A84FF" />
+        </div>
+      </div>
+    </div>
+
+    <div class="toggle-row">
+      <span class="toggle-label">افزودن لوگوی کُدینو در مرکز</span>
+      <label class="switch">
+        <input type="checkbox" id="logo-toggle">
+        <span class="slider"></span>
+      </label>
     </div>
 
     <button class="btn btn-primary" id="generate-btn">ساخت کیوارکد</button>
@@ -405,7 +296,20 @@
     <div class="qr-section" id="qr-section">
       <div class="divider"></div>
       <div id="qr-card">
-        <div id="qrcode"></div>
+        <div id="qrcode-wrap">
+          <div id="qrcode"></div>
+          <div class="qr-logo-overlay" id="qr-logo-overlay">
+            <div class="mini-badge">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+                <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+                <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+                <path d="M14 14H17V17H14V14Z" fill="white"/><path d="M18 14H21V17H18V14Z" fill="white"/>
+                <path d="M14 18H17V21H14V18Z" fill="white"/><path d="M18 18H21V21H18V18Z" fill="white"/>
+              </svg>
+            </div>
+          </div>
+        </div>
         <div class="qr-caption" id="qr-caption"></div>
       </div>
 
@@ -416,6 +320,11 @@
         </button>
         <button class="btn btn-download" id="download-btn">دانلود عکس</button>
       </div>
+
+      <button class="btn btn-share-more" id="share-more-btn">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/></svg>
+        اشتراک‌گذاری در سایر برنامه‌ها
+      </button>
 
       <button class="btn btn-screenshot" id="screenshot-btn">
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none"><path d="M4 8V6a2 2 0 0 1 2-2h2M4 16v2a2 2 0 0 0 2 2h2M20 8V6a2 2 0 0 0-2-2h-2M20 16v2a2 2 0 0 1-2 2h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/></svg>
@@ -438,13 +347,17 @@
 
 <script>
   const input = document.getElementById('qr-input');
+  const copyBtn = document.getElementById('copy-btn');
   const genBtn = document.getElementById('generate-btn');
   const qrSection = document.getElementById('qr-section');
   const qrCard = document.getElementById('qr-card');
   const qrContainer = document.getElementById('qrcode');
+  const qrLogoOverlay = document.getElementById('qr-logo-overlay');
+  const logoToggle = document.getElementById('logo-toggle');
   const qrCaption = document.getElementById('qr-caption');
   const telegramBtn = document.getElementById('telegram-btn');
   const downloadBtn = document.getElementById('download-btn');
+  const shareMoreBtn = document.getElementById('share-more-btn');
   const screenshotBtn = document.getElementById('screenshot-btn');
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
@@ -452,11 +365,14 @@
   const hintText = document.getElementById('hint-text');
   const toast = document.getElementById('toast');
   const themeDots = document.querySelectorAll('.theme-dot');
+  const colorDots = document.querySelectorAll('.color-dot');
+  const customColorInput = document.getElementById('custom-color');
   const htmlEl = document.documentElement;
 
   let currentQR = null;
   let currentBlob = null;
   let currentValue = '';
+  let qrColor = '#0A84FF';
 
   themeDots.forEach(dot=>{
     dot.addEventListener('click', ()=>{
@@ -466,6 +382,39 @@
     });
   });
 
+  colorDots.forEach(dot=>{
+    dot.addEventListener('click', ()=>{
+      qrColor = dot.dataset.c;
+      colorDots.forEach(d=> d.classList.remove('active'));
+      dot.classList.add('active');
+      customColorInput.value = qrColor;
+      if(currentValue) generateQR(true);
+    });
+  });
+
+  customColorInput.addEventListener('input', ()=>{
+    qrColor = customColorInput.value;
+    colorDots.forEach(d=> d.classList.remove('active'));
+    if(currentValue) generateQR(true);
+  });
+
+  logoToggle.addEventListener('change', ()=>{
+    qrLogoOverlay.classList.toggle('visible', logoToggle.checked);
+    currentBlob = null;
+    if(qrSection.classList.contains('visible')) renderShareImage();
+  });
+
+  copyBtn.addEventListener('click', async ()=>{
+    const value = input.value.trim();
+    if(!value){ showToast('چیزی برای کپی نیست'); return; }
+    try{
+      await navigator.clipboard.writeText(value);
+      showToast('متن کپی شد');
+    }catch(e){
+      showToast('کپی ناموفق بود');
+    }
+  });
+
   function showToast(msg){
     toast.textContent = msg;
     toast.classList.add('show');
@@ -473,9 +422,7 @@
   }
 
   function nextPaint(){
-    return new Promise(resolve=>{
-      requestAnimationFrame(()=> requestAnimationFrame(resolve));
-    });
+    return new Promise(resolve=>{ requestAnimationFrame(()=> requestAnimationFrame(resolve)); });
   }
 
   async function renderShareImage(){
@@ -484,11 +431,7 @@
     downloadBtn.disabled = true;
     await nextPaint();
     try{
-      const canvas = await html2canvas(qrCard, {
-        backgroundColor: '#FFFFFF',
-        scale: 3,
-        useCORS: true
-      });
+      const canvas = await html2canvas(qrCard, { backgroundColor: '#FFFFFF', scale: 3, useCORS: true });
       currentBlob = await new Promise(res => canvas.toBlob(res, 'image/png'));
       telegramBtn.disabled = false;
       downloadBtn.disabled = false;
@@ -502,13 +445,13 @@
     }
   }
 
-  async function generateQR(){
+  async function generateQR(silent){
     const value = input.value.trim();
     if(!value){
       input.focus();
       input.style.borderColor = '#FF3B30';
       setTimeout(()=> input.style.borderColor = '', 900);
-      showToast('لطفاً یک متن یا لینک وارد کنید');
+      if(!silent) showToast('لطفاً یک متن یا لینک وارد کنید');
       return;
     }
 
@@ -520,49 +463,38 @@
       text: value,
       width: 210,
       height: 210,
-      colorDark: "#0B0D12",
+      colorDark: qrColor,
       colorLight: "#FFFFFF",
       correctLevel: QRCode.CorrectLevel.H
     });
 
     qrCaption.textContent = value;
     qrSection.classList.add('visible');
-    qrSection.scrollIntoView({behavior:'smooth', block:'nearest'});
+    if(!silent) qrSection.scrollIntoView({behavior:'smooth', block:'nearest'});
 
     renderShareImage();
   }
 
-  genBtn.addEventListener('click', generateQR);
-  input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') generateQR(); });
+  genBtn.addEventListener('click', ()=> generateQR(false));
+  input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') generateQR(false); });
 
   function downloadBlob(blob, filename){
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(()=> URL.revokeObjectURL(url), 2000);
   }
 
-  downloadBtn.addEventListener('click', async ()=>{
-    if(!currentBlob){
-      showToast('صبر کنید تصویر آماده شود');
-      return;
-    }
+  downloadBtn.addEventListener('click', ()=>{
+    if(!currentBlob){ showToast('صبر کنید تصویر آماده شود'); return; }
     downloadBlob(currentBlob, 'codino-qr.png');
     showToast('تصویر کیوارکد دانلود شد');
   });
 
   screenshotBtn.addEventListener('click', async ()=>{
-    if(!qrSection.classList.contains('visible')){
-      showToast('ابتدا یک کیوارکد بسازید');
-      return;
-    }
-
+    if(!qrSection.classList.contains('visible')){ showToast('ابتدا یک کیوارکد بسازید'); return; }
     let blobToShow = currentBlob;
-
     if(!blobToShow){
       showToast('در حال گرفتن اسکرین‌شات...');
       try{
@@ -570,31 +502,38 @@
         const canvas = await html2canvas(qrCard, { backgroundColor:'#FFFFFF', scale: 3 });
         blobToShow = await new Promise(res => canvas.toBlob(res, 'image/png'));
         currentBlob = blobToShow;
-      }catch(e){
-        showToast('گرفتن اسکرین‌شات ناموفق بود');
-        return;
-      }
+      }catch(e){ showToast('گرفتن اسکرین‌شات ناموفق بود'); return; }
     }
-
     const objUrl = URL.createObjectURL(blobToShow);
     lightboxImg.src = objUrl;
     lightbox.classList.add('visible');
   });
 
-  lightboxClose.addEventListener('click', ()=>{
-    lightbox.classList.remove('visible');
-  });
+  lightboxClose.addEventListener('click', ()=> lightbox.classList.remove('visible'));
+  lightbox.addEventListener('click', (e)=>{ if(e.target === lightbox) lightbox.classList.remove('visible'); });
 
-  lightbox.addEventListener('click', (e)=>{
-    if(e.target === lightbox) lightbox.classList.remove('visible');
+  shareMoreBtn.addEventListener('click', async ()=>{
+    if(!qrSection.classList.contains('visible')){ showToast('ابتدا یک کیوارکد بسازید'); return; }
+    if(navigator.share){
+      try{
+        await navigator.share({
+          title: 'کُدینو | Codino',
+          text: 'کیوارکد ساخته‌شده با کُدینو | Codino:\n' + currentValue,
+          url: currentValue.startsWith('http') ? currentValue : undefined
+        });
+      }catch(e){ /* user cancelled, ignore */ }
+    } else {
+      try{
+        await navigator.clipboard.writeText(currentValue);
+        showToast('این مرورگر اشتراک‌گذاری مستقیم را پشتیبانی نمی‌کند — متن کپی شد');
+      }catch(e){
+        showToast('اشتراک‌گذاری در دسترس نیست');
+      }
+    }
   });
 
   telegramBtn.addEventListener('click', async ()=>{
-    if(!qrSection.classList.contains('visible')){
-      showToast('ابتدا یک کیوارکد بسازید');
-      return;
-    }
-
+    if(!qrSection.classList.contains('visible')){ showToast('ابتدا یک کیوارکد بسازید'); return; }
     if(!currentBlob){
       showToast('در حال آماده‌سازی تصویر، دوباره بزنید');
       renderShareImage();
@@ -605,21 +544,13 @@
 
     if(navigator.canShare && navigator.canShare({ files:[file] })){
       try{
-        await navigator.share({
-          files: [file],
-          title: 'کُدینو | Codino',
-          text: 'کیوارکد ساخته شده با کُدینو | Codino'
-        });
+        await navigator.share({ files: [file], title: 'کُدینو | Codino', text: 'کیوارکد ساخته شده با کُدینو | Codino' });
         return;
       }catch(err){
         if(err.name === 'AbortError') return;
       }
     }
 
-    // No file-share support on this browser (typical on desktop, or when
-    // the page isn't opened as a standalone HTTPS page). Telegram's web
-    // link can only carry text/links, not images, so we hand the user
-    // the real PNG file to attach manually and open the chat picker too.
     downloadBlob(currentBlob, 'codino-qr.png');
     showToast('این مرورگر امکان ارسال مستقیم عکس را ندارد — عکس دانلود شد، آن را در تلگرام ضمیمه کنید');
     const text = encodeURIComponent('کیوارکد ساخته شده با کُدینو | Codino:\n' + currentValue);
