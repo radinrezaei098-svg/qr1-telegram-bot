@@ -1,0 +1,17 @@
+{
+  "name": "qr1-telegram-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "بات تلگرامی کُدینو - با دکمه‌های شیشه‌ای، تنظیمات قابل تغییر (اسم و رنگ) و اجرا روی Vercel",
+  "main": "api/webhook.js",
+  "scripts": {
+    "set-webhook": "node scripts/set-webhook.js",
+    "delete-webhook": "node scripts/delete-webhook.js"
+  },
+  "dependencies": {
+    "@vercel/kv": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
