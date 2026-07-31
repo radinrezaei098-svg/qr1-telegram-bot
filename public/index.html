@@ -298,10 +298,10 @@
 
       <button class="btn btn-telegram" id="telegram-btn">
         <svg viewBox="0 0 24 24"><path d="M21.05 3.16 2.53 10.4c-1.24.5-1.23 1.2-.22 1.51l4.77 1.49 1.83 5.6c.22.62.36.86.73.86.34 0 .5-.16.7-.35l1.86-1.8 4.02 2.97c.74.41 1.27.2 1.46-.68l2.65-12.5c.28-1.16-.42-1.68-1.28-1.34Zm-11.7 9.03 8.35-5.27c.4-.24.76-.11.46.15L9.9 14.4l-.28 3.03-1.42-4.24Z"/></svg>
-        ارسال در تلگرام
+        <span id="telegram-btn-text">ارسال در تلگرام</span>
       </button>
 
-      <div class="hint">در صورت پشتیبانی مرورگر، تصویر کیوارکد مستقیم ارسال می‌شود</div>
+      <div class="hint" id="hint-text">در حال آماده‌سازی تصویر برای ارسال...</div>
     </div>
 
     <footer>توسط گروه کُدینو <span>| Codino</span> ساخته شده</footer>
@@ -317,17 +317,28 @@
   const qrContainer = document.getElementById('qrcode');
   const qrCaption = document.getElementById('qr-caption');
   const telegramBtn = document.getElementById('telegram-btn');
+  const telegramBtnText = document.getElementById('telegram-btn-text');
+  const hintText = document.getElementById('hint-text');
   const toast = document.getElementById('toast');
 
   let currentQR = null;
+  let currentBlob = null;
+  let currentValue = '';
 
   function showToast(msg){
     toast.textContent = msg;
     toast.classList.add('show');
-    setTimeout(()=> toast.classList.remove('show'), 2400);
+    setTimeout(()=> toast.classList.remove('show'), 2600);
   }
 
-  function generateQR(){
+  // wait two animation frames so the QR canvas/image has actually painted
+  function nextPaint(){
+    return new Promise(resolve=>{
+      requestAnimationFrame(()=> requestAnimationFrame(resolve));
+    });
+  }
+
+  async function generateQR(){
     const value = input.value.trim();
     if(!value){
       input.focus();
@@ -337,6 +348,8 @@
       return;
     }
 
+    currentValue = value;
+    currentBlob = null;
     qrContainer.innerHTML = '';
 
     currentQR = new QRCode(qrContainer, {
@@ -351,6 +364,36 @@
     qrCaption.textContent = value;
     qrSection.classList.add('visible');
     qrSection.scrollIntoView({behavior:'smooth', block:'nearest'});
+
+    // pre-render the shareable image right away (not on click) so that
+    // when the user taps "ارسال در تلگرام" the share() call fires
+    // immediately inside the click gesture instead of after a delay
+    telegramBtn.disabled = true;
+    hintText.textContent = 'در حال آماده‌سازی تصویر...';
+
+    await nextPaint();
+
+    try{
+      const canvas = await html2canvas(qrCard, {
+        backgroundColor: '#FFFFFF',
+        scale: 3,
+        useCORS: true
+      });
+
+      canvas.toBlob((blob)=>{
+        if(blob){
+          currentBlob = blob;
+          telegramBtn.disabled = false;
+          hintText.textContent = 'تصویر آماده است، روی دکمه بزنید';
+        } else {
+          telegramBtn.disabled = false;
+          hintText.textContent = 'برای دانلود/ارسال دستی، تصویر کیوارکد را نگه‌دارید و ذخیره کنید';
+        }
+      }, 'image/png');
+    }catch(err){
+      telegramBtn.disabled = false;
+      hintText.textContent = 'برای ارسال، روی تصویر کیوارکد نگه‌دارید و ذخیره کنید';
+    }
   }
 
   genBtn.addEventListener('click', generateQR);
@@ -362,48 +405,62 @@
       return;
     }
 
-    telegramBtn.disabled = true;
-
-    try{
-      const canvas = await html2canvas(qrCard, {
-        backgroundColor: '#FFFFFF',
-        scale: 2
-      });
-
-      canvas.toBlob(async (blob)=>{
-        const file = new File([blob], 'codino-qr.png', { type: 'image/png' });
-
-        if(navigator.canShare && navigator.canShare({ files:[file] })){
-          try{
-            await navigator.share({
-              files: [file],
-              title: 'کُدینو | Codino',
-              text: 'کیوارکد ساخته شده با کُدینو'
-            });
-          }catch(err){
-            if(err.name !== 'AbortError'){
-              fallbackTelegramShare();
-            }
-          }
-        } else {
-          fallbackTelegramShare();
-        }
-
-        telegramBtn.disabled = false;
-      }, 'image/png');
-
-    }catch(err){
-      telegramBtn.disabled = false;
-      fallbackTelegramShare();
+    if(!currentBlob){
+      // image not ready yet — build it now, this may fall outside the
+      // gesture on strict browsers but is the best fallback available
+      showToast('در حال آماده‌سازی تصویر...');
+      try{
+        await nextPaint();
+        const canvas = await html2canvas(qrCard, { backgroundColor:'#FFFFFF', scale:3 });
+        currentBlob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+      }catch(e){ /* ignore, will fall back below */ }
     }
+
+    if(currentBlob){
+      const file = new File([currentBlob], 'codino-qr.png', { type: 'image/png' });
+
+      if(navigator.canShare && navigator.canShare({ files:[file] })){
+        try{
+          await navigator.share({
+            files: [file],
+            title: 'کُدینو | Codino',
+            text: 'کیوارکد ساخته شده با کُدینو | Codino'
+          });
+          return;
+        }catch(err){
+          if(err.name === 'AbortError') return; // user cancelled share sheet, do nothing
+          // real failure — fall through to download + telegram fallback
+        }
+      }
+    }
+
+    // Desktop browsers / unsupported devices: navigator.share with files
+    // isn't available, so we download the actual PNG and open Telegram's
+    // web share as a companion action (Telegram's web link cannot attach
+    // images directly — this is a browser limitation, not this page).
+    if(currentBlob){
+      downloadBlob(currentBlob, 'codino-qr.png');
+      showToast('تصویر کیوارکد دانلود شد؛ آن را در تلگرام ضمیمه کنید');
+    }
+    fallbackTelegramShare();
   });
 
+  function downloadBlob(blob, filename){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=> URL.revokeObjectURL(url), 2000);
+  }
+
   function fallbackTelegramShare(){
-    const value = input.value.trim();
+    const value = currentValue || input.value.trim();
     const text = encodeURIComponent('کیوارکد ساخته شده با کُدینو | Codino:\n' + value);
     const url = 'https://t.me/share/url?url=' + encodeURIComponent(value) + '&text=' + text;
     window.open(url, '_blank');
-    showToast('صفحه اشتراک‌گذاری تلگرام باز شد');
   }
 </script>
 
