@@ -24,6 +24,25 @@
     background:var(--white);
   }
 
+  #glitch-bg{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    opacity:.22;
+    pointer-events:none;
+  }
+  #glitch-bg canvas{
+    display:block;
+    width:100%;
+    height:100%;
+  }
+  #glitch-bg .vignette{
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle, rgba(255,255,255,0) 45%, rgba(255,255,255,1) 100%);
+  }
+
   body{
     font-family:'Vazirmatn', Tahoma, sans-serif;
     color:var(--ink);
@@ -40,12 +59,18 @@
   }
 
   .card{
+    position:relative;
+    z-index:1;
     width:100%;
     max-width:380px;
     display:flex;
     flex-direction:column;
     align-items:center;
     text-align:center;
+    background:var(--white);
+    border-radius:26px;
+    padding:38px 24px 30px;
+    box-shadow:0 24px 60px rgba(17,75,161,.14);
   }
 
   /* ---------- eyebrow ---------- */
@@ -295,6 +320,11 @@
 </head>
 <body>
 
+  <div id="glitch-bg">
+    <canvas id="glitch-canvas"></canvas>
+    <div class="vignette"></div>
+  </div>
+
   <div class="card">
 
     <div class="eyebrow"><span class="dot"></span>در حال به‌روزرسانی</div>
@@ -379,6 +409,136 @@
 
   tick();
   setInterval(tick, 1000);
+
+  // ---------- LetterGlitch background (vanilla JS port) ----------
+  (function initLetterGlitch(){
+    const canvas = document.getElementById('glitch-canvas');
+    const wrap = document.getElementById('glitch-bg');
+    if (!canvas || !wrap) return;
+    const ctx = canvas.getContext('2d');
+
+    const glitchColors = ['#2b4539', '#61dca3', '#61b3dc'];
+    const glitchSpeed = 50;
+    const smooth = true;
+
+    const fontSize = 16, charWidth = 10, charHeight = 20;
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$&*()-_+=/[]{};:<>.,0123456789';
+    const chars = Array.from(characters);
+
+    let letters = [];
+    let grid = { columns: 0, rows: 0 };
+    let lastGlitchTime = Date.now();
+    let rafId = null;
+
+    const randomChar = () => chars[Math.floor(Math.random() * chars.length)];
+    const randomColor = () => glitchColors[Math.floor(Math.random() * glitchColors.length)];
+
+    function hexToRgb(hex){
+      const short = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+      hex = hex.replace(short, (m,r,g,b) => r+r+g+g+b+b);
+      const res = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return res ? { r: parseInt(res[1],16), g: parseInt(res[2],16), b: parseInt(res[3],16) } : null;
+    }
+    function interpolateColor(a,b,t){
+      const r = Math.round(a.r + (b.r-a.r)*t);
+      const g = Math.round(a.g + (b.g-a.g)*t);
+      const bl = Math.round(a.b + (b.b-a.b)*t);
+      return `rgb(${r}, ${g}, ${bl})`;
+    }
+    function calcGrid(w,h){
+      return { columns: Math.ceil(w/charWidth), rows: Math.ceil(h/charHeight) };
+    }
+    function initLetters(columns, rows){
+      grid = { columns, rows };
+      const total = columns * rows;
+      letters = Array.from({length: total}, () => ({
+        char: randomChar(), color: randomColor(), targetColor: randomColor(), colorProgress: 1
+      }));
+    }
+    function drawLetters(){
+      if (!letters.length) return;
+      const rect = canvas.getBoundingClientRect();
+      ctx.clearRect(0,0,rect.width,rect.height);
+      ctx.font = `${fontSize}px monospace`;
+      ctx.textBaseline = 'top';
+      letters.forEach((l, i) => {
+        const x = (i % grid.columns) * charWidth;
+        const y = Math.floor(i / grid.columns) * charHeight;
+        ctx.fillStyle = l.color;
+        ctx.fillText(l.char, x, y);
+      });
+    }
+    function updateLetters(){
+      if (!letters.length) return;
+      const updateCount = Math.max(1, Math.floor(letters.length * 0.05));
+      for (let i=0;i<updateCount;i++){
+        const idx = Math.floor(Math.random()*letters.length);
+        if (!letters[idx]) continue;
+        letters[idx].char = randomChar();
+        letters[idx].targetColor = randomColor();
+        if (!smooth){
+          letters[idx].color = letters[idx].targetColor;
+          letters[idx].colorProgress = 1;
+        } else {
+          letters[idx].colorProgress = 0;
+        }
+      }
+    }
+    function handleSmoothTransitions(){
+      let needsRedraw = false;
+      letters.forEach(l => {
+        if (l.colorProgress < 1){
+          l.colorProgress += 0.05;
+          if (l.colorProgress > 1) l.colorProgress = 1;
+          const start = hexToRgb(l.color.startsWith('#') ? l.color : l.color);
+          const startRgb = l.color.startsWith('rgb') ? (() => {
+            const m = l.color.match(/\d+/g); return { r:+m[0], g:+m[1], b:+m[2] };
+          })() : hexToRgb(l.color);
+          const endRgb = hexToRgb(l.targetColor);
+          if (startRgb && endRgb){
+            l.color = interpolateColor(startRgb, endRgb, l.colorProgress);
+            needsRedraw = true;
+          }
+        }
+      });
+      if (needsRedraw) drawLetters();
+    }
+    function resizeCanvas(){
+      const rect = wrap.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      const { columns, rows } = calcGrid(rect.width, rect.height);
+      initLetters(columns, rows);
+      drawLetters();
+    }
+    function animate(){
+      const now = Date.now();
+      if (now - lastGlitchTime >= glitchSpeed){
+        updateLetters();
+        drawLetters();
+        lastGlitchTime = now;
+      }
+      if (smooth) handleSmoothTransitions();
+      rafId = requestAnimationFrame(animate);
+    }
+
+    resizeCanvas();
+    animate();
+
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        cancelAnimationFrame(rafId);
+        resizeCanvas();
+        animate();
+      }, 100);
+    });
+  })();
 </script>
 
 </body>
