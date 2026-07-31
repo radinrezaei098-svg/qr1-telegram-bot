@@ -1,119 +1,137 @@
-import { ThinkingOrb } from "thinking-orbs";
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>در حال بروزرسانی</title>
 
-export default function MaintenancePage() {
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background:
-          "radial-gradient(circle at top, #1e293b 0%, #0f172a 45%, #020617 100%)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontFamily: "Inter, sans-serif",
-        color: "#fff",
-        overflow: "hidden",
-        position: "relative",
-      }}
-    >
-      {/* Background Glow */}
-      <div
-        style={{
-          position: "absolute",
-          width: 500,
-          height: 500,
-          borderRadius: "50%",
-          background: "rgba(59,130,246,.15)",
-          filter: "blur(120px)",
-        }}
-      />
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
 
-      {/* Card */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 2,
-          width: "90%",
-          maxWidth: 600,
-          padding: "50px 40px",
-          borderRadius: 24,
-          textAlign: "center",
-          background: "rgba(255,255,255,.05)",
-          backdropFilter: "blur(18px)",
-          border: "1px solid rgba(255,255,255,.08)",
-          boxShadow: "0 25px 60px rgba(0,0,0,.45)",
-        }}
-      >
-        <ThinkingOrb state="solving" size={90} speed={1.85} />
-
-        <h1
-          style={{
-            marginTop: 30,
-            fontSize: 38,
-            fontWeight: 800,
-            letterSpacing: 1,
-          }}
-        >
-          در حال بروزرسانی...
-        </h1>
-
-        <p
-          style={{
-            marginTop: 20,
-            color: "#cbd5e1",
-            fontSize: 18,
-            lineHeight: 1.8,
-          }}
-        >
-          ما در حال توسعه نسخه‌ای سریع‌تر، هوشمندتر و قدرتمندتر هستیم.
-          <br />
-          به‌زودی با امکانات جدید بازخواهیم گشت.
-        </p>
-
-        <div
-          style={{
-            marginTop: 35,
-            width: "100%",
-            height: 8,
-            borderRadius: 999,
-            background: "rgba(255,255,255,.08)",
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              width: "45%",
-              height: "100%",
-              borderRadius: 999,
-              background:
-                "linear-gradient(90deg,#3b82f6,#06b6d4,#22c55e)",
-              animation: "loading 2s infinite ease-in-out",
-            }}
-          />
-        </div>
-
-        <div
-          style={{
-            marginTop: 18,
-            color: "#94a3b8",
-            fontSize: 14,
-            letterSpacing: 1,
-          }}
-        >
-          SYSTEM UPGRADE IN PROGRESS
-        </div>
-      </div>
-
-      <style>{`
-        @keyframes loading {
-          0% {
-            margin-left: -45%;
-          }
-          100% {
-            margin-left: 100%;
-          }
-        }
-      `}</style>
-    </div>
-  );
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Vazirmatn',sans-serif;
 }
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:radial-gradient(circle,#16213e,#0f172a,#020617);
+overflow:hidden;
+color:white;
+}
+
+.glow{
+position:absolute;
+width:450px;
+height:450px;
+background:#3b82f655;
+border-radius:50%;
+filter:blur(120px);
+animation:pulse 3s infinite;
+}
+
+.card{
+position:relative;
+z-index:5;
+width:90%;
+max-width:600px;
+padding:50px;
+text-align:center;
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(18px);
+border:1px solid rgba(255,255,255,.08);
+border-radius:25px;
+box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+
+.orb{
+width:90px;
+height:90px;
+margin:auto;
+border-radius:50%;
+background:linear-gradient(45deg,#3b82f6,#06b6d4,#22c55e);
+animation:spin 2s linear infinite;
+box-shadow:0 0 40px #3b82f6;
+}
+
+h1{
+margin-top:30px;
+font-size:38px;
+font-weight:800;
+}
+
+p{
+margin-top:20px;
+font-size:18px;
+line-height:2;
+color:#cbd5e1;
+}
+
+.progress{
+margin-top:35px;
+height:8px;
+background:#ffffff15;
+border-radius:20px;
+overflow:hidden;
+}
+
+.bar{
+height:100%;
+width:40%;
+background:linear-gradient(90deg,#3b82f6,#06b6d4,#22c55e);
+animation:loading 2s infinite;
+}
+
+small{
+display:block;
+margin-top:18px;
+color:#94a3b8;
+letter-spacing:2px;
+}
+
+@keyframes spin{
+100%{transform:rotate(360deg);}
+}
+
+@keyframes loading{
+0%{margin-left:-40%;}
+100%{margin-left:100%;}
+}
+
+@keyframes pulse{
+50%{transform:scale(1.2);}
+}
+</style>
+
+</head>
+<body>
+
+<div class="glow"></div>
+
+<div class="card">
+
+<div class="orb"></div>
+
+<h1>🚀 در حال بروزرسانی</h1>
+
+<p>
+در حال ساخت نسخه‌ای سریع‌تر، هوشمندتر و قدرتمندتر هستیم.
+<br>
+به‌زودی با امکانات جدید بازخواهیم گشت.
+</p>
+
+<div class="progress">
+<div class="bar"></div>
+</div>
+
+<small>SYSTEM UPGRADE IN PROGRESS</small>
+
+</div>
+
+</body>
+</html>
