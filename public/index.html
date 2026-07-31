@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="classic">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -10,14 +10,39 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root{
-    --blue: #0A84FF;
-    --blue-deep: #0060DF;
-    --blue-light: #EAF4FF;
-    --blue-pale: #F5FAFF;
-    --black: #0B0D12;
-    --gray: #6E7480;
-    --white: #FFFFFF;
-    --radius: 22px;
+    --bg-top:#F5FAFF; --bg-bottom:#FFFFFF;
+    --surface:#FFFFFF; --surface-border:#EAF4FF;
+    --text:#0B0D12; --muted:#6E7480;
+    --accent:#0A84FF; --accent-deep:#0060DF; --accent-soft:#EAF4FF;
+    --input-bg:#F5FAFF; --input-border:#E4ECF7;
+    --tg-bg:#0B0D12; --tg-text:#FFFFFF;
+    --dl-bg:#FFFFFF; --dl-text:#0A84FF; --dl-border:#0A84FF;
+    --shadow-tint: rgba(10,60,140,0.18);
+    --glow-tint: rgba(10,132,255,0.55);
+  }
+
+  html[data-theme="dark"]{
+    --bg-top:#0B0D12; --bg-bottom:#12151C;
+    --surface:#12151C; --surface-border:#1E2430;
+    --text:#F5F7FA; --muted:#8A93A3;
+    --accent:#3AA0FF; --accent-deep:#0A84FF; --accent-soft:#16202E;
+    --input-bg:#171B22; --input-border:#232A36;
+    --tg-bg:#3AA0FF; --tg-text:#0B0D12;
+    --dl-bg:#171B22; --dl-text:#3AA0FF; --dl-border:#2B3444;
+    --shadow-tint: rgba(0,0,0,0.55);
+    --glow-tint: rgba(58,160,255,0.45);
+  }
+
+  html[data-theme="ocean"]{
+    --bg-top:#EAFBFF; --bg-bottom:#FFFFFF;
+    --surface:#FFFFFF; --surface-border:#D8F3F8;
+    --text:#062A33; --muted:#4C7A83;
+    --accent:#00B8D9; --accent-deep:#0086A8; --accent-soft:#E0FAFF;
+    --input-bg:#F1FDFF; --input-border:#D3F1F7;
+    --tg-bg:#062A33; --tg-text:#FFFFFF;
+    --dl-bg:#FFFFFF; --dl-text:#00A6C4; --dl-border:#00B8D9;
+    --shadow-tint: rgba(0,140,168,0.18);
+    --glow-tint: rgba(0,184,217,0.5);
   }
 
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -25,9 +50,6 @@
   html,body{
     height:100%;
     font-family:"Vazirmatn", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-    background: linear-gradient(180deg, var(--blue-pale) 0%, var(--white) 40%);
-    color: var(--black);
-    -webkit-font-smoothing: antialiased;
   }
 
   body{
@@ -36,20 +58,24 @@
     justify-content:center;
     min-height:100vh;
     padding: 24px 14px;
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 45%);
+    color: var(--text);
+    transition: background .35s ease, color .35s ease;
   }
 
   .phone-frame{
     width:100%;
     max-width: 380px;
-    background: var(--white);
+    background: var(--surface);
     border-radius: 34px;
     box-shadow:
       0 1px 2px rgba(10,20,40,0.04),
-      0 20px 50px -12px rgba(10,60,140,0.18),
-      0 0 0 1px rgba(10,60,140,0.05);
-    padding: 30px 22px 22px;
+      0 20px 50px -12px var(--shadow-tint),
+      0 0 0 1px var(--surface-border);
+    padding: 26px 22px 22px;
     position:relative;
     overflow:hidden;
+    transition: background .35s ease, box-shadow .35s ease;
   }
 
   .phone-frame::before{
@@ -57,13 +83,39 @@
     position:absolute;
     top:-120px; right:-90px;
     width:260px; height:260px;
-    background: radial-gradient(circle, var(--blue-light) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
     pointer-events:none;
+    transition: background .35s ease;
   }
+
+  .theme-switcher{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom: 18px;
+    position:relative;
+  }
+
+  .theme-dot{
+    width:28px; height:28px;
+    border-radius:50%;
+    border: 2px solid transparent;
+    cursor:pointer;
+    padding:0;
+    position:relative;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+
+  .theme-dot:active{ transform: scale(0.9); }
+  .theme-dot.active{ border-color: var(--text); }
+
+  .theme-dot[data-t="classic"]{ background: linear-gradient(135deg,#0A84FF,#0060DF); }
+  .theme-dot[data-t="dark"]{ background: linear-gradient(135deg,#12151C,#3AA0FF); }
+  .theme-dot[data-t="ocean"]{ background: linear-gradient(135deg,#00B8D9,#062A33); }
 
   header{
     text-align:center;
-    margin-bottom: 26px;
+    margin-bottom: 24px;
     position:relative;
   }
 
@@ -71,9 +123,10 @@
     width:56px; height:56px;
     margin:0 auto 14px;
     border-radius:16px;
-    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-deep) 100%);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
     display:flex; align-items:center; justify-content:center;
-    box-shadow: 0 8px 20px -6px rgba(10,132,255,0.55);
+    box-shadow: 0 8px 20px -6px var(--glow-tint);
+    transition: background .35s ease, box-shadow .35s ease;
   }
 
   .logo-badge svg{ width:28px; height:28px; }
@@ -82,26 +135,24 @@
     font-size: 21px;
     font-weight: 800;
     letter-spacing: -0.2px;
-    color: var(--black);
+    color: var(--text);
   }
 
-  .brand-title span{ color: var(--blue); }
+  .brand-title span{ color: var(--accent); }
 
   .brand-sub{
     font-size: 12.5px;
-    color: var(--gray);
+    color: var(--muted);
     margin-top: 4px;
     font-weight:500;
   }
 
-  .field-group{
-    margin-bottom: 14px;
-  }
+  .field-group{ margin-bottom: 14px; }
 
   .field-label{
     font-size: 12.5px;
     font-weight:600;
-    color: var(--gray);
+    color: var(--muted);
     margin-bottom: 8px;
     display:block;
     padding-right:4px;
@@ -111,22 +162,21 @@
     width:100%;
     padding: 14px 16px;
     border-radius: 14px;
-    border: 1.5px solid #E4ECF7;
-    background: var(--blue-pale);
+    border: 1.5px solid var(--input-border);
+    background: var(--input-bg);
     font-family: inherit;
     font-size: 14.5px;
-    color: var(--black);
+    color: var(--text);
     outline:none;
     transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
     text-align:right;
   }
 
-  input[type="text"]::placeholder{ color:#9AA5B4; }
+  input[type="text"]::placeholder{ color: var(--muted); opacity:.8; }
 
   input[type="text"]:focus{
-    border-color: var(--blue);
-    background: var(--white);
-    box-shadow: 0 0 0 4px rgba(10,132,255,0.12);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
   }
 
   .btn{
@@ -146,15 +196,14 @@
   }
 
   .btn:active{ transform: scale(0.97); }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
 
   .btn-primary{
-    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-deep) 100%);
-    color:var(--white);
-    box-shadow: 0 10px 24px -8px rgba(10,132,255,0.55);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+    color:#FFFFFF;
+    box-shadow: 0 10px 24px -8px var(--glow-tint);
     margin-top:4px;
   }
-
-  .btn-primary:hover{ box-shadow: 0 14px 28px -8px rgba(10,132,255,0.65); }
 
   .qr-section{
     margin-top: 22px;
@@ -170,8 +219,8 @@
   }
 
   #qr-card{
-    background: var(--white);
-    border: 1.5px solid var(--blue-light);
+    background: #FFFFFF;
+    border: 1.5px solid var(--surface-border);
     border-radius: 20px;
     padding: 22px;
     display:flex;
@@ -181,58 +230,68 @@
   }
 
   #qrcode{
-    background:var(--white);
+    background:#FFFFFF;
     padding: 12px;
     border-radius: 14px;
-    box-shadow: 0 6px 18px -6px rgba(10,60,140,0.15);
+    box-shadow: 0 6px 18px -6px var(--shadow-tint);
     display:flex;
   }
 
-  #qrcode img, #qrcode canvas{
-    border-radius: 6px;
-    display:block;
-  }
+  #qrcode img, #qrcode canvas{ border-radius: 6px; display:block; }
 
   .qr-caption{
     font-size: 12.5px;
-    color: var(--gray);
+    color: #6E7480;
     text-align:center;
     word-break: break-all;
     max-width: 260px;
     font-weight:500;
   }
 
-  .btn-telegram{
-    margin-top: 16px;
-    background: var(--black);
-    color: var(--white);
+  .action-row{
+    display:flex;
+    gap:10px;
+    margin-top:16px;
   }
 
-  .btn-telegram svg{ width:18px; height:18px; fill:var(--white); }
+  .btn-telegram{
+    background: var(--tg-bg);
+    color: var(--tg-text);
+    flex:2;
+  }
 
-  .btn-telegram:disabled{ opacity:.55; cursor:not-allowed; }
+  .btn-telegram svg{ width:18px; height:18px; fill: var(--tg-text); }
+
+  .btn-download{
+    background: var(--dl-bg);
+    color: var(--dl-text);
+    border: 1.5px solid var(--dl-border);
+    flex:1;
+    padding: 15px 10px;
+  }
 
   .hint{
     text-align:center;
     font-size:11.5px;
-    color:#9AA5B4;
+    color: var(--muted);
     margin-top:10px;
+    line-height:1.7;
   }
 
   footer{
-    margin-top: 26px;
+    margin-top: 24px;
     text-align:center;
     font-size: 11.5px;
-    color: var(--gray);
+    color: var(--muted);
     font-weight:600;
     letter-spacing: 0.1px;
   }
 
-  footer span{ color: var(--blue); }
+  footer span{ color: var(--accent); }
 
   .divider{
     height:1px;
-    background: linear-gradient(90deg, transparent, #E4ECF7, transparent);
+    background: linear-gradient(90deg, transparent, var(--surface-border), transparent);
     margin: 18px 0 14px;
   }
 
@@ -241,8 +300,8 @@
     bottom: 26px;
     left:50%;
     transform: translateX(-50%) translateY(20px);
-    background: var(--black);
-    color:var(--white);
+    background: var(--text);
+    color: var(--surface);
     padding: 12px 20px;
     border-radius: 12px;
     font-size: 13px;
@@ -252,18 +311,22 @@
     pointer-events:none;
     box-shadow: 0 10px 24px -8px rgba(0,0,0,0.35);
     z-index:999;
-    white-space:nowrap;
+    max-width:88vw;
+    text-align:center;
   }
 
-  .toast.show{
-    opacity:1;
-    transform: translateX(-50%) translateY(0);
-  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
   <div class="phone-frame">
+    <div class="theme-switcher">
+      <button class="theme-dot active" data-t="classic" title="تم کلاسیک آبی"></button>
+      <button class="theme-dot" data-t="dark" title="تم شب"></button>
+      <button class="theme-dot" data-t="ocean" title="تم اقیانوسی"></button>
+    </div>
+
     <header>
       <div class="logo-badge">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -285,9 +348,7 @@
       <input type="text" id="qr-input" placeholder="مثلاً: https://example.com" />
     </div>
 
-    <button class="btn btn-primary" id="generate-btn">
-      ساخت کیوارکد
-    </button>
+    <button class="btn btn-primary" id="generate-btn">ساخت کیوارکد</button>
 
     <div class="qr-section" id="qr-section">
       <div class="divider"></div>
@@ -296,10 +357,13 @@
         <div class="qr-caption" id="qr-caption"></div>
       </div>
 
-      <button class="btn btn-telegram" id="telegram-btn">
-        <svg viewBox="0 0 24 24"><path d="M21.05 3.16 2.53 10.4c-1.24.5-1.23 1.2-.22 1.51l4.77 1.49 1.83 5.6c.22.62.36.86.73.86.34 0 .5-.16.7-.35l1.86-1.8 4.02 2.97c.74.41 1.27.2 1.46-.68l2.65-12.5c.28-1.16-.42-1.68-1.28-1.34Zm-11.7 9.03 8.35-5.27c.4-.24.76-.11.46.15L9.9 14.4l-.28 3.03-1.42-4.24Z"/></svg>
-        <span id="telegram-btn-text">ارسال در تلگرام</span>
-      </button>
+      <div class="action-row">
+        <button class="btn btn-telegram" id="telegram-btn">
+          <svg viewBox="0 0 24 24"><path d="M21.05 3.16 2.53 10.4c-1.24.5-1.23 1.2-.22 1.51l4.77 1.49 1.83 5.6c.22.62.36.86.73.86.34 0 .5-.16.7-.35l1.86-1.8 4.02 2.97c.74.41 1.27.2 1.46-.68l2.65-12.5c.28-1.16-.42-1.68-1.28-1.34Zm-11.7 9.03 8.35-5.27c.4-.24.76-.11.46.15L9.9 14.4l-.28 3.03-1.42-4.24Z"/></svg>
+          <span id="telegram-btn-text">ارسال در تلگرام</span>
+        </button>
+        <button class="btn btn-download" id="download-btn">دانلود عکس</button>
+      </div>
 
       <div class="hint" id="hint-text">در حال آماده‌سازی تصویر برای ارسال...</div>
     </div>
@@ -317,25 +381,58 @@
   const qrContainer = document.getElementById('qrcode');
   const qrCaption = document.getElementById('qr-caption');
   const telegramBtn = document.getElementById('telegram-btn');
-  const telegramBtnText = document.getElementById('telegram-btn-text');
+  const downloadBtn = document.getElementById('download-btn');
   const hintText = document.getElementById('hint-text');
   const toast = document.getElementById('toast');
+  const themeDots = document.querySelectorAll('.theme-dot');
+  const htmlEl = document.documentElement;
 
   let currentQR = null;
   let currentBlob = null;
   let currentValue = '';
 
+  themeDots.forEach(dot=>{
+    dot.addEventListener('click', ()=>{
+      htmlEl.setAttribute('data-theme', dot.dataset.t);
+      themeDots.forEach(d=> d.classList.remove('active'));
+      dot.classList.add('active');
+    });
+  });
+
   function showToast(msg){
     toast.textContent = msg;
     toast.classList.add('show');
-    setTimeout(()=> toast.classList.remove('show'), 2600);
+    setTimeout(()=> toast.classList.remove('show'), 2800);
   }
 
-  // wait two animation frames so the QR canvas/image has actually painted
   function nextPaint(){
     return new Promise(resolve=>{
       requestAnimationFrame(()=> requestAnimationFrame(resolve));
     });
+  }
+
+  async function renderShareImage(){
+    hintText.textContent = 'در حال آماده‌سازی تصویر...';
+    telegramBtn.disabled = true;
+    downloadBtn.disabled = true;
+    await nextPaint();
+    try{
+      const canvas = await html2canvas(qrCard, {
+        backgroundColor: '#FFFFFF',
+        scale: 3,
+        useCORS: true
+      });
+      currentBlob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+      telegramBtn.disabled = false;
+      downloadBtn.disabled = false;
+      hintText.textContent = navigator.share
+        ? 'تصویر آماده است — روی دکمه بزنید'
+        : 'تصویر آماده است — دکمه دانلود عکس را بزنید و در تلگرام ارسال کنید';
+    }catch(err){
+      telegramBtn.disabled = false;
+      downloadBtn.disabled = false;
+      hintText.textContent = 'برای ارسال، دکمه دانلود عکس را بزنید';
+    }
   }
 
   async function generateQR(){
@@ -365,85 +462,11 @@
     qrSection.classList.add('visible');
     qrSection.scrollIntoView({behavior:'smooth', block:'nearest'});
 
-    // pre-render the shareable image right away (not on click) so that
-    // when the user taps "ارسال در تلگرام" the share() call fires
-    // immediately inside the click gesture instead of after a delay
-    telegramBtn.disabled = true;
-    hintText.textContent = 'در حال آماده‌سازی تصویر...';
-
-    await nextPaint();
-
-    try{
-      const canvas = await html2canvas(qrCard, {
-        backgroundColor: '#FFFFFF',
-        scale: 3,
-        useCORS: true
-      });
-
-      canvas.toBlob((blob)=>{
-        if(blob){
-          currentBlob = blob;
-          telegramBtn.disabled = false;
-          hintText.textContent = 'تصویر آماده است، روی دکمه بزنید';
-        } else {
-          telegramBtn.disabled = false;
-          hintText.textContent = 'برای دانلود/ارسال دستی، تصویر کیوارکد را نگه‌دارید و ذخیره کنید';
-        }
-      }, 'image/png');
-    }catch(err){
-      telegramBtn.disabled = false;
-      hintText.textContent = 'برای ارسال، روی تصویر کیوارکد نگه‌دارید و ذخیره کنید';
-    }
+    renderShareImage();
   }
 
   genBtn.addEventListener('click', generateQR);
   input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') generateQR(); });
-
-  telegramBtn.addEventListener('click', async ()=>{
-    if(!qrSection.classList.contains('visible')){
-      showToast('ابتدا یک کیوارکد بسازید');
-      return;
-    }
-
-    if(!currentBlob){
-      // image not ready yet — build it now, this may fall outside the
-      // gesture on strict browsers but is the best fallback available
-      showToast('در حال آماده‌سازی تصویر...');
-      try{
-        await nextPaint();
-        const canvas = await html2canvas(qrCard, { backgroundColor:'#FFFFFF', scale:3 });
-        currentBlob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-      }catch(e){ /* ignore, will fall back below */ }
-    }
-
-    if(currentBlob){
-      const file = new File([currentBlob], 'codino-qr.png', { type: 'image/png' });
-
-      if(navigator.canShare && navigator.canShare({ files:[file] })){
-        try{
-          await navigator.share({
-            files: [file],
-            title: 'کُدینو | Codino',
-            text: 'کیوارکد ساخته شده با کُدینو | Codino'
-          });
-          return;
-        }catch(err){
-          if(err.name === 'AbortError') return; // user cancelled share sheet, do nothing
-          // real failure — fall through to download + telegram fallback
-        }
-      }
-    }
-
-    // Desktop browsers / unsupported devices: navigator.share with files
-    // isn't available, so we download the actual PNG and open Telegram's
-    // web share as a companion action (Telegram's web link cannot attach
-    // images directly — this is a browser limitation, not this page).
-    if(currentBlob){
-      downloadBlob(currentBlob, 'codino-qr.png');
-      showToast('تصویر کیوارکد دانلود شد؛ آن را در تلگرام ضمیمه کنید');
-    }
-    fallbackTelegramShare();
-  });
 
   function downloadBlob(blob, filename){
     const url = URL.createObjectURL(blob);
@@ -456,12 +479,52 @@
     setTimeout(()=> URL.revokeObjectURL(url), 2000);
   }
 
-  function fallbackTelegramShare(){
-    const value = currentValue || input.value.trim();
-    const text = encodeURIComponent('کیوارکد ساخته شده با کُدینو | Codino:\n' + value);
-    const url = 'https://t.me/share/url?url=' + encodeURIComponent(value) + '&text=' + text;
+  downloadBtn.addEventListener('click', async ()=>{
+    if(!currentBlob){
+      showToast('صبر کنید تصویر آماده شود');
+      return;
+    }
+    downloadBlob(currentBlob, 'codino-qr.png');
+    showToast('تصویر کیوارکد دانلود شد');
+  });
+
+  telegramBtn.addEventListener('click', async ()=>{
+    if(!qrSection.classList.contains('visible')){
+      showToast('ابتدا یک کیوارکد بسازید');
+      return;
+    }
+
+    if(!currentBlob){
+      showToast('در حال آماده‌سازی تصویر، دوباره بزنید');
+      renderShareImage();
+      return;
+    }
+
+    const file = new File([currentBlob], 'codino-qr.png', { type: 'image/png' });
+
+    if(navigator.canShare && navigator.canShare({ files:[file] })){
+      try{
+        await navigator.share({
+          files: [file],
+          title: 'کُدینو | Codino',
+          text: 'کیوارکد ساخته شده با کُدینو | Codino'
+        });
+        return;
+      }catch(err){
+        if(err.name === 'AbortError') return;
+      }
+    }
+
+    // No file-share support on this browser (typical on desktop, or when
+    // the page isn't opened as a standalone HTTPS page). Telegram's web
+    // link can only carry text/links, not images, so we hand the user
+    // the real PNG file to attach manually and open the chat picker too.
+    downloadBlob(currentBlob, 'codino-qr.png');
+    showToast('این مرورگر امکان ارسال مستقیم عکس را ندارد — عکس دانلود شد، آن را در تلگرام ضمیمه کنید');
+    const text = encodeURIComponent('کیوارکد ساخته شده با کُدینو | Codino:\n' + currentValue);
+    const url = 'https://t.me/share/url?url=' + encodeURIComponent(currentValue) + '&text=' + text;
     window.open(url, '_blank');
-  }
+  });
 </script>
 
 </body>
