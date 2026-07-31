@@ -351,6 +351,30 @@
   .focus-frame .corner.top-right{ top:-4px; right:-4px; border-left:none; border-bottom:none; border-radius:0 4px 0 0; }
   .focus-frame .corner.bottom-left{ bottom:-4px; left:-4px; border-right:none; border-top:none; border-radius:0 0 0 4px; }
   .focus-frame .corner.bottom-right{ bottom:-4px; right:-4px; border-left:none; border-top:none; border-radius:0 0 4px 0; }
+
+  .eb-wrap{
+    position:relative;
+    display:flex; justify-content:center;
+  }
+
+  .eb-canvas-container{
+    position:absolute; inset:-32px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  #eb-canvas{ position:absolute; top:0; left:0; }
+
+  .eb-glow-1, .eb-glow-2{
+    position:absolute; inset:16px;
+    border-radius:26px;
+    background: var(--accent);
+    filter: blur(22px);
+    opacity:0.16;
+  }
+  .eb-glow-2{ inset:26px; opacity:0.10; filter: blur(34px); }
+
+  #qr-frame{ position:relative; z-index:1; }
 </style>
 </head>
 <body>
@@ -456,25 +480,33 @@
     <div class="qr-section" id="qr-section">
       <div class="divider"></div>
 
-      <div id="qr-frame" class="frame-none">
-        <div id="qr-card">
-          <div id="qrcode-wrap">
-            <div id="qrcode"></div>
-            <div class="qr-logo-overlay" id="qr-logo-overlay">
-              <div class="mini-badge" id="mini-badge">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
-                  <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
-                  <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
-                  <path d="M14 14H17V17H14V14Z" fill="white"/><path d="M18 14H21V17H18V14Z" fill="white"/>
-                  <path d="M14 18H17V21H14V18Z" fill="white"/><path d="M18 18H21V21H18V18Z" fill="white"/>
-                </svg>
+      <div class="eb-wrap" id="eb-wrap">
+        <div class="eb-canvas-container">
+          <div class="eb-glow-1"></div>
+          <div class="eb-glow-2"></div>
+          <canvas id="eb-canvas"></canvas>
+        </div>
+
+        <div id="qr-frame" class="frame-none">
+          <div id="qr-card">
+            <div id="qrcode-wrap">
+              <div id="qrcode"></div>
+              <div class="qr-logo-overlay" id="qr-logo-overlay">
+                <div class="mini-badge" id="mini-badge">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+                    <path d="M14 14H17V17H14V14Z" fill="white"/><path d="M18 14H21V17H18V14Z" fill="white"/>
+                    <path d="M14 18H17V21H14V18Z" fill="white"/><path d="M18 18H21V21H18V18Z" fill="white"/>
+                  </svg>
+                </div>
               </div>
             </div>
+            <div class="qr-caption" id="qr-caption"></div>
           </div>
-          <div class="qr-caption" id="qr-caption"></div>
+          <div class="frame-caption-text" id="frame-caption-text">برای اسکن، دوربین را بگیرید</div>
         </div>
-        <div class="frame-caption-text" id="frame-caption-text">برای اسکن، دوربین را بگیرید</div>
       </div>
 
       <div class="action-row">
@@ -801,6 +833,162 @@
     const url = 'https://t.me/share/url?url=' + encodeURIComponent(currentValue) + '&text=' + text;
     window.open(url, '_blank');
   });
+
+  // ---------- Electric animated border around the generated QR (adapted from ElectricBorder.jsx) ----------
+  (function initElectricBorder(){
+    const wrap = document.getElementById('eb-wrap');
+    const ebCanvas = document.getElementById('eb-canvas');
+    const ctx = ebCanvas.getContext('2d');
+    const target = document.getElementById('qr-frame');
+
+    const octaves = 6;
+    const lacunarity = 1.6;
+    const gain = 0.7;
+    const chaos = 0.12;
+    const frequency = 10;
+    const baseFlatness = 0;
+    const displacement = 22;
+    const borderOffset = 26;
+    const speed = 1;
+
+    let accentColor = getComputedStyle(htmlEl).getPropertyValue('--accent').trim() || '#0A84FF';
+    themeDots.forEach(d => d.addEventListener('click', ()=>{
+      setTimeout(()=>{ accentColor = getComputedStyle(htmlEl).getPropertyValue('--accent').trim(); }, 50);
+    }));
+
+    let width = 0, height = 0, radius = 20;
+    let timeVal = 0, lastFrameTime = 0;
+
+    function random(x){ return (Math.sin(x * 12.9898) * 43758.5453) % 1; }
+
+    function noise2D(x, y){
+      const i = Math.floor(x), j = Math.floor(y);
+      const fx = x - i, fy = y - j;
+      const a = random(i + j * 57);
+      const b = random(i + 1 + j * 57);
+      const c = random(i + (j + 1) * 57);
+      const d = random(i + 1 + (j + 1) * 57);
+      const ux = fx * fx * (3.0 - 2.0 * fx);
+      const uy = fy * fy * (3.0 - 2.0 * fy);
+      return a * (1 - ux) * (1 - uy) + b * ux * (1 - uy) + c * (1 - ux) * uy + d * ux * uy;
+    }
+
+    function octavedNoise(x, time, seed){
+      let y = 0, amp = chaos, freq = frequency;
+      for(let i = 0; i < octaves; i++){
+        let octAmp = amp;
+        if(i === 0) octAmp *= baseFlatness;
+        y += octAmp * noise2D(freq * x + seed * 100, time * freq * 0.3);
+        freq *= lacunarity;
+        amp *= gain;
+      }
+      return y;
+    }
+
+    function getCornerPoint(cx, cy, r, startAngle, arcLength, progress){
+      const angle = startAngle + progress * arcLength;
+      return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
+    }
+
+    function getRoundedRectPoint(t, left, top, w, h, r){
+      const straightW = w - 2*r, straightH = h - 2*r;
+      const cornerArc = (Math.PI * r) / 2;
+      const total = 2*straightW + 2*straightH + 4*cornerArc;
+      const dist = t * total;
+      let acc = 0;
+
+      if(dist <= acc + straightW){
+        const p = (dist - acc) / straightW;
+        return { x: left + r + p*straightW, y: top };
+      }
+      acc += straightW;
+      if(dist <= acc + cornerArc){
+        const p = (dist - acc) / cornerArc;
+        return getCornerPoint(left + w - r, top + r, r, -Math.PI/2, Math.PI/2, p);
+      }
+      acc += cornerArc;
+      if(dist <= acc + straightH){
+        const p = (dist - acc) / straightH;
+        return { x: left + w, y: top + r + p*straightH };
+      }
+      acc += straightH;
+      if(dist <= acc + cornerArc){
+        const p = (dist - acc) / cornerArc;
+        return getCornerPoint(left + w - r, top + h - r, r, 0, Math.PI/2, p);
+      }
+      acc += cornerArc;
+      if(dist <= acc + straightW){
+        const p = (dist - acc) / straightW;
+        return { x: left + w - r - p*straightW, y: top + h };
+      }
+      acc += straightW;
+      if(dist <= acc + cornerArc){
+        const p = (dist - acc) / cornerArc;
+        return getCornerPoint(left + r, top + h - r, r, Math.PI/2, Math.PI/2, p);
+      }
+      acc += cornerArc;
+      if(dist <= acc + straightH){
+        const p = (dist - acc) / straightH;
+        return { x: left, y: top + h - r - p*straightH };
+      }
+      acc += straightH;
+      const p = (dist - acc) / cornerArc;
+      return getCornerPoint(left + r, top + r, r, Math.PI, Math.PI/2, p);
+    }
+
+    function updateSize(){
+      const rect = target.getBoundingClientRect();
+      width = rect.width + borderOffset*2;
+      height = rect.height + borderOffset*2;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      ebCanvas.width = width * dpr;
+      ebCanvas.height = height * dpr;
+      ebCanvas.style.width = width + 'px';
+      ebCanvas.style.height = height + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const maxR = Math.min(rect.width, rect.height) / 2;
+      radius = Math.min(20, maxR);
+    }
+
+    updateSize();
+    const ro = new ResizeObserver(()=> updateSize());
+    ro.observe(target);
+
+    function draw(currentTime){
+      requestAnimationFrame(draw);
+      if(!qrSection.classList.contains('visible')) return;
+
+      const dt = (currentTime - lastFrameTime) / 1000;
+      timeVal += (dt || 0) * speed;
+      lastFrameTime = currentTime;
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 1.4;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      const left = borderOffset, top = borderOffset;
+      const bw = width - 2*borderOffset, bh = height - 2*borderOffset;
+      const perimeter = 2*(bw+bh) + 2*Math.PI*radius;
+      const samples = Math.floor(perimeter / 3);
+
+      ctx.beginPath();
+      for(let i = 0; i <= samples; i++){
+        const t = i / samples;
+        const pt = getRoundedRectPoint(t, left, top, bw, bh, radius);
+        const xN = octavedNoise(t*8, timeVal, 0);
+        const yN = octavedNoise(t*8, timeVal, 1);
+        const dx = pt.x + xN * displacement;
+        const dy = pt.y + yN * displacement;
+        if(i === 0) ctx.moveTo(dx, dy); else ctx.lineTo(dx, dy);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(draw);
+  })();
 
   // ---------- TrueFocus effect on the brand title (adapted from TrueFocus.jsx) ----------
   (function initTrueFocus(){
