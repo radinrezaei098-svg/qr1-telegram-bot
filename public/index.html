@@ -1,575 +1,1023 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="classic">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>کُدینو | Codino</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root{
-    --blue:      #1f6bdc;
-    --blue-deep: #114ba1;
-    --blue-tint: #d3e4fc;
-    --ink:       #0e1b2b;
-    --ink-soft:  #55647a;
-    --white:     #ffffff;
+    --bg-top:#F5FAFF; --bg-bottom:#FFFFFF;
+    --surface:#FFFFFF; --surface-border:#EAF4FF;
+    --text:#0B0D12; --muted:#6E7480;
+    --accent:#0A84FF; --accent-deep:#0060DF; --accent-soft:#EAF4FF;
+    --input-bg:#F5FAFF; --input-border:#E4ECF7;
+    --tg-bg:#0B0D12; --tg-text:#FFFFFF;
+    --dl-bg:#FFFFFF; --dl-text:#0A84FF; --dl-border:#0A84FF;
+    --shadow-tint: rgba(10,60,140,0.18);
+    --glow-tint: rgba(10,132,255,0.55);
   }
 
-  *{ box-sizing:border-box; margin:0; padding:0; }
-
-  html,body{
-    height:100%;
-    background:var(--white);
+  html[data-theme="dark"]{
+    --bg-top:#0B0D12; --bg-bottom:#12151C;
+    --surface:#12151C; --surface-border:#1E2430;
+    --text:#F5F7FA; --muted:#8A93A3;
+    --accent:#3AA0FF; --accent-deep:#0A84FF; --accent-soft:#16202E;
+    --input-bg:#171B22; --input-border:#232A36;
+    --tg-bg:#3AA0FF; --tg-text:#0B0D12;
+    --dl-bg:#171B22; --dl-text:#3AA0FF; --dl-border:#2B3444;
+    --shadow-tint: rgba(0,0,0,0.55);
+    --glow-tint: rgba(58,160,255,0.45);
   }
 
-  #glitch-bg{
-    position:fixed;
-    inset:0;
-    z-index:0;
-    overflow:hidden;
-    opacity:.22;
-    pointer-events:none;
+  html[data-theme="ocean"]{
+    --bg-top:#EAFBFF; --bg-bottom:#FFFFFF;
+    --surface:#FFFFFF; --surface-border:#D8F3F8;
+    --text:#062A33; --muted:#4C7A83;
+    --accent:#00B8D9; --accent-deep:#0086A8; --accent-soft:#E0FAFF;
+    --input-bg:#F1FDFF; --input-border:#D3F1F7;
+    --tg-bg:#062A33; --tg-text:#FFFFFF;
+    --dl-bg:#FFFFFF; --dl-text:#00A6C4; --dl-border:#00B8D9;
+    --shadow-tint: rgba(0,140,168,0.18);
+    --glow-tint: rgba(0,184,217,0.5);
   }
-  #glitch-bg canvas{
-    display:block;
-    width:100%;
-    height:100%;
-  }
-  #glitch-bg .vignette{
-    position:absolute;
-    inset:0;
-    background:radial-gradient(circle, rgba(255,255,255,0) 45%, rgba(255,255,255,1) 100%);
-  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html,body{ height:100%; font-family:"Vazirmatn", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; }
 
   body{
-    font-family:'Vazirmatn', Tahoma, sans-serif;
-    color:var(--ink);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height:100dvh;
-    padding:28px 18px;
-    -webkit-font-smoothing:antialiased;
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; padding: 24px 14px;
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 45%);
+    color: var(--text);
+    transition: background .35s ease, color .35s ease;
   }
 
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  .phone-frame{
+    width:100%; max-width: 380px;
+    background: var(--surface);
+    border-radius: 34px;
+    box-shadow: 0 1px 2px rgba(10,20,40,0.04), 0 20px 50px -12px var(--shadow-tint), 0 0 0 1px var(--surface-border);
+    padding: 26px 22px 22px;
+    position:relative; overflow:hidden;
+    transition: background .35s ease, box-shadow .35s ease;
   }
 
-  .card{
-    position:relative;
-    z-index:1;
-    width:100%;
-    max-width:380px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    text-align:center;
-    background:rgba(255,255,255,.88);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    border-radius:26px;
-    padding:38px 24px 30px;
-    box-shadow:0 24px 60px rgba(17,75,161,.14);
+  .phone-frame::before{
+    content:""; position:absolute; top:-120px; right:-90px; width:260px; height:260px;
+    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+    pointer-events:none; transition: background .35s ease;
   }
 
-  /* ---------- eyebrow ---------- */
-  .eyebrow{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    font-size:12px;
-    font-weight:600;
-    letter-spacing:.5px;
-    color:var(--blue-deep);
-    background:var(--blue-tint);
-    padding:6px 14px;
-    border-radius:999px;
-    margin-bottom:30px;
+  .update-badge{
+    display:flex; align-items:center; gap:8px;
+    background: var(--accent-soft);
+    border: 1px solid var(--surface-border);
+    color: var(--accent-deep);
+    font-size: 11.5px; font-weight:700;
+    padding: 8px 14px; border-radius: 999px;
+    margin: 0 auto 18px; width: fit-content; max-width: 100%;
+    text-align:center; line-height:1.6;
   }
-  .eyebrow .dot{
-    width:7px; height:7px; border-radius:50%;
-    background:var(--blue);
-    animation:blink 1.6s ease-in-out infinite;
+  .update-badge .dot-wrap{ position:relative; width:9px; height:9px; flex-shrink:0; }
+  .update-badge .dot-wrap::before, .update-badge .dot-wrap::after{
+    content:""; position:absolute; inset:0; border-radius:50%; background: var(--accent);
   }
-  @keyframes blink{
-    0%,100%{ opacity:1; box-shadow:0 0 0 0 rgba(31,107,220,.5); }
-    50%{ opacity:.4; box-shadow:0 0 0 4px rgba(31,107,220,0); }
+  .update-badge .dot-wrap::before{ animation: pulse-ring 1.8s ease-out infinite; }
+  @keyframes pulse-ring{ 0%{ transform: scale(1); opacity:0.6; } 100%{ transform: scale(2.8); opacity:0; } }
+
+  .theme-switcher{ display:flex; justify-content:center; gap:10px; margin-bottom: 18px; }
+  .theme-dot{ width:28px; height:28px; border-radius:50%; border:2px solid transparent; cursor:pointer; padding:0; transition: transform .15s ease, border-color .15s ease; }
+  .theme-dot:active{ transform: scale(0.9); }
+  .theme-dot.active{ border-color: var(--text); }
+  .theme-dot[data-t="classic"]{ background: linear-gradient(135deg,#0A84FF,#0060DF); }
+  .theme-dot[data-t="dark"]{ background: linear-gradient(135deg,#12151C,#3AA0FF); }
+  .theme-dot[data-t="ocean"]{ background: linear-gradient(135deg,#00B8D9,#062A33); }
+
+  header{ text-align:center; margin-bottom: 22px; position:relative; }
+
+  .logo-badge{
+    width:56px; height:56px; margin:0 auto 14px; border-radius:16px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 8px 20px -6px var(--glow-tint);
+    transition: background .35s ease, box-shadow .35s ease;
+  }
+  .logo-badge svg{ width:28px; height:28px; }
+
+  .brand-title{ font-size: 21px; font-weight: 800; letter-spacing: -0.2px; color: var(--text); }
+  .brand-title span{ color: var(--accent); }
+  .brand-sub{ font-size: 12.5px; color: var(--muted); margin-top: 4px; font-weight:500; }
+
+  .field-group{ margin-bottom: 14px; }
+  .field-label{ font-size: 12.5px; font-weight:600; color: var(--muted); margin-bottom: 8px; display:block; padding-right:4px; }
+
+  .input-row{ display:flex; gap:8px; }
+
+  input[type="text"]{
+    width:100%; padding: 14px 16px; border-radius: 14px;
+    border: 1.5px solid var(--input-border); background: var(--input-bg);
+    font-family: inherit; font-size: 14.5px; color: var(--text); outline:none;
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    text-align:right;
+  }
+  input[type="text"]::placeholder{ color: var(--muted); opacity:.8; }
+  input[type="text"]:focus{ border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+
+  .copy-btn{
+    flex-shrink:0; width:48px; border-radius:14px; border:1.5px solid var(--input-border);
+    background: var(--input-bg); color: var(--muted); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition: all .15s ease;
+  }
+  .copy-btn:active{ transform: scale(0.92); }
+  .copy-btn svg{ width:18px; height:18px; }
+
+  .customize-panel{
+    margin-top:16px; padding:16px; border-radius:18px;
+    background: var(--input-bg); border: 1.5px solid var(--input-border);
+  }
+  .customize-title{
+    font-size:13px; font-weight:800; color: var(--text); margin-bottom:14px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .customize-title svg{ width:15px; height:15px; color: var(--accent); }
+
+  .option-block{ margin-top: 14px; }
+  .option-block:first-of-type{ margin-top:0; }
+  .option-title{ font-size:12px; font-weight:600; color: var(--muted); margin-bottom:8px; padding-right:4px; }
+
+  .color-row{ display:flex; align-items:center; gap:10px; }
+  .color-dot{
+    width:26px; height:26px; border-radius:50%; border:2px solid transparent; cursor:pointer;
+    transition: transform .15s ease, border-color .15s ease; flex-shrink:0;
+  }
+  .color-dot:active{ transform: scale(0.9); }
+  .color-dot.active{ border-color: var(--text); }
+  .color-dot[data-c="#0A84FF"]{ background:#0A84FF; }
+  .color-dot[data-c="#0B0D12"]{ background:#0B0D12; }
+  .color-dot[data-c="#00B8D9"]{ background:#00B8D9; }
+
+  .color-custom-wrap{
+    width:26px; height:26px; border-radius:50%; overflow:hidden; position:relative;
+    border:2px dashed var(--muted); flex-shrink:0; cursor:pointer;
+  }
+  .color-custom-wrap input[type="color"]{ position:absolute; inset:-4px; width:34px; height:34px; border:none; padding:0; cursor:pointer; }
+
+  .segmented{
+    display:flex; background: var(--surface); border-radius:12px; padding:3px;
+    border:1.5px solid var(--input-border); gap:3px;
+  }
+  .segmented button{
+    flex:1; border:none; background:transparent; font-family:inherit; font-size:11.5px;
+    font-weight:700; color: var(--muted); padding:9px 4px; border-radius:9px; cursor:pointer;
+    transition: all .15s ease;
+  }
+  .segmented button.active{ background: var(--accent); color:#FFFFFF; }
+
+  .upload-row{
+    display:none; align-items:center; gap:8px; margin-top:10px;
+  }
+  .upload-row.visible{ display:flex; }
+  .upload-btn{
+    flex:1; padding:10px; border-radius:10px; border:1.5px dashed var(--input-border);
+    background: var(--surface); color: var(--muted); font-family:inherit; font-size:12px;
+    font-weight:600; cursor:pointer; text-align:center;
+  }
+  .upload-name{ font-size:11px; color: var(--accent-deep); font-weight:600; max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .caption-input{
+    width:100%; margin-top:10px; padding:11px 14px; border-radius:12px;
+    border:1.5px solid var(--input-border); background: var(--surface);
+    font-family:inherit; font-size:13px; color: var(--text); outline:none; text-align:right;
+    display:none;
+  }
+  .caption-input.visible{ display:block; }
+
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
+  .toggle-label{ font-size:12.5px; font-weight:600; color: var(--text); }
+
+  .switch{ position:relative; width:44px; height:26px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{ position:absolute; cursor:pointer; inset:0; background: var(--input-border); border-radius:999px; transition:.25s; }
+  .slider::before{ content:""; position:absolute; height:20px; width:20px; right:3px; bottom:3px; background: white; border-radius:50%; transition:.25s; box-shadow:0 1px 3px rgba(0,0,0,0.3); }
+  input:checked + .slider{ background: var(--accent); }
+  input:checked + .slider::before{ transform: translateX(-18px); }
+
+  .btn{
+    width:100%; padding: 15px 16px; border:none; border-radius: 14px; font-family: inherit;
+    font-size: 15px; font-weight:700; cursor:pointer;
+    transition: transform .12s ease, box-shadow .18s ease, opacity .15s ease;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .btn:active{ transform: scale(0.97); }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  .btn-primary{
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+    color:#FFFFFF; box-shadow: 0 10px 24px -8px var(--glow-tint); margin-top:16px;
   }
 
-  /* ---------- thinking orb ---------- */
-  .orb-wrap{
-    position:relative;
-    width:112px;
-    height:112px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin-bottom:34px;
-  }
-  .orb-halo{
-    position:absolute;
-    inset:-18px;
-    border-radius:50%;
-    background:radial-gradient(circle, rgba(31,107,220,.16) 0%, rgba(211,228,252,0) 70%);
-    animation:halo 2.2s ease-in-out infinite;
-  }
-  @keyframes halo{
-    0%,100%{ transform:scale(.9); opacity:.7; }
-    50%{ transform:scale(1.15); opacity:1; }
-  }
-  .orb-ring{
-    position:absolute;
-    inset:0;
-    border-radius:50%;
-    padding:3px;
-    background:conic-gradient(from 0deg, var(--blue) 0deg, var(--blue-deep) 140deg, var(--blue-tint) 220deg, var(--blue) 360deg);
-    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite:xor;
-    mask-composite:exclude;
-    animation:spin 1.62s linear infinite;
-  }
-  @keyframes spin{ to{ transform:rotate(360deg); } }
-  .orb-core{
-    position:absolute;
-    inset:14px;
-    border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, #4f8bee 0%, var(--blue) 45%, var(--blue-deep) 100%);
-    box-shadow:0 8px 22px rgba(17,75,161,.35), inset 0 -6px 14px rgba(0,0,0,.12), inset 0 4px 10px rgba(255,255,255,.35);
-    animation:breathe 2.2s ease-in-out infinite;
-  }
-  @keyframes breathe{
-    0%,100%{ transform:scale(1); }
-    50%{ transform:scale(.92); }
-  }
-  .orb-satellite{
-    position:absolute;
-    inset:0;
-    animation:spin 1.62s linear infinite;
-  }
-  .orb-satellite::after{
-    content:'';
-    position:absolute;
-    top:2px; left:50%;
-    width:8px; height:8px;
-    margin-left:-4px;
-    border-radius:50%;
-    background:var(--white);
-    box-shadow:0 0 8px 2px rgba(31,107,220,.7);
+  .qr-section{ margin-top: 22px; display:none; animation: fadeUp .35s ease; }
+  .qr-section.visible{ display:block; }
+  @keyframes fadeUp{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
+
+  #qr-frame{
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+    border-radius: 20px; transition: all .2s ease;
   }
 
-  /* ---------- text ---------- */
-  h1{
-    font-size:23px;
-    font-weight:800;
-    letter-spacing:.2px;
-    color:var(--ink);
-    margin-bottom:14px;
-    display:flex;
-    align-items:baseline;
-    justify-content:center;
-    gap:8px;
-    direction:ltr;
-  }
-  h1 .fa{ direction:rtl; }
-  h1 .sep{ color:var(--blue-tint); font-weight:400; }
-  h1 .en{
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:16px;
-    font-weight:700;
-    color:var(--blue-deep);
-    letter-spacing:.4px;
-  }
-  .lead{
-    font-size:14.5px;
-    font-weight:500;
-    color:var(--ink-soft);
-    line-height:1.9;
-    margin-bottom:26px;
-    max-width:320px;
-  }
-  .lead b{ color:var(--blue-deep); font-weight:700; }
-
-  /* ---------- progress ---------- */
-  .progress-block{
-    width:100%;
-    margin-bottom:26px;
-  }
-  .progress-meta{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    margin-bottom:10px;
-    font-size:12.5px;
-    color:var(--ink-soft);
-    font-weight:600;
-  }
-  .progress-meta .pct{
-    font-size:15px;
-    font-weight:800;
-    color:var(--blue-deep);
-    font-variant-numeric:tabular-nums;
-  }
-  .track{
-    position:relative;
-    width:100%;
-    height:10px;
-    border-radius:999px;
-    background:var(--blue-tint);
-    overflow:hidden;
-  }
-  .fill{
-    position:absolute;
-    top:0; right:0;
-    height:100%;
-    width:0%;
-    border-radius:999px;
-    background:linear-gradient(90deg, var(--blue-deep), var(--blue));
-    transition:width 1s linear;
-  }
-  .fill::after{
-    content:'';
-    position:absolute;
-    inset:0;
-    background:linear-gradient(100deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%);
-    background-size:200% 100%;
-    animation:shimmer 1.6s linear infinite;
-  }
-  @keyframes shimmer{
-    0%{ background-position:160% 0; }
-    100%{ background-position:-60% 0; }
-  }
-  .eta{
-    margin-top:10px;
-    font-size:12px;
-    color:var(--ink-soft);
-    font-weight:500;
-  }
-  .eta span{
-    font-weight:700;
-    color:var(--blue-deep);
-    font-variant-numeric:tabular-nums;
-  }
-  .status{
-    margin-top:8px;
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    font-size:11.5px;
-    font-weight:700;
-    color:var(--blue);
-  }
-  .status::before{
-    content:'';
-    width:6px; height:6px;
-    border-radius:50%;
-    background:var(--blue);
-    animation:blink 1.6s ease-in-out infinite;
+  #qr-frame.frame-simple, #qr-frame.frame-caption{
+    padding: 18px; border: 2px solid var(--accent); background: #FFFFFF;
+    box-shadow: 0 10px 26px -10px var(--shadow-tint);
   }
 
-  /* ---------- bot notice ---------- */
-  .notice{
-    width:100%;
-    background:rgba(255,255,255,.4);
-    backdrop-filter:blur(7px);
-    -webkit-backdrop-filter:blur(7px);
-    border:1px solid rgba(31,107,220,.16);
-    border-radius:14px;
-    padding:12px 16px;
-    font-size:12px;
-    line-height:1.85;
-    color:var(--blue-deep);
-    font-weight:600;
-    box-shadow:0 6px 18px rgba(17,75,161,.06), inset 0 1px 0 rgba(255,255,255,.6);
+  #qr-card{
+    background: #FFFFFF; border-radius: 20px;
+    padding: 22px; display:flex; flex-direction:column; align-items:center; gap:14px;
   }
-  .notice .step{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    justify-content:flex-start;
-  }
-  .notice .step + .step{ margin-top:4px; }
-  .notice .num{
-    flex:none;
-    width:18px; height:18px;
-    border-radius:50%;
-    background:var(--blue);
-    color:var(--white);
-    font-size:10px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:800;
+  #qr-frame.frame-simple #qr-card, #qr-frame.frame-caption #qr-card{
+    border: none; padding: 0;
   }
 
-  .cta{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    width:100%;
-    margin-top:16px;
-    padding:14px 20px;
-    border:none;
-    border-radius:14px;
-    background:linear-gradient(135deg, var(--blue), var(--blue-deep));
-    color:var(--white);
-    font-family:'Vazirmatn', Tahoma, sans-serif;
-    font-size:14.5px;
-    font-weight:700;
-    letter-spacing:.2px;
-    text-decoration:none;
-    cursor:pointer;
-    box-shadow:0 10px 22px rgba(17,75,161,.28);
-    transition:transform .15s ease, box-shadow .15s ease;
+  .frame-caption-text{
+    display:none; font-size:12.5px; font-weight:800; color: var(--accent-deep);
+    text-align:center; letter-spacing:0.3px;
   }
-  .cta:active{
-    transform:translateY(1px) scale(.99);
-    box-shadow:0 6px 14px rgba(17,75,161,.24);
-  }
-  .cta svg{ flex:none; }
+  #qr-frame.frame-caption .frame-caption-text{ display:block; }
 
-  .footnote{
-    margin-top:24px;
-    font-size:11px;
-    color:#9aa6b8;
-    font-weight:500;
-    letter-spacing:.3px;
+  #qrcode-wrap{ position:relative; display:flex; }
+  #qrcode{ background:#FFFFFF; padding: 12px; border-radius: 14px; box-shadow: 0 6px 18px -6px var(--shadow-tint); display:flex; }
+  #qrcode img, #qrcode canvas{ border-radius: 6px; display:block; }
+
+  .qr-logo-overlay{
+    position:absolute; top:50%; left:50%; transform: translate(-50%,-50%);
+    width:46px; height:46px; background:#FFFFFF; border-radius:12px;
+    display:none; align-items:center; justify-content:center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25); padding:4px; overflow:hidden;
+  }
+  .qr-logo-overlay.visible{ display:flex; }
+  .qr-logo-overlay .mini-badge{
+    width:100%; height:100%; border-radius:8px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .qr-logo-overlay svg{ width:22px; height:22px; }
+  .qr-logo-overlay img.custom-logo-img{ width:100%; height:100%; object-fit:cover; border-radius:8px; display:block; }
+
+  .qr-caption{ font-size: 12.5px; color: #6E7480; text-align:center; word-break: break-all; max-width: 260px; font-weight:500; }
+
+  .action-row{ display:flex; gap:10px; margin-top:16px; }
+  .btn-telegram{ background: var(--tg-bg); color: var(--tg-text); flex:2; }
+  .btn-telegram svg{ width:18px; height:18px; fill: var(--tg-text); }
+  .btn-download{ background: var(--dl-bg); color: var(--dl-text); border: 1.5px solid var(--dl-border); flex:1; padding: 15px 10px; }
+
+  .btn-screenshot, .btn-share-more{
+    margin-top:10px; background: var(--accent-soft); color: var(--accent-deep);
+    border: 1.5px solid var(--surface-border);
+  }
+
+  .hint{ text-align:center; font-size:11.5px; color: var(--muted); margin-top:10px; line-height:1.7; }
+
+  footer{ margin-top: 24px; text-align:center; font-size: 11.5px; color: var(--muted); font-weight:600; letter-spacing: 0.1px; }
+  footer span{ color: var(--accent); }
+
+  .divider{ height:1px; background: linear-gradient(90deg, transparent, var(--surface-border), transparent); margin: 18px 0 14px; }
+
+  .toast{
+    position:fixed; bottom: 26px; left:50%; transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: var(--surface); padding: 12px 20px; border-radius: 12px;
+    font-size: 13px; font-weight:600; opacity:0; transition: all .25s ease; pointer-events:none;
+    box-shadow: 0 10px 24px -8px rgba(0,0,0,0.35); z-index:999; max-width:88vw; text-align:center;
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+  .lightbox{
+    position:fixed; inset:0; background: rgba(6,10,18,0.82); backdrop-filter: blur(6px);
+    display:none; align-items:center; justify-content:center; flex-direction:column; gap:16px;
+    z-index:1200; padding: 26px 20px;
+  }
+  .lightbox.visible{ display:flex; }
+  .lightbox img{ max-width: 86vw; max-height: 62vh; border-radius: 18px; box-shadow: 0 20px 60px -10px rgba(0,0,0,0.6); -webkit-touch-callout: default; }
+  .lightbox-hint{ color:#EAF4FF; font-size: 13px; font-weight:600; text-align:center; max-width: 300px; line-height:1.8; }
+  .lightbox-close{ background: rgba(255,255,255,0.14); color:#FFFFFF; border:none; padding: 12px 26px; border-radius: 12px; font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer; }
+
+  #splash{
+    position:fixed; inset:0; z-index:3000;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px;
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 55%);
+    transition: opacity .6s ease, visibility .6s ease;
+  }
+  #splash.hide{ opacity:0; visibility:hidden; pointer-events:none; }
+
+  #orb-canvas{ width:84px; height:84px; border-radius:50%; }
+
+  .splash-title{
+    font-family:"Vazirmatn", -apple-system, sans-serif;
+    font-size:16px; font-weight:800; color: var(--text); letter-spacing:-.2px;
+  }
+  .splash-title span{ color: var(--accent); }
+  .splash-sub{
+    font-family:"Vazirmatn", -apple-system, sans-serif;
+    font-size:11.5px; font-weight:600; color: var(--muted); margin-top:-14px;
+  }
+
+  .focus-container{
+    position:relative; display:inline-flex; align-items:center; gap:9px;
+    margin:0 auto;
+  }
+  .focus-word{
+    font-size: 21px; font-weight: 800; letter-spacing: -0.2px;
+    color: var(--text); display:inline-block; padding: 3px 5px;
+    filter: blur(6px); transition: filter .5s ease, color .5s ease;
+  }
+  .focus-word.active{ filter: blur(0px); color: var(--accent); }
+
+  .focus-frame{
+    position:absolute; top:0; left:0;
+    border-radius:8px; pointer-events:none; opacity:0;
+    transition: transform .5s ease, width .5s ease, height .5s ease, opacity .5s ease;
+  }
+  .focus-frame.show{ opacity:1; }
+  .focus-frame .corner{
+    position:absolute; width:11px; height:11px;
+    border: 2px solid var(--accent);
+    filter: drop-shadow(0 0 4px var(--glow-tint));
+  }
+  .focus-frame .corner.top-left{ top:-4px; left:-4px; border-right:none; border-bottom:none; border-radius:4px 0 0 0; }
+  .focus-frame .corner.top-right{ top:-4px; right:-4px; border-left:none; border-bottom:none; border-radius:0 4px 0 0; }
+  .focus-frame .corner.bottom-left{ bottom:-4px; left:-4px; border-right:none; border-top:none; border-radius:0 0 0 4px; }
+  .focus-frame .corner.bottom-right{ bottom:-4px; right:-4px; border-left:none; border-top:none; border-radius:0 0 4px 0; }
+
+  #qr-frame{ position:relative; z-index:1; }
+
+  .qr-loading{
+    display:none; flex-direction:column; align-items:center; gap:14px;
+    padding: 30px 0;
+  }
+  .qr-loading.visible{ display:flex; }
+  #solving-orb-canvas{ width:64px; height:64px; border-radius:50%; }
+  .qr-loading-text{
+    font-size:12.5px; font-weight:700; color: var(--muted);
   }
 </style>
 </head>
 <body>
 
-  <div id="glitch-bg">
-    <canvas id="glitch-canvas"></canvas>
-    <div class="vignette"></div>
+  <div id="splash">
+    <canvas id="orb-canvas" width="168" height="168"></canvas>
+    <div class="splash-title">کُدینو <span>| Codino</span></div>
+    <div class="splash-sub">در حال آماده‌سازی...</div>
   </div>
 
-  <div class="card">
-
-    <div class="eyebrow"><span class="dot"></span>در حال به‌روزرسانی</div>
-
-    <div class="orb-wrap">
-      <div class="orb-halo"></div>
-      <div class="orb-ring"></div>
-      <div class="orb-satellite"></div>
-      <div class="orb-core"></div>
+  <div class="phone-frame">
+    <div class="update-badge">
+      <span class="dot-wrap"></span>
+      <span>کُدینو هنوز آپدیت نشده، در حال آپدیت است — امکانات جدید به‌زودی اضافه می‌شوند</span>
     </div>
 
-    <h1><span class="en">Codino</span><span class="sep">|</span><span class="fa">کُدینو</span></h1>
-    <p class="lead">
-      کدینو در حال آپدیت <b>بزرگ‌تری</b> است و به همین دلیل، فعلاً صفحه مینی‌اپ کدینو در حال به‌روزرسانی می‌باشد.
-    </p>
+    <div class="theme-switcher">
+      <button class="theme-dot active" data-t="classic" title="تم کلاسیک آبی"></button>
+      <button class="theme-dot" data-t="dark" title="تم شب"></button>
+      <button class="theme-dot" data-t="ocean" title="تم اقیانوسی"></button>
+    </div>
 
-    <div class="progress-block">
-      <div class="progress-meta">
-        <span>پیشرفت به‌روزرسانی</span>
-        <span class="pct" id="pct">0%</span>
+    <header>
+      <div class="logo-badge">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+          <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+          <path d="M14 14H17V17H14V14Z" fill="white"/>
+          <path d="M18 14H21V17H18V14Z" fill="white"/>
+          <path d="M14 18H17V21H14V18Z" fill="white"/>
+          <path d="M18 18H21V21H18V18Z" fill="white"/>
+        </svg>
       </div>
-      <div class="track"><div class="fill" id="fill"></div></div>
-      <div class="eta">زمان تقریبی تکمیل &nbsp;<span id="eta-time">—</span>&nbsp; &middot; &nbsp;باقی‌مانده <span id="eta-count">—</span></div>
-      <div class="status" id="status"></div>
+      <div class="focus-container" id="brand-focus">
+        <span class="focus-word" data-w="0">کُدینو</span>
+        <span class="focus-word" data-w="1">Codino</span>
+        <div class="focus-frame" id="focus-frame">
+          <span class="corner top-left"></span>
+          <span class="corner top-right"></span>
+          <span class="corner bottom-left"></span>
+          <span class="corner bottom-right"></span>
+        </div>
+      </div>
+      <div class="brand-sub">ساخت آسان و سریع کیوارکد</div>
+    </header>
+
+    <div class="field-group">
+      <label class="field-label">متن یا لینک مورد نظر را وارد کنید</label>
+      <div class="input-row">
+        <input type="text" id="qr-input" placeholder="مثلاً: https://example.com" />
+        <button class="copy-btn" id="copy-btn" title="کپی متن">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </div>
     </div>
 
-    <div class="notice">
-      <div class="step"><span class="num">۱</span>در حال حاضر می‌توانید از خود ربات بارکد بسازید</div>
-      <div class="step"><span class="num">۲</span>ربات را استارت کنید</div>
-      <div class="step"><span class="num">۳</span>متن دلخواه خود را ارسال کنید تا بارکد دریافت کنید</div>
+    <div class="customize-panel">
+      <div class="customize-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="4"/></svg>
+        سفارشی‌سازی کیوارکد
+      </div>
+
+      <div class="option-block">
+        <div class="option-title">رنگ کیوارکد</div>
+        <div class="color-row">
+          <button class="color-dot active" data-c="#0A84FF" title="آبی"></button>
+          <button class="color-dot" data-c="#0B0D12" title="مشکی"></button>
+          <button class="color-dot" data-c="#00B8D9" title="فیروزه‌ای"></button>
+          <div class="color-custom-wrap" title="رنگ دلخواه">
+            <input type="color" id="custom-color" value="#0A84FF" />
+          </div>
+        </div>
+      </div>
+
+      <div class="option-block">
+        <div class="option-title">قاب گرفتن</div>
+        <div class="segmented" id="frame-segmented">
+          <button class="active" data-f="none">بدون قاب</button>
+          <button data-f="simple">قاب ساده</button>
+          <button data-f="caption">قاب با متن</button>
+        </div>
+        <input type="text" class="caption-input" id="caption-input" placeholder="متن دلخواه، مثلاً: برای اسکن دوربین را بگیرید" value="برای اسکن، دوربین را بگیرید" />
+      </div>
+
+      <div class="option-block">
+        <div class="option-title">لوگو در مرکز کیوارکد</div>
+        <div class="segmented" id="logo-segmented">
+          <button class="active" data-l="none">بدون لوگو</button>
+          <button data-l="brand">لوگوی کُدینو</button>
+          <button data-l="custom">لوگوی دلخواه</button>
+        </div>
+        <div class="upload-row" id="upload-row">
+          <button class="upload-btn" id="upload-trigger">انتخاب تصویر لوگو</button>
+          <span class="upload-name" id="upload-name"></span>
+          <input type="file" id="logo-file" accept="image/*" style="display:none" />
+        </div>
+      </div>
     </div>
 
-    <a class="cta" href="https://t.me/qrcodesazzbot" target="_blank" rel="noopener">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M21.5 3.5L2.75 10.9c-1.03.42-1.02 1-.19 1.26l4.78 1.5 1.85 5.6c.22.6.38.85.77.85.39 0 .56-.18.78-.4l2.1-2.03 4.6 3.4c.85.47 1.46.23 1.68-.79l3.03-14.3c.32-1.25-.47-1.82-1.6-1.43z" fill="currentColor"/>
-      </svg>
-      ساخت بارکد با ربات
-    </a>
+    <button class="btn btn-primary" id="generate-btn">ساخت کیوارکد</button>
 
-    <div class="footnote">CODINO PLATFORM</div>
+    <div class="qr-section" id="qr-section">
+      <div class="divider"></div>
 
+      <div class="qr-loading" id="qr-loading">
+        <canvas id="solving-orb-canvas" width="128" height="128"></canvas>
+        <div class="qr-loading-text">در حال ساخت کیوارکد...</div>
+      </div>
+
+      <div id="qr-frame" class="frame-none">
+        <div id="qr-card">
+          <div id="qrcode-wrap">
+            <div id="qrcode"></div>
+            <div class="qr-logo-overlay" id="qr-logo-overlay">
+              <div class="mini-badge" id="mini-badge">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+                  <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+                  <path d="M14 14H17V17H14V14Z" fill="white"/><path d="M18 14H21V17H18V14Z" fill="white"/>
+                  <path d="M14 18H17V21H14V18Z" fill="white"/><path d="M18 18H21V21H18V18Z" fill="white"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="qr-caption" id="qr-caption"></div>
+        </div>
+        <div class="frame-caption-text" id="frame-caption-text">برای اسکن، دوربین را بگیرید</div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-telegram" id="telegram-btn">
+          <svg viewBox="0 0 24 24"><path d="M21.05 3.16 2.53 10.4c-1.24.5-1.23 1.2-.22 1.51l4.77 1.49 1.83 5.6c.22.62.36.86.73.86.34 0 .5-.16.7-.35l1.86-1.8 4.02 2.97c.74.41 1.27.2 1.46-.68l2.65-12.5c.28-1.16-.42-1.68-1.28-1.34Zm-11.7 9.03 8.35-5.27c.4-.24.76-.11.46.15L9.9 14.4l-.28 3.03-1.42-4.24Z"/></svg>
+          <span id="telegram-btn-text">ارسال در تلگرام</span>
+        </button>
+        <button class="btn btn-download" id="download-btn">دانلود عکس</button>
+      </div>
+
+      <button class="btn btn-share-more" id="share-more-btn">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/></svg>
+        اشتراک‌گذاری در سایر برنامه‌ها
+      </button>
+
+      <button class="btn btn-screenshot" id="screenshot-btn">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none"><path d="M4 8V6a2 2 0 0 1 2-2h2M4 16v2a2 2 0 0 0 2 2h2M20 8V6a2 2 0 0 0-2-2h-2M20 16v2a2 2 0 0 1-2 2h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/></svg>
+        گرفتن اسکرین‌شات
+      </button>
+
+      <div class="hint" id="hint-text">در حال آماده‌سازی تصویر برای ارسال...</div>
+    </div>
+
+    <footer>توسط گروه کُدینو <span>| Codino</span> ساخته شده</footer>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="lightbox" id="lightbox">
+    <img id="lightbox-img" src="" alt="اسکرین‌شات کیوارکد" />
+    <div class="lightbox-hint">برای ذخیره یا ارسال مستقیم در تلگرام، روی عکس نگه‌دارید (لمس طولانی) و گزینه‌ی ذخیره یا اشتراک‌گذاری را بزنید</div>
+    <button class="lightbox-close" id="lightbox-close">بستن</button>
   </div>
 
 <script>
-  // Target completion: tomorrow at 23:00 local time
-  const now = new Date();
-  const target = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 0, 0);
-  // Progress window start: ~22 hours before target, so it already feels "underway"
-  const start = new Date(target.getTime() - 22 * 60 * 60 * 1000);
+  const input = document.getElementById('qr-input');
+  const copyBtn = document.getElementById('copy-btn');
+  const genBtn = document.getElementById('generate-btn');
+  const qrSection = document.getElementById('qr-section');
+  const qrFrame = document.getElementById('qr-frame');
+  const qrLoading = document.getElementById('qr-loading');
+  const qrCard = document.getElementById('qr-card');
+  const qrContainer = document.getElementById('qrcode');
+  const qrLogoOverlay = document.getElementById('qr-logo-overlay');
+  const miniBadge = document.getElementById('mini-badge');
+  const qrCaption = document.getElementById('qr-caption');
+  const frameCaptionText = document.getElementById('frame-caption-text');
+  const telegramBtn = document.getElementById('telegram-btn');
+  const downloadBtn = document.getElementById('download-btn');
+  const shareMoreBtn = document.getElementById('share-more-btn');
+  const screenshotBtn = document.getElementById('screenshot-btn');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxClose = document.getElementById('lightbox-close');
+  const hintText = document.getElementById('hint-text');
+  const toast = document.getElementById('toast');
+  const themeDots = document.querySelectorAll('.theme-dot');
+  const colorDots = document.querySelectorAll('.color-dot');
+  const customColorInput = document.getElementById('custom-color');
+  const frameSegmented = document.getElementById('frame-segmented');
+  const captionInput = document.getElementById('caption-input');
+  const logoSegmented = document.getElementById('logo-segmented');
+  const uploadRow = document.getElementById('upload-row');
+  const uploadTrigger = document.getElementById('upload-trigger');
+  const uploadName = document.getElementById('upload-name');
+  const logoFile = document.getElementById('logo-file');
+  const htmlEl = document.documentElement;
 
-  const fillEl = document.getElementById('fill');
-  const pctEl = document.getElementById('pct');
-  const etaTimeEl = document.getElementById('eta-time');
-  const etaCountEl = document.getElementById('eta-count');
+  let currentQR = null;
+  let currentBlob = null;
+  let currentValue = '';
+  let qrColor = '#0A84FF';
+  let frameStyle = 'none';
+  let logoMode = 'none';
+  let customLogoDataUrl = null;
 
-  const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
-  function toFa(str){
-    return String(str).replace(/[0-9]/g, d => persianDigits[d]);
-  }
-  function pad(n){ return n < 10 ? '0' + n : '' + n; }
-
-  const etaHour = pad(target.getHours());
-  const etaMin = pad(target.getMinutes());
-  etaTimeEl.textContent = toFa(`فردا ساعت ${etaHour}:${etaMin}`);
-
-  function tick(){
-    const nowMs = Date.now();
-    const span = target.getTime() - start.getTime();
-    const elapsed = nowMs - start.getTime();
-    let pct = (elapsed / span) * 100;
-    pct = Math.max(70, Math.min(98.5, pct));
-
-    fillEl.style.width = pct.toFixed(3) + '%';
-    pctEl.textContent = toFa(pct.toFixed(1)) + '٪';
-
-    let remain = target.getTime() - nowMs;
-    if (remain < 0) remain = 0;
-    const h = Math.floor(remain / 3600000);
-    const m = Math.floor((remain % 3600000) / 60000);
-    const s = Math.floor((remain % 60000) / 1000);
-    etaCountEl.textContent = toFa(`${pad(h)}:${pad(m)}:${pad(s)}`);
-
-    const statusEl = document.getElementById('status');
-    if (statusEl){
-      let label = 'در حال به‌روزرسانی هسته اصلی';
-      if (pct >= 95) label = 'چند لحظه تا اتمام به‌روزرسانی';
-      else if (pct >= 85) label = 'در حال نهایی‌سازی و تست نهایی';
-      else if (pct >= 70) label = 'در حال بهینه‌سازی و پایداری سیستم';
-      statusEl.textContent = label;
-    }
-  }
-
-  tick();
-  setInterval(tick, 1000);
-
-  // ---------- LetterGlitch background (vanilla JS port) ----------
-  (function initLetterGlitch(){
-    const canvas = document.getElementById('glitch-canvas');
-    const wrap = document.getElementById('glitch-bg');
-    if (!canvas || !wrap) return;
-    const ctx = canvas.getContext('2d');
-
-    const glitchColors = ['#2b4539', '#61dca3', '#61b3dc'];
-    const glitchSpeed = 50;
-    const smooth = true;
-
-    const fontSize = 16, charWidth = 10, charHeight = 20;
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$&*()-_+=/[]{};:<>.,0123456789';
-    const chars = Array.from(characters);
-
-    let letters = [];
-    let grid = { columns: 0, rows: 0 };
-    let lastGlitchTime = Date.now();
-    let rafId = null;
-
-    const randomChar = () => chars[Math.floor(Math.random() * chars.length)];
-    const randomColor = () => glitchColors[Math.floor(Math.random() * glitchColors.length)];
-
-    function hexToRgb(hex){
-      const short = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-      hex = hex.replace(short, (m,r,g,b) => r+r+g+g+b+b);
-      const res = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return res ? { r: parseInt(res[1],16), g: parseInt(res[2],16), b: parseInt(res[3],16) } : null;
-    }
-    function interpolateColor(a,b,t){
-      const r = Math.round(a.r + (b.r-a.r)*t);
-      const g = Math.round(a.g + (b.g-a.g)*t);
-      const bl = Math.round(a.b + (b.b-a.b)*t);
-      return `rgb(${r}, ${g}, ${bl})`;
-    }
-    function calcGrid(w,h){
-      return { columns: Math.ceil(w/charWidth), rows: Math.ceil(h/charHeight) };
-    }
-    function initLetters(columns, rows){
-      grid = { columns, rows };
-      const total = columns * rows;
-      letters = Array.from({length: total}, () => ({
-        char: randomChar(), color: randomColor(), targetColor: randomColor(), colorProgress: 1
-      }));
-    }
-    function drawLetters(){
-      if (!letters.length) return;
-      const rect = canvas.getBoundingClientRect();
-      ctx.clearRect(0,0,rect.width,rect.height);
-      ctx.font = `${fontSize}px monospace`;
-      ctx.textBaseline = 'top';
-      letters.forEach((l, i) => {
-        const x = (i % grid.columns) * charWidth;
-        const y = Math.floor(i / grid.columns) * charHeight;
-        ctx.fillStyle = l.color;
-        ctx.fillText(l.char, x, y);
-      });
-    }
-    function updateLetters(){
-      if (!letters.length) return;
-      const updateCount = Math.max(1, Math.floor(letters.length * 0.05));
-      for (let i=0;i<updateCount;i++){
-        const idx = Math.floor(Math.random()*letters.length);
-        if (!letters[idx]) continue;
-        letters[idx].char = randomChar();
-        letters[idx].targetColor = randomColor();
-        if (!smooth){
-          letters[idx].color = letters[idx].targetColor;
-          letters[idx].colorProgress = 1;
-        } else {
-          letters[idx].colorProgress = 0;
-        }
-      }
-    }
-    function handleSmoothTransitions(){
-      let needsRedraw = false;
-      letters.forEach(l => {
-        if (l.colorProgress < 1){
-          l.colorProgress += 0.05;
-          if (l.colorProgress > 1) l.colorProgress = 1;
-          const start = hexToRgb(l.color.startsWith('#') ? l.color : l.color);
-          const startRgb = l.color.startsWith('rgb') ? (() => {
-            const m = l.color.match(/\d+/g); return { r:+m[0], g:+m[1], b:+m[2] };
-          })() : hexToRgb(l.color);
-          const endRgb = hexToRgb(l.targetColor);
-          if (startRgb && endRgb){
-            l.color = interpolateColor(startRgb, endRgb, l.colorProgress);
-            needsRedraw = true;
-          }
-        }
-      });
-      if (needsRedraw) drawLetters();
-    }
-    function resizeCanvas(){
-      const rect = wrap.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      canvas.style.width = rect.width + 'px';
-      canvas.style.height = rect.height + 'px';
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      const { columns, rows } = calcGrid(rect.width, rect.height);
-      initLetters(columns, rows);
-      drawLetters();
-    }
-    function animate(){
-      const now = Date.now();
-      if (now - lastGlitchTime >= glitchSpeed){
-        updateLetters();
-        drawLetters();
-        lastGlitchTime = now;
-      }
-      if (smooth) handleSmoothTransitions();
-      rafId = requestAnimationFrame(animate);
-    }
-
-    resizeCanvas();
-    animate();
-
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        cancelAnimationFrame(rafId);
-        resizeCanvas();
-        animate();
-      }, 100);
+  themeDots.forEach(dot=>{
+    dot.addEventListener('click', ()=>{
+      htmlEl.setAttribute('data-theme', dot.dataset.t);
+      themeDots.forEach(d=> d.classList.remove('active'));
+      dot.classList.add('active');
     });
+  });
+
+  colorDots.forEach(dot=>{
+    dot.addEventListener('click', ()=>{
+      qrColor = dot.dataset.c;
+      colorDots.forEach(d=> d.classList.remove('active'));
+      dot.classList.add('active');
+      customColorInput.value = qrColor;
+      if(currentValue) generateQR(true);
+    });
+  });
+
+  customColorInput.addEventListener('input', ()=>{
+    qrColor = customColorInput.value;
+    colorDots.forEach(d=> d.classList.remove('active'));
+    if(currentValue) generateQR(true);
+  });
+
+  frameSegmented.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      frameStyle = btn.dataset.f;
+      frameSegmented.querySelectorAll('button').forEach(b=> b.classList.remove('active'));
+      btn.classList.add('active');
+      captionInput.classList.toggle('visible', frameStyle === 'caption');
+      applyFrameStyle();
+    });
+  });
+
+  captionInput.addEventListener('input', ()=>{
+    frameCaptionText.textContent = captionInput.value.trim() || 'برای اسکن، دوربین را بگیرید';
+    currentBlob = null;
+    if(qrSection.classList.contains('visible')) renderShareImage();
+  });
+
+  function applyFrameStyle(){
+    qrFrame.classList.remove('frame-none','frame-simple','frame-caption');
+    qrFrame.classList.add('frame-' + frameStyle);
+    frameCaptionText.textContent = captionInput.value.trim() || 'برای اسکن، دوربین را بگیرید';
+    currentBlob = null;
+    if(qrSection.classList.contains('visible')) renderShareImage();
+  }
+
+  logoSegmented.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      logoMode = btn.dataset.l;
+      logoSegmented.querySelectorAll('button').forEach(b=> b.classList.remove('active'));
+      btn.classList.add('active');
+      uploadRow.classList.toggle('visible', logoMode === 'custom');
+      applyLogoMode();
+    });
+  });
+
+  uploadTrigger.addEventListener('click', ()=> logoFile.click());
+
+  logoFile.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev)=>{
+      customLogoDataUrl = ev.target.result;
+      uploadName.textContent = file.name.length > 14 ? file.name.slice(0,12) + '…' : file.name;
+      applyLogoMode();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function applyLogoMode(){
+    if(logoMode === 'none'){
+      qrLogoOverlay.classList.remove('visible');
+    } else if(logoMode === 'brand'){
+      qrLogoOverlay.classList.add('visible');
+      miniBadge.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+        <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="1.8"/>
+        <path d="M14 14H17V17H14V14Z" fill="white"/><path d="M18 14H21V17H18V14Z" fill="white"/>
+        <path d="M14 18H17V21H14V18Z" fill="white"/><path d="M18 18H21V21H18V18Z" fill="white"/></svg>`;
+      miniBadge.style.background = '';
+      miniBadge.classList.remove('custom-fill');
+    } else if(logoMode === 'custom'){
+      if(customLogoDataUrl){
+        qrLogoOverlay.classList.add('visible');
+        miniBadge.innerHTML = `<img class="custom-logo-img" src="${customLogoDataUrl}" alt="لوگو" />`;
+        miniBadge.style.background = 'transparent';
+      } else {
+        qrLogoOverlay.classList.remove('visible');
+      }
+    }
+    currentBlob = null;
+    if(qrSection.classList.contains('visible')) renderShareImage();
+  }
+
+  copyBtn.addEventListener('click', async ()=>{
+    const value = input.value.trim();
+    if(!value){ showToast('چیزی برای کپی نیست'); return; }
+    try{
+      await navigator.clipboard.writeText(value);
+      showToast('متن کپی شد');
+    }catch(e){
+      showToast('کپی ناموفق بود');
+    }
+  });
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(()=> toast.classList.remove('show'), 2800);
+  }
+
+  function nextPaint(){
+    return new Promise(resolve=>{ requestAnimationFrame(()=> requestAnimationFrame(resolve)); });
+  }
+
+  async function renderShareImage(){
+    hintText.textContent = 'در حال آماده‌سازی تصویر...';
+    telegramBtn.disabled = true;
+    downloadBtn.disabled = true;
+    await nextPaint();
+    try{
+      const canvas = await html2canvas(qrFrame, { backgroundColor: '#FFFFFF', scale: 3, useCORS: true });
+      currentBlob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+      telegramBtn.disabled = false;
+      downloadBtn.disabled = false;
+      hintText.textContent = navigator.share
+        ? 'تصویر آماده است — روی دکمه بزنید'
+        : 'تصویر آماده است — دکمه دانلود عکس را بزنید و در تلگرام ارسال کنید';
+    }catch(err){
+      telegramBtn.disabled = false;
+      downloadBtn.disabled = false;
+      hintText.textContent = 'برای ارسال، دکمه دانلود عکس را بزنید';
+    }
+  }
+
+  let solvingRAF = null;
+  let solvingT = 0;
+
+  function orbAccentColors(){
+    const theme = htmlEl.getAttribute('data-theme');
+    if(theme === 'dark') return ['#3AA0FF', '#0A84FF', '#0B0D12'];
+    if(theme === 'ocean') return ['#00B8D9', '#0086A8', '#062A33'];
+    return ['#0A84FF', '#0060DF', '#EAF4FF'];
+  }
+
+  function startSolvingOrb(){
+    const canvas = document.getElementById('solving-orb-canvas');
+    const octx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W/2, cy = H/2, radius = W/2 - 5;
+
+    function frame(){
+      octx.clearRect(0, 0, W, H);
+      const [c1, c2, bgTint] = orbAccentColors();
+
+      octx.save();
+      octx.beginPath();
+      octx.arc(cx, cy, radius, 0, Math.PI*2);
+      octx.clip();
+
+      const bg = octx.createRadialGradient(cx, cy, radius*0.1, cx, cy, radius);
+      bg.addColorStop(0, bgTint);
+      bg.addColorStop(1, '#FFFFFF');
+      octx.fillStyle = bg;
+      octx.fillRect(0, 0, W, H);
+
+      const bands = 5;
+      const scramble = Math.abs(Math.sin(solvingT * 0.9));
+      for(let b = 0; b < bands; b++){
+        const yBase = cy - radius*0.55 + (b/(bands-1)) * radius * 1.1;
+        const segments = 8;
+        octx.beginPath();
+        for(let s = 0; s <= segments; s++){
+          const x = cx - radius + (s/segments) * radius * 2;
+          const noiseVal = Math.sin(s*1.7 + solvingT*2 + b) * radius * 0.16 * scramble;
+          const y = yBase + noiseVal;
+          if(s === 0) octx.moveTo(x, y); else octx.lineTo(x, y);
+        }
+        octx.strokeStyle = b % 2 === 0 ? c1 : c2;
+        octx.lineWidth = 3.4;
+        octx.globalAlpha = 0.85 - b*0.08;
+        octx.stroke();
+      }
+      octx.globalAlpha = 1;
+      octx.restore();
+
+      octx.beginPath();
+      octx.arc(cx, cy, radius, 0, Math.PI*2);
+      octx.strokeStyle = c1;
+      octx.lineWidth = 2;
+      octx.globalAlpha = 0.5;
+      octx.stroke();
+      octx.globalAlpha = 1;
+
+      solvingT += 0.05;
+      solvingRAF = requestAnimationFrame(frame);
+    }
+    frame();
+  }
+
+  function stopSolvingOrb(){
+    if(solvingRAF) cancelAnimationFrame(solvingRAF);
+    solvingRAF = null;
+  }
+
+  async function generateQR(silent){
+    const value = input.value.trim();
+    if(!value){
+      input.focus();
+      input.style.borderColor = '#FF3B30';
+      setTimeout(()=> input.style.borderColor = '', 900);
+      if(!silent) showToast('لطفاً یک متن یا لینک وارد کنید');
+      return;
+    }
+
+    currentValue = value;
+    currentBlob = null;
+
+    if(!silent){
+      qrSection.classList.add('visible');
+      qrFrame.style.display = 'none';
+      qrLoading.classList.add('visible');
+      genBtn.disabled = true;
+      qrSection.scrollIntoView({behavior:'smooth', block:'nearest'});
+
+      startSolvingOrb();
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      stopSolvingOrb();
+
+      qrLoading.classList.remove('visible');
+      qrFrame.style.display = '';
+      genBtn.disabled = false;
+    }
+
+    qrContainer.innerHTML = '';
+
+    currentQR = new QRCode(qrContainer, {
+      text: value,
+      width: 210,
+      height: 210,
+      colorDark: qrColor,
+      colorLight: "#FFFFFF",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    qrCaption.textContent = value;
+    qrSection.classList.add('visible');
+
+    renderShareImage();
+  }
+
+  genBtn.addEventListener('click', ()=> generateQR(false));
+  input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') generateQR(false); });
+
+  function downloadBlob(blob, filename){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=> URL.revokeObjectURL(url), 2000);
+  }
+
+  downloadBtn.addEventListener('click', ()=>{
+    if(!currentBlob){ showToast('صبر کنید تصویر آماده شود'); return; }
+    downloadBlob(currentBlob, 'codino-qr.png');
+    showToast('تصویر کیوارکد دانلود شد');
+  });
+
+  screenshotBtn.addEventListener('click', async ()=>{
+    if(!qrSection.classList.contains('visible')){ showToast('ابتدا یک کیوارکد بسازید'); return; }
+    let blobToShow = currentBlob;
+    if(!blobToShow){
+      showToast('در حال گرفتن اسکرین‌شات...');
+      try{
+        await nextPaint();
+        const canvas = await html2canvas(qrFrame, { backgroundColor:'#FFFFFF', scale: 3 });
+        blobToShow = await new Promise(res => canvas.toBlob(res, 'image/png'));
+        currentBlob = blobToShow;
+      }catch(e){ showToast('گرفتن اسکرین‌شات ناموفق بود'); return; }
+    }
+    const objUrl = URL.createObjectURL(blobToShow);
+    lightboxImg.src = objUrl;
+    lightbox.classList.add('visible');
+  });
+
+  lightboxClose.addEventListener('click', ()=> lightbox.classList.remove('visible'));
+  lightbox.addEventListener('click', (e)=>{ if(e.target === lightbox) lightbox.classList.remove('visible'); });
+
+  shareMoreBtn.addEventListener('click', async ()=>{
+    if(!qrSection.classList.contains('visible')){ showToast('ابتدا یک کیوارکد بسازید'); return; }
+    if(navigator.share){
+      try{
+        await navigator.share({
+          title: 'کُدینو | Codino',
+          text: 'کیوارکد ساخته‌شده با کُدینو | Codino:\n' + currentValue,
+          url: currentValue.startsWith('http') ? currentValue : undefined
+        });
+      }catch(e){ /* user cancelled, ignore */ }
+    } else {
+      try{
+        await navigator.clipboard.writeText(currentValue);
+        showToast('این مرورگر اشتراک‌گذاری مستقیم را پشتیبانی نمی‌کند — متن کپی شد');
+      }catch(e){
+        showToast('اشتراک‌گذاری در دسترس نیست');
+      }
+    }
+  });
+
+  telegramBtn.addEventListener('click', async ()=>{
+    if(!qrSection.classList.contains('visible')){ showToast('ابتدا یک کیوارکد بسازید'); return; }
+    if(!currentBlob){
+      showToast('در حال آماده‌سازی تصویر، دوباره بزنید');
+      renderShareImage();
+      return;
+    }
+
+    const file = new File([currentBlob], 'codino-qr.png', { type: 'image/png' });
+
+    if(navigator.canShare && navigator.canShare({ files:[file] })){
+      try{
+        await navigator.share({ files: [file], title: 'کُدینو | Codino', text: 'کیوارکد ساخته شده با کُدینو | Codino' });
+        return;
+      }catch(err){
+        if(err.name === 'AbortError') return;
+      }
+    }
+
+    downloadBlob(currentBlob, 'codino-qr.png');
+    showToast('این مرورگر امکان ارسال مستقیم عکس را ندارد — عکس دانلود شد، آن را در تلگرام ضمیمه کنید');
+    const text = encodeURIComponent('کیوارکد ساخته شده با کُدینو | Codino:\n' + currentValue);
+    const url = 'https://t.me/share/url?url=' + encodeURIComponent(currentValue) + '&text=' + text;
+    window.open(url, '_blank');
+  });
+
+  // ---------- TrueFocus effect on the brand title (adapted from TrueFocus.jsx) ----------
+  (function initTrueFocus(){
+    const container = document.getElementById('brand-focus');
+    const frame = document.getElementById('focus-frame');
+    const wordEls = Array.from(container.querySelectorAll('.focus-word'));
+    const animationDuration = 500;   // ms
+    const pauseBetween = 1200;       // ms
+    let currentIndex = 0;
+
+    function positionFrame(){
+      const parentRect = container.getBoundingClientRect();
+      const activeEl = wordEls[currentIndex];
+      const activeRect = activeEl.getBoundingClientRect();
+      frame.style.transform = `translate(${activeRect.left - parentRect.left}px, ${activeRect.top - parentRect.top}px)`;
+      frame.style.width = activeRect.width + 'px';
+      frame.style.height = activeRect.height + 'px';
+      frame.classList.add('show');
+    }
+
+    function setActive(index){
+      wordEls.forEach((el, i)=> el.classList.toggle('active', i === index));
+      requestAnimationFrame(()=> requestAnimationFrame(positionFrame));
+    }
+
+    setActive(currentIndex);
+
+    setInterval(()=>{
+      currentIndex = (currentIndex + 1) % wordEls.length;
+      setActive(currentIndex);
+    }, animationDuration + pauseBetween);
+
+    window.addEventListener('resize', positionFrame);
+  })();
+
+  // ---------- Splash screen orb animation (10s on load) ----------
+  (function initSplashOrb(){
+    const splash = document.getElementById('splash');
+    const orbCanvas = document.getElementById('orb-canvas');
+    const octx = orbCanvas.getContext('2d');
+    const W = orbCanvas.width, H = orbCanvas.height;
+    const cx = W/2, cy = H/2, radius = W/2 - 4;
+    let t = 0;
+
+    function accentColors(){
+      const theme = htmlEl.getAttribute('data-theme');
+      if(theme === 'dark') return ['#3AA0FF', '#0A84FF', '#0B0D12'];
+      if(theme === 'ocean') return ['#00B8D9', '#0086A8', '#062A33'];
+      return ['#0A84FF', '#0060DF', '#EAF4FF'];
+    }
+
+    function drawOrb(){
+      octx.clearRect(0, 0, W, H);
+      const [c1, c2, bgTint] = accentColors();
+
+      octx.save();
+      octx.beginPath();
+      octx.arc(cx, cy, radius, 0, Math.PI*2);
+      octx.clip();
+
+      const bg = octx.createRadialGradient(cx, cy, radius*0.1, cx, cy, radius);
+      bg.addColorStop(0, bgTint);
+      bg.addColorStop(1, '#FFFFFF');
+      octx.fillStyle = bg;
+      octx.fillRect(0, 0, W, H);
+
+      const bands = 5;
+      for(let b = 0; b < bands; b++){
+        const amp = radius * (0.16 + b*0.04);
+        const freq = 1.6 + b*0.35;
+        const phase = t*0.03 + b*1.1;
+        const yBase = cy - radius*0.5 + (b/(bands-1)) * radius;
+
+        octx.beginPath();
+        for(let x = -radius; x <= radius; x += 4){
+          const y = yBase + Math.sin((x/radius)*Math.PI*freq + phase) * amp * 0.25;
+          if(x === -radius) octx.moveTo(cx + x, cy + y - cy);
+          else octx.lineTo(cx + x, y);
+        }
+        octx.strokeStyle = b % 2 === 0 ? c1 : c2;
+        octx.globalAlpha = 0.55 - b*0.06;
+        octx.lineWidth = 3.2;
+        octx.stroke();
+      }
+      octx.globalAlpha = 1;
+
+      const ringGrad = octx.createRadialGradient(cx, cy, radius*0.7, cx, cy, radius);
+      ringGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      ringGrad.addColorStop(1, 'rgba(0,0,0,0.12)');
+      octx.fillStyle = ringGrad;
+      octx.fillRect(0, 0, W, H);
+
+      octx.restore();
+
+      octx.beginPath();
+      octx.arc(cx, cy, radius, 0, Math.PI*2);
+      octx.lineWidth = 2;
+      octx.strokeStyle = c1;
+      octx.globalAlpha = 0.5;
+      octx.stroke();
+      octx.globalAlpha = 1;
+
+      t++;
+      if(!splash.classList.contains('hide')){
+        requestAnimationFrame(drawOrb);
+      }
+    }
+
+    drawOrb();
+
+    setTimeout(()=>{
+      splash.classList.add('hide');
+    }, 10000);
   })();
 </script>
 
