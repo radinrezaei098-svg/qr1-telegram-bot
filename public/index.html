@@ -252,6 +252,22 @@
     color:var(--blue-deep);
     font-variant-numeric:tabular-nums;
   }
+  .status{
+    margin-top:8px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--blue);
+  }
+  .status::before{
+    content:'';
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--blue);
+    animation:blink 1.6s ease-in-out infinite;
+  }
 
   /* ---------- bot notice ---------- */
   .notice{
@@ -354,6 +370,7 @@
       </div>
       <div class="track"><div class="fill" id="fill"></div></div>
       <div class="eta">زمان تقریبی تکمیل &nbsp;<span id="eta-time">—</span>&nbsp; &middot; &nbsp;باقی‌مانده <span id="eta-count">—</span></div>
+      <div class="status" id="status"></div>
     </div>
 
     <div class="notice">
@@ -400,7 +417,7 @@
     const span = target.getTime() - start.getTime();
     const elapsed = nowMs - start.getTime();
     let pct = (elapsed / span) * 100;
-    pct = Math.max(3, Math.min(98.5, pct));
+    pct = Math.max(70, Math.min(98.5, pct));
 
     fillEl.style.width = pct.toFixed(3) + '%';
     pctEl.textContent = toFa(pct.toFixed(1)) + '٪';
@@ -411,6 +428,15 @@
     const m = Math.floor((remain % 3600000) / 60000);
     const s = Math.floor((remain % 60000) / 1000);
     etaCountEl.textContent = toFa(`${pad(h)}:${pad(m)}:${pad(s)}`);
+
+    const statusEl = document.getElementById('status');
+    if (statusEl){
+      let label = 'در حال به‌روزرسانی هسته اصلی';
+      if (pct >= 95) label = 'چند لحظه تا اتمام به‌روزرسانی';
+      else if (pct >= 85) label = 'در حال نهایی‌سازی و تست نهایی';
+      else if (pct >= 70) label = 'در حال بهینه‌سازی و پایداری سیستم';
+      statusEl.textContent = label;
+    }
   }
 
   tick();
